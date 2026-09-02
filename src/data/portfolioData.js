@@ -1,71 +1,40 @@
 /* ============================================================
-   portfolioData.js — All portfolio content in one place
+   portfolioData.js — Comprehensive Portfolio & Nirmaan Data
    ============================================================ */
 
-// ── Navigation Links ──
-export const navLinks = [
-  { id: 'about', label: '01 ABOUT', num: '01', bg: '#2563EB', textColor: '#FFFFFF' },
-  { id: 'work', label: '02 SKILLS', num: '02', bg: '#F59E0B', textColor: '#11110F' },
-  { id: 'projects', label: '03 WORK', num: '03', bg: '#FF5722', textColor: '#FFFFFF' },
-  { id: 'experience', label: '04 EXPERIENCE', num: '04', bg: '#EF4444', textColor: '#FFFFFF' },
-  { id: 'designs', label: '05 DESIGN', num: '05', bg: '#10B981', textColor: '#FFFFFF' },
-  { id: 'journey', label: '06 JOURNEY', num: '06', bg: '#22C55E', textColor: '#11110F' },
-  { id: 'github', label: '07 GITHUB', num: '07', bg: '#6366F1', textColor: '#FFFFFF' },
-  { id: 'contact', label: '08 CONTACT', num: '08', bg: '#8B5CF6', textColor: '#FFFFFF' },
+// ── Navigation Items (Left Rail & Mobile Menu) ──
+export const sideNavItems = [
+  { id: 'hero', num: '00', title: 'Start', bg: '#11110F', textColor: '#FFFFFF' },
+  { id: 'overview', num: '01', title: 'Overview', bg: '#0072E3', textColor: '#FFFFFF' },
+  { id: 'tracks', num: '02', title: 'Domain Tracks', bg: '#FFB200', textColor: '#11110F' },
+  { id: 'projects', num: '03', title: 'Selected Work', bg: '#FF6100', textColor: '#FFFFFF' },
+  { id: 'gallery', num: '04', title: 'Design Archive', bg: '#00AA3C', textColor: '#11110F' },
+  { id: 'github', num: '05', title: 'Code Radar', bg: '#AB54F7', textColor: '#FFFFFF' },
+  { id: 'contact', num: '06', title: 'Contact', bg: '#FFB200', textColor: '#11110F' },
 ];
 
-// ── Personal Profile ──
+// ── Profile Information ──
 export const profile = {
   name: 'Archisha Gupta',
-  primaryIdentity: 'Computer Science Student',
-  positioning: 'Building at the intersection of code and design.',
-  quote: '“Most builders pick a side. I don’t.”',
-  location: 'Bengaluru, India',
-  educationShort: 'B.Tech — Computer Science (2025–2029)',
-  institutionShort: 'BMS Institute of Technology & Management',
-  microLabels: [
-    { label: 'BASED IN', value: 'BENGALURU, INDIA' },
-    { label: 'STUDYING', value: 'COMPUTER SCIENCE' },
-    { label: 'BUILDING', value: 'WEB + AI + IOT' },
-    { label: 'EXPLORING', value: 'CREATIVE TECHNOLOGY' },
-  ],
-  interests: [
-    'WEB DEVELOPMENT',
-    'UI/UX',
-    'AI',
-    'IoT',
-    'CREATIVE TECHNOLOGY',
-    'VISUAL DESIGN',
-  ],
+  handle: 'archisha.',
+  role: 'Creative Developer & Designer',
+  tagline: 'Building at the intersection of code and design.',
+  statement: 'Most builders pick a side. I don’t.',
+  subtext: 'Computer Science Engineering student at BMS Institute of Technology and Management, exploring web development, UI/UX, AI, IoT, and creative technology.',
+  college: 'BMS Institute of Technology & Management, Bengaluru',
+  degree: 'B.Tech — Computer Science (2025–2029)',
+  location: 'Bengaluru, Karnataka, India',
+  email: 'archishagupta4907@gmail.com',
+  githubUrl: 'https://github.com/Archish2007Gupta',
+  linkedinUrl: 'https://www.linkedin.com/in/archisha-gupta-4a6266385/',
 };
 
-// ── Categorized Skills (No Fake % Bars) ──
-export const skillCategories = [
-  {
-    category: 'CODE',
-    accent: 'var(--nirmaan-blue)',
-    skills: ['C', 'C++', 'Python', 'HTML', 'CSS', 'JavaScript', 'TypeScript'],
-  },
-  {
-    category: 'WEB / DEVELOPMENT',
-    accent: 'var(--nirmaan-yellow)',
-    skills: ['React', 'Web Development', 'APIs', 'Git', 'GitHub', 'Supabase'],
-  },
-  {
-    category: 'IoT',
-    accent: 'var(--nirmaan-green)',
-    skills: ['ESP32', 'Sensors', 'Hardware Automation'],
-  },
-  {
-    category: 'DESIGN',
-    accent: 'var(--nirmaan-orange)',
-    skills: ['Figma', 'Canva', 'Photoshop', 'UI/UX', 'Branding', 'Visual Design'],
-  },
-  {
-    category: 'INTERESTS',
-    accent: 'var(--nirmaan-purple)',
-    skills: ['Artificial Intelligence', 'IoT', 'Creative Technology', 'Game Development'],
-  },
+// ── Live Builder Metrics ──
+export const liveMetrics = [
+  ['Projects Built', '14+'],
+  ['Code Commits', '240+'],
+  ['Design Assets', '50+'],
+  ['Hackathons / Clubs', '4'],
 ];
 
 // ── Hero Info Cards ──
@@ -73,229 +42,444 @@ export const heroCards = [
   {
     number: '01',
     title: 'DESIGN',
-    items: ['UI/UX', 'Branding', 'Visual Systems'],
-    accent: 'var(--nirmaan-blue)',
+    items: ['UI/UX Systems', 'Branding & Posters', 'Typography & Visuals'],
+    accent: '#0072E3',
+    color: 'bg-blue text-white',
   },
   {
     number: '02',
     title: 'CODE',
-    items: ['Web', 'React', 'Python', 'C++'],
-    accent: 'var(--nirmaan-yellow)',
+    items: ['React & Web Apps', 'JavaScript / TypeScript', 'C++ & Python Core'],
+    accent: '#FFB200',
+    color: 'bg-yellow text-ink',
   },
   {
     number: '03',
     title: 'EXPLORE',
-    items: ['AI', 'IoT', 'Creative Tech'],
-    accent: 'var(--nirmaan-red)',
+    items: ['ESP32 & IoT Devices', 'AI / LLM Integration', 'Creative Interactions'],
+    accent: '#EF333A',
+    color: 'bg-red text-white',
   },
 ];
 
-// ── Disciplines ("What I Build") ──
-export const disciplines = [
+// ── Marquee Tickers ──
+export const marqueeOneItems = [
+  '✦ ARCHISHA GUPTA',
+  '✦ CREATIVE DEVELOPER',
+  '✦ UI/UX DESIGNER',
+  '✦ CSE @ BMSIT 2025–29',
+  '✦ CODING CLUB CORE',
+  '✦ ROTARACT EDITORIAL',
+  '✦ BUILD. INNOVATE. IMPACT.',
+  '✦ FULL STACK WEB',
+];
+
+export const marqueeTwoItems = [
+  '✦ ECHONEX IOT ASSISTANT',
+  '✦ CLEANZY SMART CITY',
+  '✦ WAY2UNI CAMPUS NAV',
+  '✦ SPARKHABIT CREATIVE TECH',
+  '✦ REACT & TYPESCRIPT',
+  '✦ HARDWARE & AI',
+];
+
+// ── Live Activity Announcements ──
+export const announcements = [
   {
-    number: '01',
-    title: 'WEB EXPERIENCES',
-    description: 'Interactive websites, dashboards and web applications.',
-    accent: 'var(--nirmaan-blue)',
+    id: 1,
+    date: 'Current Sprint',
+    tag: 'PORTFOLIO',
+    content: 'Elevating digital portfolio 3.0 inspired by Nirmaan 2026 & editorial luxury web design.',
   },
   {
-    number: '02',
-    title: 'UI / UX',
-    description: 'Interfaces, prototypes and digital experiences.',
-    accent: 'var(--nirmaan-purple)',
+    id: 2,
+    date: 'Design Role',
+    tag: 'CODING CLUB',
+    content: 'Leading design systems, event branding, ID cards, and official posters for Coding Club BMSIT.',
   },
   {
-    number: '03',
-    title: 'AI',
-    description: 'AI-powered tools and experiments.',
-    accent: 'var(--nirmaan-red)',
+    id: 3,
+    date: 'Hardware Sprint',
+    tag: 'ECHONEX',
+    content: 'Integrating ESP32 sensor telemetry with real-time Supabase cloud dashboard and voice agent.',
   },
   {
-    number: '04',
-    title: 'IoT',
-    description: 'Connected devices and hardware automation.',
-    accent: 'var(--nirmaan-green)',
-  },
-  {
-    number: '05',
-    title: 'CREATIVE TECHNOLOGY',
-    description: 'Projects combining technology and visual creativity.',
-    accent: 'var(--nirmaan-yellow)',
-  },
-  {
-    number: '06',
-    title: 'REAL-WORLD PRODUCTS',
-    description: 'Applications designed around actual user problems.',
-    accent: 'var(--nirmaan-blue)',
+    id: 4,
+    date: 'Editorial',
+    tag: 'ROTARACT',
+    content: 'Directing creative newsletters and visual storytelling initiatives for Rotaract Club of BMS Yelahanka.',
   },
 ];
 
-// ── Featured Projects ("ONE FLOW") ──
-export const projects = [
+// ── 4 Core Principles / Values ──
+export const values = [
+  {
+    mark: '01',
+    title: 'Innovation & Creativity',
+    copy: 'Approaching problems from unconventional angles to build distinctive digital experiences that surprise and delight.',
+    accent: '#0072E3',
+  },
+  {
+    mark: '02',
+    title: 'Feasibility & Impact',
+    copy: 'Designing scalable architectures and intuitive interfaces that solve genuine user problems in the real world.',
+    accent: '#FFB200',
+  },
+  {
+    mark: '03',
+    title: 'Technical Implementation',
+    copy: 'Writing clean, robust code with modular components, performance optimization, and thoughtful hardware integration.',
+    accent: '#EF333A',
+  },
+  {
+    mark: '04',
+    title: 'Visual Craft & Typography',
+    copy: 'Pairing bold typography with tactile claymorphic surfaces, intentional grids, and fluid micro-animations.',
+    accent: '#00AA3C',
+  },
+];
+
+// ── Domain Tracks ("What I Build") ──
+export const domainTracks = [
+  {
+    id: 'web',
+    index: '01',
+    title: 'Web Experiences',
+    badge: 'CORE FOCUS · HIGH IMPACT',
+    color: '#0072E3',
+    tagColor: 'bg-blue',
+    description: 'High-performance interactive web applications, responsive single-page apps, and real-time dashboard interfaces.',
+    skills: ['React', 'JavaScript (ES6+)', 'TypeScript', 'Vite', 'HTML5/CSS3', 'REST APIs'],
+  },
+  {
+    id: 'uiux',
+    index: '02',
+    title: 'UI/UX & Visual Systems',
+    badge: 'EDITORIAL · TACTILE',
+    color: '#FFB200',
+    tagColor: 'bg-yellow',
+    description: 'Design systems, wireframes, high-fidelity prototypes, brand guidelines, and physical print/merch assets.',
+    skills: ['Figma', 'UI/UX Design', 'Visual Hierarchy', 'Typography', 'Canva', 'Color Theory'],
+  },
+  {
+    id: 'ai',
+    index: '03',
+    title: 'AI & Intelligent Systems',
+    badge: 'RAPIDLY EVOLVING',
+    color: '#EF333A',
+    tagColor: 'bg-red',
+    description: 'AI-assisted workflows, conversational voice agents, intelligent assistants, and API-driven automation.',
+    skills: ['AI Integration', 'Prompt Engineering', 'API Orchestration', 'Python', 'Supabase Vector'],
+  },
+  {
+    id: 'iot',
+    index: '04',
+    title: 'IoT & Embedded Computing',
+    badge: 'HARDWARE + SOFTWARE',
+    color: '#00AA3C',
+    tagColor: 'bg-green',
+    description: 'Microcontroller programming, sensor telemetry, voice-controlled hardware, and automated home/campus systems.',
+    skills: ['ESP32', 'Arduino IDE', 'Sensors & Actuators', 'IoT Protocols', 'C/C++'],
+  },
+  {
+    id: 'creative-tech',
+    index: '05',
+    title: 'Creative Technology',
+    badge: 'EXPERIMENTAL LAB',
+    color: '#AB54F7',
+    tagColor: 'bg-purple',
+    description: 'Interactive canvas mini-games, retro Web Audio synthesizers, generative visuals, and kinetic micro-interactions.',
+    skills: ['Canvas 2D', 'Web Audio API', 'Kinetic Typography', 'Micro-Interactions', 'CSS Animation'],
+  },
+  {
+    id: 'products',
+    index: '06',
+    title: 'Real-World Products',
+    badge: 'END-TO-END DELIVERY',
+    color: '#FF6100',
+    tagColor: 'bg-orange',
+    description: 'Holistic product design combining research, user journey mapping, functional code, and production deployment.',
+    skills: ['Full Cycle Dev', 'Problem Solving', 'User Testing', 'Git/GitHub', 'Cloud Hosting'],
+  },
+];
+
+// ── Featured Projects ("SELECTED WORK") ──
+export const featuredProjects = [
   {
     id: 'echonex',
     number: '01',
     title: 'ECHONEX',
-    category: 'IoT / AI / Web',
-    buildType: 'WEB + IOT + AI',
-    status: 'BUILT',
-    stack: 'ESP32 · AI · SUPABASE · WEB',
+    category: 'IoT · AI · Web Platform',
+    accent: '#0072E3',
+    badge: 'HARDWARE + CLOUD',
+    tag: 'FEATURED 01',
     description:
-      'A smart voice-controlled assistant combining ESP32, hardware sensors, automation, AI interaction and a real-time web dashboard.',
-    technologies: ['ESP32', 'AI', 'IoT', 'SUPABASE', 'WEB'],
-    tags: ['ESP32', 'AI', 'IoT', 'SUPABASE', 'WEB'],
-    accent: 'var(--nirmaan-blue)',
+      'A voice-activated smart hardware assistant driven by ESP32 microcontrollers, integrated with real-time sensor monitoring, AI speech processing, and a companion web dashboard for automated control.',
+    techStack: ['ESP32', 'C++', 'AI API', 'Supabase', 'React', 'WebSockets'],
+    highlights: [
+      'Voice-directed actuator & relay triggers',
+      'Live temperature, humidity & sensor feeds',
+      'Cloud synchronization & web management dashboard',
+    ],
     github: 'https://github.com/Archish2007Gupta',
-    live: null,
+    liveUrl: null,
   },
   {
     id: 'cleanzy',
     number: '02',
     title: 'CLEANZY',
-    category: 'Smart City / Product',
-    buildType: 'WEB + PRODUCT PLATFORM',
-    status: 'BUILT',
-    stack: 'WEB · TYPESCRIPT · UI/UX',
+    category: 'Smart City · Product Platform',
+    accent: '#00AA3C',
+    badge: 'FULL STACK MVP',
+    tag: 'FEATURED 02',
     description:
-      'An on-demand waste collection platform designed around pickup scheduling, route tracking and digital waste management.',
-    technologies: ['WEB', 'TYPESCRIPT', 'UI/UX'],
-    tags: ['WEB', 'TYPESCRIPT', 'UI/UX'],
-    accent: 'var(--nirmaan-green)',
+      'An on-demand urban waste collection and recycling dispatch platform designed around seamless pickup scheduling, driver route optimization, and digital weight/billing tracking.',
+    techStack: ['React', 'TypeScript', 'Tailwind', 'REST APIs', 'UI/UX System'],
+    highlights: [
+      'Interactive booking flow & schedule calendar',
+      'Live dispatch status & pickup confirmation',
+      'Clean neo-brutalist interface designed for ease of use',
+    ],
     github: 'https://github.com/Archish2007Gupta/Cleanzy',
-    live: null,
+    liveUrl: null,
   },
   {
     id: 'way2uni',
     number: '03',
     title: 'WAY2UNI',
-    category: 'Product / UI/UX',
-    buildType: 'WEB + NAVIGATION PLATFORM',
-    status: 'BUILT',
-    stack: 'WEB · MAPS · AI · UI/UX',
+    category: 'Campus Navigation · UI/UX',
+    accent: '#FFB200',
+    badge: 'STUDENT UTILITY',
+    tag: 'FEATURED 03',
     description:
-      'A campus discovery and navigation concept designed to help students find buildings, facilities and useful services seamlessly.',
-    technologies: ['WEB', 'MAPS', 'AI', 'UI/UX'],
-    tags: ['WEB', 'MAPS', 'AI', 'UI/UX'],
-    accent: 'var(--nirmaan-yellow)',
+      'A campus discovery and interactive indoor/outdoor navigation concept engineered to help collegiate students and visitors effortlessly navigate departmental blocks, labs, and amenities.',
+    techStack: ['Web App', 'Interactive Maps', 'UI/UX Design', 'JavaScript'],
+    highlights: [
+      'Block-by-block directory with step-free route aids',
+      'Departmental lab & library occupancy indicators',
+      'Mobile-first responsive vector interface',
+    ],
     github: 'https://github.com/Archish2007Gupta',
-    live: null,
+    liveUrl: null,
   },
   {
     id: 'sparkhabit',
     number: '04',
     title: 'SPARKHABIT',
-    category: 'Creative Technology',
-    buildType: 'CREATIVE TECH PLATFORM',
-    status: 'BUILT',
-    stack: 'JAVASCRIPT · WEB · PRODUCT DESIGN',
+    category: 'Creative Technology · Web',
+    accent: '#AB54F7',
+    badge: 'DAILY CHALLENGES',
+    tag: 'FEATURED 04',
     description:
-      'A platform centered around short daily creative challenges designed to build consistency and spark visual exploration.',
-    technologies: ['JAVASCRIPT', 'WEB', 'PRODUCT DESIGN'],
-    tags: ['JAVASCRIPT', 'WEB', 'PRODUCT DESIGN'],
-    accent: 'var(--nirmaan-purple)',
+      'A habit-building platform focused on 5-minute daily creative challenges. Designed to combat creator block and build streak consistency across sketching, coding, and writing.',
+    techStack: ['JavaScript', 'HTML5 Canvas', 'Local Storage', 'CSS Motion'],
+    highlights: [
+      'Dynamic daily prompt generator with countdown clock',
+      'Streak counter & milestone badge achievements',
+      'Instant canvas canvas export & sharing',
+    ],
     github: 'https://github.com/Archish2007Gupta/SparkHabit',
-    live: null,
+    liveUrl: null,
   },
 ];
 
-// ── Verified Experience ──
-export const experience = [
+// ── Experience & Timeline Groups ──
+export const scheduleTimeline = [
   {
-    id: 'coding-club',
-    number: '01',
-    org: 'CODING CLUB BMSIT',
-    role: 'Design Associate / Core Team Member',
-    period: 'March 2026 – Present',
-    description:
-      'Created branding and visual assets including logos, ID cards, posters, social media creatives, and apparel. Contributed to event branding, promotional campaigns, UI/UX requirements, visual storytelling, colour theory, typography, and layout.',
-    tags: ['BRANDING', 'POSTERS', 'APPAREL', 'UI/UX', 'LOGOS', 'ID CARDS'],
-    accent: 'var(--nirmaan-blue)',
+    period: '2025 – Present',
+    label: 'Academic & Core Roles',
+    items: [
+      {
+        time: '2025 — 2029',
+        title: 'B.Tech in Computer Science Engineering',
+        organization: 'BMS Institute of Technology & Management',
+        detail: 'Core coursework in Algorithms, Data Structures, Computer Architecture, and Object-Oriented Programming.',
+        color: '#0072E3',
+        tag: 'EDUCATION',
+      },
+      {
+        time: 'March 2026 — Present',
+        title: 'Design Associate & Core Team Member',
+        organization: 'Coding Club BMSIT',
+        detail: 'Conceptualized branding identities, event posters, official ID cards, club apparel, and digital promotional campaigns.',
+        color: '#FFB200',
+        tag: 'LEADERSHIP',
+      },
+      {
+        time: 'June 2026 — Present',
+        title: 'Editorial Director',
+        organization: 'Rotaract Club of BMS Yelahanka',
+        detail: 'Directing creative content presentation, editorial communication, newsletters, and visual storytelling for community outreach.',
+        color: '#EF333A',
+        tag: 'EDITORIAL',
+      },
+    ],
   },
   {
-    id: 'rotaract',
-    number: '02',
-    org: 'ROTARACT CLUB OF BMS YELAHANKA',
-    role: 'Editorial Director',
-    period: 'June 2026 – Present',
-    description:
-      'Contribute to editorial and creative communication activities, including content presentation and visual communication for club initiatives.',
-    tags: ['EDITORIAL', 'CREATIVE COMM', 'VISUAL STORYTELLING'],
-    accent: 'var(--nirmaan-red)',
+    period: '2026 Hackathons',
+    label: 'Competitive Sprints',
+    items: [
+      {
+        time: '2026 Sprint',
+        title: 'Decode2Deploy Hackathon',
+        organization: 'Coding Club BMSIT',
+        detail: 'Intensive building sprint tackling real-world problem statements under 24-hour pressure.',
+        color: '#00AA3C',
+        tag: 'HACKATHON',
+      },
+      {
+        time: '2026 Sprint',
+        title: 'RNSIT ImpactX Challenge',
+        organization: 'RNSIT Bengaluru',
+        detail: 'Collaborative prototyping, multi-disciplinary engineering, and rapid pitch evaluation.',
+        color: '#AB54F7',
+        tag: 'CHALLENGE',
+      },
+      {
+        time: '2026 Sprint',
+        title: 'VyuhaTech 2.0',
+        organization: 'Inter-College Innovation Sprint',
+        detail: 'Hardware & IoT integration with cloud telemetry and live prototype demonstration.',
+        color: '#FF6100',
+        tag: 'SPRINT',
+      },
+    ],
   },
 ];
 
-// ── Education ──
-export const education = {
-  institution: 'BMS INSTITUTE OF TECHNOLOGY & MANAGEMENT',
-  degree: 'B.Tech — Computer Science',
-  period: '2025 — 2029',
-  location: 'Bengaluru, India',
-};
-
-// ── Hackathons & Events ──
-export const events = [
+// ── Design Archive / Visual Gallery ──
+export const designGallery = [
   {
-    number: '01',
-    name: 'DECODE2DEPLOY',
-    org: 'Coding Club BMSIT',
-    accent: 'var(--nirmaan-blue)',
+    id: 1,
+    title: 'Coding Club Official Identity & Logo',
+    category: 'Branding',
+    color: '#0072E3',
+    tags: ['Vector', 'Logo', 'Visual System'],
+    description: 'Official emblem and geometric icon system engineered for Coding Club BMSIT.',
   },
   {
-    number: '02',
-    name: 'RNSIT IMPACTX',
-    org: 'RNSIT',
-    accent: 'var(--nirmaan-yellow)',
+    id: 2,
+    title: 'Decode2Deploy Hackathon Poster',
+    category: 'Posters',
+    color: '#EF333A',
+    tags: ['Print', 'Typography', 'Event'],
+    description: 'High-energy neo-brutalist poster series for the 24-hour coding sprint.',
   },
   {
-    number: '03',
-    name: 'VYUHATECH 2.0',
-    org: 'Hackathon Event',
-    accent: 'var(--nirmaan-purple)',
+    id: 3,
+    title: 'Core Team Official ID Cards',
+    category: 'ID Cards',
+    color: '#FFB200',
+    tags: ['Stationery', 'Badge', 'Print'],
+    description: 'Custom laminated holographic ID badge layouts designed for executive members.',
+  },
+  {
+    id: 4,
+    title: 'Varsity Apparel & Merch Design',
+    category: 'Apparel',
+    color: '#AB54F7',
+    tags: ['Apparel', 'Streetwear', 'Embroidery'],
+    description: 'Backprint typography and sleeve patch graphics for club hoodies and jerseys.',
+  },
+  {
+    id: 5,
+    title: 'Cleanzy Waste Dashboard Concept',
+    category: 'UI/UX',
+    color: '#00AA3C',
+    tags: ['Figma', 'Interface', 'Dashboard'],
+    description: 'Comprehensive UI component library and user flows for on-demand waste pickup.',
+  },
+  {
+    id: 6,
+    title: 'Rotaract Community Creative Banner',
+    category: 'Posters',
+    color: '#FF6100',
+    tags: ['Social', 'Editorial', 'Banner'],
+    description: 'Story-driven visual communication collateral for social impact initiatives.',
+  },
+  {
+    id: 7,
+    title: 'Official Certificate of Merit Template',
+    category: 'Certificates',
+    color: '#0072E3',
+    tags: ['Print', 'Gold Seal', 'Layout'],
+    description: 'High-security certificate layout with custom border Guilloche and typographic hierarchy.',
+  },
+  {
+    id: 8,
+    title: 'Tech Fest Social Media Campaign',
+    category: 'Social Media',
+    color: '#EF333A',
+    tags: ['Instagram', 'Motion', 'Carousel'],
+    description: 'Engaging carousel series with 3D elements and bold typographic callouts.',
   },
 ];
 
-export const hackathonDescription =
-  '“Experiences that pushed me to build, collaborate, prototype and present under pressure.”';
-
-// ── Design Archive Categories ──
-export const designCategories = [
-  'ALL',
-  'POSTERS',
-  'BRANDING',
-  'UI/UX',
-  'EVENT DESIGN',
-  'APPAREL',
-  'SOCIAL MEDIA',
-  'ID CARDS',
-  'CERTIFICATES',
+// ── GitHub Repositories ──
+export const githubRepos = [
+  {
+    name: 'SparkHabit',
+    lang: 'JavaScript',
+    langColor: '#F7DF1E',
+    stars: 5,
+    forks: 2,
+    desc: 'Short daily creative challenges platform to build consistency and spark ideas.',
+    url: 'https://github.com/Archish2007Gupta/SparkHabit',
+  },
+  {
+    name: 'Cleanzy',
+    lang: 'TypeScript',
+    langColor: '#3178C6',
+    stars: 8,
+    forks: 3,
+    desc: 'On-demand urban waste collection dispatch and route management platform.',
+    url: 'https://github.com/Archish2007Gupta/Cleanzy',
+  },
+  {
+    name: 'Netflix-Clone',
+    lang: 'HTML / CSS / JS',
+    langColor: '#E34F26',
+    stars: 4,
+    forks: 1,
+    desc: 'Pixel-perfect responsive streaming media showcase and video player interface.',
+    url: 'https://github.com/Archish2007Gupta',
+  },
+  {
+    name: 'Amazon-Clone',
+    lang: 'JavaScript',
+    langColor: '#F7DF1E',
+    stars: 3,
+    forks: 1,
+    desc: 'E-commerce marketplace interface with product catalog and cart state mechanics.',
+    url: 'https://github.com/Archish2007Gupta',
+  },
 ];
 
-// ── Design Archive Items ──
-export const designItems = [
-  { id: 1, title: 'Coding Club Official Logo', category: 'BRANDING', accent: 'var(--nirmaan-blue)' },
-  { id: 2, title: 'Decode2Deploy Hackathon Poster', category: 'POSTERS', accent: 'var(--nirmaan-red)' },
-  { id: 3, title: 'Coding Club Core Team ID Card', category: 'ID CARDS', accent: 'var(--nirmaan-yellow)' },
-  { id: 4, title: 'Club Merch & Apparel Design', category: 'APPAREL', accent: 'var(--nirmaan-purple)' },
-  { id: 5, title: 'Cleanzy Waste Dashboard Concept', category: 'UI/UX', accent: 'var(--nirmaan-green)' },
-  { id: 6, title: 'Rotaract Event Creative Banner', category: 'EVENT DESIGN', accent: 'var(--nirmaan-orange)' },
-  { id: 7, title: 'Official Certificate Template', category: 'CERTIFICATES', accent: 'var(--nirmaan-blue)' },
-  { id: 8, title: 'Social Media Campaign Creative', category: 'SOCIAL MEDIA', accent: 'var(--nirmaan-pink)' },
+// ── FAQs (Matching Nirmaan Style) ──
+export const faqs = [
+  {
+    question: 'What is your background and current focus?',
+    answer:
+      'I am a Computer Science Engineering student at BMS Institute of Technology & Management (2025–2029). I actively build across Web Development, UI/UX Systems, AI, and IoT hardware, while serving as Design Associate at Coding Club BMSIT and Editorial Director at Rotaract.',
+  },
+  {
+    question: 'Are you available for internships or project collaborations?',
+    answer:
+      'Yes! I am actively looking for software engineering, frontend development, and UI/UX design internship opportunities or high-energy hackathon team collaborations.',
+  },
+  {
+    question: 'What technologies do you use most frequently?',
+    answer:
+      'For frontend & web: React, JavaScript (ES6+), TypeScript, Vite, Tailwind CSS, HTML5/CSS3. For hardware & IoT: ESP32, C/C++, Sensors, Supabase. For design: Figma, Canva, Adobe Photoshop.',
+  },
+  {
+    question: 'How do you bridge code and design in your workflow?',
+    answer:
+      'I start with deep visual exploration and Figma prototypes, then translate design tokens directly into modular, performant code. This guarantees high aesthetic fidelity with zero compromise on engineering rigor.',
+  },
 ];
 
-// ── Actual GitHub Repositories ──
-export const githubProfile = {
-  url: 'https://github.com/Archish2007Gupta',
-  username: 'Archish2007Gupta',
-  repos: [
-    { name: 'SparkHabit', lang: 'JavaScript', desc: 'Short daily creative challenges platform' },
-    { name: 'Cleanzy', lang: 'TypeScript', desc: 'On-demand waste pickup & route management' },
-    { name: 'Netflix-Clone', lang: 'HTML/CSS/JS', desc: 'Responsive media streaming platform interface' },
-    { name: 'KOTLC', lang: 'Web', desc: 'Interactive web project' },
-    { name: 'Amazon-Clone', lang: 'JavaScript', desc: 'E-commerce platform UI concept' },
-  ],
-};
-
-// ── Social & Contact Links ──
+// ── Social Links ──
 export const socialLinks = [
   {
     label: 'GitHub',

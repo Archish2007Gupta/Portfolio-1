@@ -1,315 +1,281 @@
 /* ============================================================
-   ContactSection.jsx — Contact & Resume Action
+   ContactSection.jsx — Nirmaan 2026 FAQs & Contact Section
    ============================================================ */
 
 import React, { useState } from 'react';
-import { socialLinks } from '../data/portfolioData.js';
+import { faqs, socialLinks, profile } from '../data/portfolioData.js';
 
-export default function ContactSection() {
-  const [form, setForm] = useState({ name: '', email: '', message: '' });
-  const [copied, setCopied] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+export default function ContactSection({ onOpenContact }) {
+  const [openFaqIndex, setOpenFaqIndex] = useState(0);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const mailtoLink = `mailto:archishagupta4907@gmail.com?subject=Portfolio Contact from ${form.name}&body=${encodeURIComponent(form.message)}%0A%0AFrom: ${form.email}`;
-    window.open(mailtoLink);
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
-  };
-
-  const copyEmail = () => {
-    navigator.clipboard.writeText('archishagupta4907@gmail.com');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const toggleFaq = (idx) => {
+    setOpenFaqIndex(openFaqIndex === idx ? null : idx);
   };
 
   return (
-    <section className="section" id="contact">
+    <section className="nirmaan-section" id="contact">
+      
+      {/* Section Header */}
       <div className="nirmaan-section-title">
-        <span className="badge">08</span>
-        <h2>CONTACT</h2>
+        <span className="badge">06</span>
+        <h2>FAQ & CONTACT CHANNELS</h2>
       </div>
 
-      <div className="ct-grid">
-        {/* Left Side Info */}
-        <div className="ct-left">
-          <h3 className="ct-heading">
-            HAVE AN IDEA?
-            <br />
-            <span style={{ color: 'var(--nirmaan-blue)' }}>LET’S BUILD SOMETHING.</span>
-          </h3>
-          <p className="ct-body">
-            Open to building, collaborating, experimenting and making things that sit somewhere between code and design.
-          </p>
+      <div className="contact-main-grid">
+        
+        {/* Left Column: FAQ Accordion */}
+        <div className="faq-pane">
+          <h3 className="pane-heading">FREQUENTLY ASKED QUESTIONS</h3>
+          
+          <div className="faq-accordion-stack">
+            {faqs.map((faq, idx) => {
+              const isOpen = openFaqIndex === idx;
 
-          {/* Email with copy */}
-          <div className="ct-email-box">
-            <span className="ct-email">archishagupta4907@gmail.com</span>
-            <button className="ct-copy-btn" onClick={copyEmail}>
-              {copied ? 'COPIED ✓' : 'COPY EMAIL'}
-            </button>
-          </div>
+              return (
+                <div key={idx} className="brutal-card faq-card">
+                  <button
+                    onClick={() => toggleFaq(idx)}
+                    className="faq-question-btn"
+                    aria-expanded={isOpen}
+                  >
+                    <span className="faq-question-text">{faq.question}</span>
+                    <span className="faq-toggle-symbol">{isOpen ? '−' : '+'}</span>
+                  </button>
 
-          {/* Action Links */}
-          <div className="ct-actions">
-            <a
-              href="https://www.linkedin.com/in/archisha-gupta-4a6266385/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="nirmaan-card ct-action-card"
-            >
-              <span className="ct-action-label">LINKEDIN</span>
-              <span className="ct-action-arrow">↗</span>
-            </a>
-
-            <a
-              href="https://github.com/Archish2007Gupta"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="nirmaan-card ct-action-card"
-            >
-              <span className="ct-action-label">GITHUB</span>
-              <span className="ct-action-arrow">↗</span>
-            </a>
-
-            <a
-              href="mailto:archishagupta4907@gmail.com"
-              className="nirmaan-card ct-action-card"
-            >
-              <span className="ct-action-label">EMAIL</span>
-              <span className="ct-action-arrow">↗</span>
-            </a>
-
-            <button
-              onClick={copyEmail}
-              className="nirmaan-card ct-action-card ct-action-card--highlight"
-            >
-              <span className="ct-action-label">VIEW RESUME</span>
-              <span className="ct-action-arrow">↗</span>
-            </button>
+                  {isOpen && (
+                    <div className="faq-answer-panel">
+                      <p className="faq-answer-text">{faq.answer}</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* Right Side Contact Form */}
-        <form className="nirmaan-card ct-form" onSubmit={handleSubmit}>
-          <div className="card-header-banner" style={{ background: 'var(--nirmaan-purple)' }}>
-            <span>SEND A MESSAGE</span>
-            <span>✦ DIRECT INBOX</span>
+        {/* Right Column: Direct Contact & Social Cards */}
+        <div className="direct-contact-pane">
+          <h3 className="pane-heading">INITIATE COLLABORATION</h3>
+          
+          <div className="brutal-card contact-box-card">
+            <div className="card-header-banner" style={{ background: 'var(--color-yellow)', color: '#000' }}>
+              <span>DIRECT CHANNELS</span>
+              <span className="pulse-dot" />
+            </div>
+
+            <div className="contact-box-body">
+              <h4 className="contact-box-title">
+                Let&apos;s build something extraordinary together.
+              </h4>
+              <p className="contact-box-sub">
+                Whether you have an ambitious hackathon idea, an open internship role, or want to discuss design systems, I&apos;m always excited to connect.
+              </p>
+
+              <button onClick={onOpenContact} className="contact-primary-trigger clay-card">
+                <span>OPEN CONTACT DRAWER ↗</span>
+              </button>
+
+              <div className="contact-links-list">
+                <a
+                  href={`mailto:${profile.email}`}
+                  className="contact-link-item clay-card"
+                >
+                  <span className="link-icon">✉️</span>
+                  <div>
+                    <span className="link-label">EMAIL</span>
+                    <p className="link-detail">{profile.email}</p>
+                  </div>
+                </a>
+
+                <a
+                  href={profile.linkedinUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact-link-item clay-card"
+                >
+                  <span className="link-icon">💼</span>
+                  <div>
+                    <span className="link-label">LINKEDIN</span>
+                    <p className="link-detail">archisha-gupta</p>
+                  </div>
+                </a>
+
+                <a
+                  href={profile.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact-link-item clay-card"
+                >
+                  <span className="link-icon">🐙</span>
+                  <div>
+                    <span className="link-label">GITHUB</span>
+                    <p className="link-detail">Archish2007Gupta</p>
+                  </div>
+                </a>
+              </div>
+            </div>
           </div>
+        </div>
 
-          <div className="ct-form-body">
-            <div className="ct-field">
-              <label className="meta-label" htmlFor="contact-name">YOUR NAME</label>
-              <input
-                id="contact-name"
-                type="text"
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                required
-                className="ct-input"
-                placeholder="e.g. Alex Smith"
-              />
-            </div>
-
-            <div className="ct-field">
-              <label className="meta-label" htmlFor="contact-email">YOUR EMAIL</label>
-              <input
-                id="contact-email"
-                type="email"
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                required
-                className="ct-input"
-                placeholder="alex@example.com"
-              />
-            </div>
-
-            <div className="ct-field">
-              <label className="meta-label" htmlFor="contact-message">MESSAGE</label>
-              <textarea
-                id="contact-message"
-                name="message"
-                value={form.message}
-                onChange={handleChange}
-                required
-                className="ct-input ct-textarea"
-                placeholder="Tell me about your project, idea, or role..."
-                rows={4}
-              />
-            </div>
-
-            <button type="submit" className="ct-submit-btn">
-              {submitted ? 'MESSAGE SENT ✓' : 'SEND MESSAGE ↗'}
-            </button>
-          </div>
-        </form>
       </div>
 
       <style>{`
-        .ct-grid {
+        .contact-main-grid {
           display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 40px;
-          align-items: start;
+          grid-template-columns: 1fr;
+          gap: 36px;
         }
 
-        .ct-heading {
-          font-family: var(--font-hero);
-          font-size: clamp(2rem, 4vw, 3rem);
-          line-height: 1.05;
-          letter-spacing: -0.03em;
-          margin-bottom: 16px;
+        @media (min-width: 1025px) {
+          .contact-main-grid {
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 40px;
+          }
         }
 
-        .ct-body {
-          font-size: 1rem;
-          color: var(--text-gray);
-          line-height: 1.6;
-          margin-bottom: 24px;
-          max-width: 440px;
+        .pane-heading {
+          font-family: var(--font-mono);
+          font-size: 0.82rem;
+          font-weight: 800;
+          color: var(--text-muted);
+          letter-spacing: 0.08em;
+          margin-bottom: 20px;
         }
 
-        .ct-email-box {
+        /* FAQ Accordion */
+        .faq-accordion-stack {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+
+        .faq-card {
+          overflow: hidden;
+          background: #FFFFFF;
+        }
+
+        .faq-question-btn {
+          width: 100%;
+          padding: 18px 22px;
           display: flex;
           align-items: center;
-          gap: 12px;
-          margin-bottom: 24px;
-          flex-wrap: wrap;
-        }
-
-        .ct-email {
-          font-family: var(--font-mono);
-          font-size: 0.8rem;
-          font-weight: 700;
-          color: var(--text-black);
-        }
-
-        .ct-copy-btn {
-          font-family: var(--font-mono);
-          font-size: 0.65rem;
-          font-weight: 800;
-          letter-spacing: 0.1em;
-          padding: 6px 14px;
-          border: var(--border-medium);
-          border-radius: var(--radius-pill);
-          background: var(--nirmaan-yellow);
-          box-shadow: 2px 2px 0px #11110F;
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-
-        .ct-copy-btn:hover {
-          background: var(--nirmaan-blue);
-          color: white;
-          transform: translate(-2px, -2px);
-          box-shadow: 3px 3px 0px #11110F;
-        }
-
-        .ct-actions {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 12px;
-        }
-
-        .ct-action-card {
-          padding: 14px;
-          display: flex;
           justify-content: space-between;
-          align-items: center;
-          text-decoration: none;
-          color: inherit;
-          background: var(--bg-white);
-          cursor: pointer;
+          text-align: left;
+          gap: 12px;
         }
 
-        .ct-action-card--highlight {
-          background: var(--nirmaan-yellow);
+        .faq-question-text {
+          font-family: var(--font-display);
+          font-size: 1.05rem;
+          font-weight: 900;
+          color: var(--text-ink);
+          line-height: 1.25;
         }
 
-        .ct-action-label {
-          font-family: var(--font-mono);
-          font-size: 0.7rem;
-          font-weight: 800;
-          letter-spacing: 0.1em;
+        .faq-toggle-symbol {
+          font-family: var(--font-display);
+          font-size: 1.4rem;
+          font-weight: 900;
+          color: var(--color-blue);
+          line-height: 1;
         }
 
-        .ct-action-arrow {
-          font-size: 0.9rem;
-          font-weight: 800;
+        .faq-answer-panel {
+          padding: 0 22px 20px;
+          border-top: 1px dashed rgba(0, 0, 0, 0.08);
+          padding-top: 14px;
         }
 
-        .ct-form {
+        .faq-answer-text {
+          font-size: 0.94rem;
+          line-height: 1.55;
+          color: var(--text-gray);
+        }
+
+        /* Direct Contact Box */
+        .contact-box-card {
           overflow: hidden;
         }
 
-        .ct-form-body {
+        .contact-box-body {
           padding: 24px;
           display: flex;
           flex-direction: column;
           gap: 16px;
         }
 
-        .ct-field {
+        .contact-box-title {
+          font-size: 1.35rem;
+          line-height: 1.15;
+          color: var(--text-ink);
+        }
+
+        .contact-box-sub {
+          font-size: 0.92rem;
+          line-height: 1.5;
+          color: var(--text-gray);
+        }
+
+        .contact-primary-trigger {
+          background: var(--text-ink);
+          color: var(--color-yellow);
+          padding: 14px 24px;
+          border-radius: var(--radius-pill);
+          font-family: var(--font-display);
+          font-size: 0.85rem;
+          font-weight: 900;
+          letter-spacing: 0.06em;
+          text-align: center;
+          margin: 6px 0;
+          transition: all 0.2s ease;
+        }
+
+        .contact-primary-trigger:hover {
+          background: var(--color-blue);
+          color: #FFFFFF;
+          transform: translateY(-2px);
+        }
+
+        .contact-links-list {
           display: flex;
           flex-direction: column;
-          gap: 6px;
+          gap: 10px;
+          margin-top: 6px;
         }
 
-        .ct-input {
-          font-family: var(--font-body);
-          font-size: 0.9rem;
-          padding: 12px 14px;
-          border: var(--border-medium);
-          border-radius: var(--radius-sm);
-          background: var(--bg-cream);
-          outline: none;
-          transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        .contact-link-item {
+          background: rgba(244, 233, 225, 0.7);
+          border: 1px solid rgba(0, 0, 0, 0.08);
+          border-radius: 14px;
+          padding: 12px 16px;
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          transition: transform 0.2s ease;
         }
 
-        .ct-input:focus {
-          border-color: var(--nirmaan-blue);
-          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        .contact-link-item:hover {
+          transform: translateX(4px);
+          background: #FFFFFF;
         }
 
-        .ct-textarea {
-          resize: vertical;
-          min-height: 100px;
+        .link-icon {
+          font-size: 1.3rem;
         }
 
-        .ct-submit-btn {
+        .link-label {
           font-family: var(--font-mono);
-          font-size: 0.75rem;
+          font-size: 0.62rem;
           font-weight: 800;
-          letter-spacing: 0.12em;
-          padding: 14px 28px;
-          background: var(--text-black);
-          color: var(--nirmaan-yellow);
-          border: var(--border-medium);
-          border-radius: var(--radius-pill);
-          box-shadow: var(--shadow-tactile);
-          cursor: pointer;
-          transition: all 0.2s ease;
-          align-self: flex-start;
+          color: var(--text-muted);
+          letter-spacing: 0.08em;
         }
 
-        .ct-submit-btn:hover {
-          background: var(--nirmaan-blue);
-          color: white;
-          transform: translate(-2px, -2px);
-          box-shadow: var(--shadow-hover);
-        }
-
-        @media (max-width: 768px) {
-          .ct-grid {
-            grid-template-columns: 1fr;
-          }
+        .link-detail {
+          font-family: var(--font-mono);
+          font-size: 0.82rem;
+          font-weight: 700;
+          color: var(--text-ink);
         }
       `}</style>
     </section>

@@ -1,107 +1,73 @@
 /* ============================================================
-   MarqueeBanner.jsx — Infinite Scrolling Ticker
-   ============================================================
-   A horizontal scrolling banner that repeats text infinitely.
-   Common on editorial and brutalist websites.
-   
-   BEGINNER TIP:
-   - CSS @keyframes creates the infinite scroll animation
-   - We duplicate the text so it loops seamlessly
-   - The banner uses overflow:hidden to clip the moving text
+   MarqueeBanner.jsx — Nirmaan 2026 Kinetic Ticker Ribbon
    ============================================================ */
 
 import React from 'react';
 
-export default function MarqueeBanner() {
-  // The text that repeats in the ticker
-  const items = [
-    'DESIGN',
-    '✦',
-    'CODE',
-    '✦',
-    'CREATE',
-    '✦',
-    'BUILD',
-    '✦',
-    'EXPERIMENT',
-    '✦',
-    'DESIGN',
-    '✦',
-    'CODE',
-    '✦',
-    'CREATE',
-    '✦',
-    'BUILD',
-    '✦',
-    'EXPERIMENT',
-    '✦',
-  ];
+export default function MarqueeBanner({
+  color = 'bg-red',
+  textColor = 'text-yellow',
+  bgColorHex = '#EF333A',
+  textColorHex = '#FFB200',
+  items = [
+    '✦ ARCHISHA GUPTA',
+    '✦ CREATIVE DEVELOPER',
+    '✦ UI/UX DESIGNER',
+    '✦ CSE @ BMSIT 2025–29',
+    '✦ CODING CLUB CORE',
+    '✦ ROTARACT EDITORIAL',
+    '✦ BUILD. INNOVATE. IMPACT.',
+  ],
+}) {
+  const repeated = [...items, ...items, ...items, ...items];
 
   return (
-    <div className="marquee">
-      <div className="marquee__track">
-        {/* Render the items twice so the loop is seamless */}
-        {[0, 1].map((group) => (
-          <div key={group} className="marquee__group" aria-hidden={group === 1}>
-            {items.map((item, i) => (
-              <span
-                key={`${group}-${i}`}
-                className={item === '✦' ? 'marquee__dot' : 'marquee__text'}
-              >
-                {item}
-              </span>
-            ))}
-          </div>
+    <div
+      className="nirmaan-marquee-container"
+      style={{
+        backgroundColor: bgColorHex,
+        color: textColorHex,
+      }}
+    >
+      <div className="nirmaan-marquee-track">
+        {repeated.map((item, idx) => (
+          <span key={idx} className="nirmaan-marquee-item">
+            {item}
+          </span>
         ))}
       </div>
 
       <style>{`
-        .marquee {
-          width: 100%;
+        .nirmaan-marquee-container {
           overflow: hidden;
-          border-top: var(--border);
-          border-bottom: var(--border);
-          padding: var(--space-lg) 0;
-          background: var(--text-black);
-        }
-
-        .marquee__track {
-          display: flex;
-          width: max-content;
-          animation: marqueeScroll 20s linear infinite;
-        }
-
-        .marquee__group {
-          display: flex;
-          gap: var(--space-xl);
-          padding-right: var(--space-xl);
-          flex-shrink: 0;
-        }
-
-        .marquee__text {
-          font-family: var(--font-display);
-          font-size: clamp(1.5rem, 4vw, 3rem);
-          font-weight: 800;
-          letter-spacing: -0.02em;
-          color: var(--bg-cream);
           white-space: nowrap;
-        }
-
-        .marquee__dot {
-          font-size: clamp(1rem, 2vw, 1.5rem);
-          color: var(--accent-yellow);
+          border-top: var(--border-thick);
+          border-bottom: var(--border-thick);
+          padding: 12px 0;
           display: flex;
-          align-items: center;
+          user-select: none;
         }
 
-        /* Infinite scroll animation */
-        @keyframes marqueeScroll {
-          0%   { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+        .nirmaan-marquee-track {
+          display: flex;
+          gap: 32px;
+          animation: marquee 24s linear infinite;
+          will-change: transform;
         }
 
-        .marquee:hover .marquee__track {
+        .nirmaan-marquee-container:hover .nirmaan-marquee-track {
           animation-play-state: paused;
+        }
+
+        .nirmaan-marquee-item {
+          font-family: var(--font-display);
+          font-size: clamp(1rem, 1.6vw, 1.25rem);
+          font-weight: 900;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          display: inline-flex;
+          align-items: center;
+          gap: 12px;
         }
       `}</style>
     </div>

@@ -1,241 +1,232 @@
 /* ============================================================
-   JourneySection.jsx — Experience, Education & Hackathons
-   ============================================================
-   Features:
-   - EXPERIENCE: Coding Club BMSIT (Design Associate) & Rotaract (Editorial Director)
-   - EDUCATION: BMS Institute of Technology & Management (B.Tech CSE 2025-2029)
-   - HACKATHONS: Decode2Deploy, RNSIT ImpactX, VyuhaTech 2.0
+   JourneySection.jsx — Nirmaan 2026 Interactive Schedule Board
    ============================================================ */
 
-import React from 'react';
-import { experience, education, events, hackathonDescription } from '../data/portfolioData.js';
+import React, { useState } from 'react';
+import { scheduleTimeline } from '../data/portfolioData.js';
 
 export default function JourneySection() {
+  const [activeGroupIndex, setActiveGroupIndex] = useState(0);
+
+  const activeGroup = scheduleTimeline[activeGroupIndex];
+
   return (
-    <>
-      {/* ── 1. EXPERIENCE SECTION ── */}
-      <section className="section" id="experience">
-        <div className="nirmaan-section-title">
-          <span className="badge">04</span>
-          <h2>EXPERIENCE</h2>
+    <section className="nirmaan-section" id="schedule">
+      
+      {/* Section Header */}
+      <div className="nirmaan-section-title">
+        <span className="badge">04</span>
+        <h2>TIMELINE & EXPERIENCE BOARD</h2>
+      </div>
+
+      <p className="schedule-intro">
+        Key milestones across collegiate computer science education, club leadership appointments, and intense 24-hour hackathon sprints.
+      </p>
+
+      {/* Schedule Board Card */}
+      <div className="brutal-card schedule-board-card">
+        
+        {/* Top Tab Bar Switcher */}
+        <div className="schedule-tab-bar">
+          {scheduleTimeline.map((group, idx) => {
+            const isActive = activeGroupIndex === idx;
+            return (
+              <button
+                key={group.period}
+                onClick={() => setActiveGroupIndex(idx)}
+                className={`schedule-tab-btn clay-card ${isActive ? 'schedule-tab-btn--active' : ''}`}
+              >
+                <span className="tab-period">{group.period}</span>
+                <span className="tab-label">{group.label}</span>
+              </button>
+            );
+          })}
         </div>
 
-        <div className="exp-grid">
-          {experience.map((exp) => (
-            <div key={exp.id} className="nirmaan-card exp-card">
-              <div className="card-header-banner" style={{ background: exp.accent }}>
-                <span>{exp.number} // {exp.org}</span>
-                <span>{exp.period}</span>
+        {/* Schedule List Content */}
+        <div className="schedule-rows-container">
+          {activeGroup.items.map((item, i) => (
+            <div key={i} className="schedule-row-item">
+              
+              {/* Time & Tag Col */}
+              <div className="schedule-time-col">
+                <span
+                  className="schedule-time-badge"
+                  style={{ background: item.color }}
+                >
+                  {item.time}
+                </span>
+                <span className="schedule-type-tag">{item.tag}</span>
               </div>
 
-              <div className="exp-body">
-                <div className="exp-header-row">
-                  <h3 className="exp-role">{exp.role}</h3>
-                  <span className="exp-org-badge">{exp.org}</span>
+              {/* Detail Col */}
+              <div className="schedule-detail-col">
+                <div className="schedule-title-row">
+                  <h3 className="schedule-title">{item.title}</h3>
+                  <span className="schedule-org">{item.organization}</span>
                 </div>
-
-                <p className="exp-desc">{exp.description}</p>
-
-                <div className="exp-tags">
-                  {exp.tags.map((tag) => (
-                    <span key={tag} className="sticker-tag" style={{ fontSize: '0.55rem' }}>
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+                <p className="schedule-desc">{item.detail}</p>
               </div>
+
             </div>
           ))}
         </div>
-      </section>
 
-      {/* ── 2. JOURNEY / EDUCATION & HACKATHONS SECTION ── */}
-      <section className="section" id="journey">
-        <div className="nirmaan-section-title">
-          <span className="badge">06</span>
-          <h2>JOURNEY & EDUCATION</h2>
-        </div>
-
-        <div className="journey-grid">
-          {/* Compact Education Card */}
-          <div className="nirmaan-card edu-card">
-            <div className="card-header-banner" style={{ background: 'var(--nirmaan-blue)' }}>
-              <span>ACADEMIC EDUCATION</span>
-              <span>{education.period}</span>
-            </div>
-
-            <div className="edu-body">
-              <span className="meta-label">UNDERGRADUATE DEGREE</span>
-              <h3 className="edu-degree">{education.degree}</h3>
-              <p className="edu-inst">{education.institution}</p>
-              <span className="sticker-tag sticker-tag--blue" style={{ marginTop: '12px' }}>
-                📍 {education.location}
-              </span>
-            </div>
-          </div>
-
-          {/* Hackathons & Events Section */}
-          <div className="nirmaan-card hackathons-card">
-            <div className="card-header-banner" style={{ background: 'var(--nirmaan-red)' }}>
-              <span>HACKATHONS & EVENTS</span>
-              <span>BUILT UNDER PRESSURE</span>
-            </div>
-
-            <div className="hackathons-body">
-              <p className="hackathons-quote">{hackathonDescription}</p>
-
-              <div className="events-list">
-                {events.map((ev) => (
-                  <div key={ev.number} className="event-row">
-                    <span className="event-num" style={{ color: ev.accent }}>
-                      {ev.number}
-                    </span>
-                    <span className="event-name">{ev.name}</span>
-                    <span className="event-org">{ev.org}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      </div>
 
       <style>{`
-        .exp-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 24px;
+        .schedule-intro {
+          font-size: 1.05rem;
+          color: var(--text-gray);
+          max-width: 680px;
+          margin-bottom: 36px;
         }
 
-        .exp-card {
+        .schedule-board-card {
           overflow: hidden;
-          display: flex;
-          flex-direction: column;
+          background: #FFFFFF;
         }
 
-        .exp-body {
+        /* Tabs */
+        .schedule-tab-bar {
+          display: flex;
+          background: rgba(244, 233, 225, 0.6);
+          border-bottom: var(--border-medium);
+          padding: 14px 20px;
+          gap: 12px;
+          flex-wrap: wrap;
+        }
+
+        .schedule-tab-btn {
+          background: #FFFFFF;
+          color: var(--text-ink);
+          border-radius: var(--radius-pill);
+          padding: 10px 20px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-family: var(--font-display);
+          transition: all 0.2s ease;
+        }
+
+        .schedule-tab-btn:hover {
+          transform: translateY(-2px);
+        }
+
+        .schedule-tab-btn--active {
+          background: var(--text-ink);
+          color: var(--color-yellow);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .tab-period {
+          font-size: 0.85rem;
+          font-weight: 900;
+        }
+
+        .tab-label {
+          font-family: var(--font-mono);
+          font-size: 0.68rem;
+          font-weight: 700;
+          opacity: 0.8;
+        }
+
+        /* Rows */
+        .schedule-rows-container {
           padding: 24px;
           display: flex;
           flex-direction: column;
-          gap: 14px;
-          flex: 1;
+          gap: 16px;
         }
 
-        .exp-header-row {
+        .schedule-row-item {
+          background: rgba(244, 233, 225, 0.5);
+          border: 1px solid rgba(0, 0, 0, 0.1);
+          border-radius: 16px;
+          padding: 20px 24px;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 16px;
+          transition: all 0.24s ease;
+        }
+
+        @media (min-width: 768px) {
+          .schedule-row-item {
+            grid-template-columns: 220px 1fr;
+            align-items: center;
+          }
+        }
+
+        .schedule-row-item:hover {
+          transform: translateX(8px);
+          background-color: #FFFFFF;
+          box-shadow: 0 10px 0 rgba(0, 0, 0, 0.12);
+        }
+
+        .schedule-time-col {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 6px;
+        }
+
+        .schedule-time-badge {
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
+          font-weight: 800;
+          color: #FFFFFF;
+          padding: 4px 10px;
+          border-radius: var(--radius-pill);
+          letter-spacing: 0.05em;
+        }
+
+        .schedule-type-tag {
+          font-family: var(--font-mono);
+          font-size: 0.65rem;
+          font-weight: 800;
+          color: var(--text-muted);
+          letter-spacing: 0.08em;
+        }
+
+        .schedule-detail-col {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .schedule-title-row {
           display: flex;
           flex-direction: column;
           gap: 4px;
         }
 
-        .exp-role {
-          font-family: var(--font-hero);
-          font-size: 1.3rem;
-          line-height: 1.1;
+        @media (min-width: 768px) {
+          .schedule-title-row {
+            flex-direction: row;
+            align-items: baseline;
+            justify-content: space-between;
+          }
         }
 
-        .exp-org-badge {
-          font-family: var(--font-mono);
-          font-size: 0.65rem;
-          font-weight: 700;
-          color: var(--text-gray);
-          letter-spacing: 0.08em;
+        .schedule-title {
+          font-size: 1.18rem;
+          color: var(--text-ink);
+          letter-spacing: -0.02em;
         }
 
-        .exp-desc {
-          font-size: 0.9rem;
-          color: var(--text-gray);
-          line-height: 1.6;
-        }
-
-        .exp-tags {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 6px;
-          margin-top: auto;
-        }
-
-        /* Journey Grid */
-        .journey-grid {
-          display: grid;
-          grid-template-columns: 1fr 1.2fr;
-          gap: 28px;
-          align-items: start;
-        }
-
-        .edu-card, .hackathons-card {
-          overflow: hidden;
-        }
-
-        .edu-body, .hackathons-body {
-          padding: 24px;
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-
-        .edu-degree {
-          font-family: var(--font-hero);
-          font-size: 1.4rem;
-          line-height: 1.1;
-        }
-
-        .edu-inst {
-          font-size: 0.95rem;
-          color: var(--text-gray);
-          font-weight: 500;
-        }
-
-        .hackathons-quote {
-          font-size: 0.95rem;
-          font-style: italic;
-          color: var(--text-black);
-          border-left: 3px solid var(--nirmaan-red);
-          padding-left: 12px;
-          margin-bottom: 8px;
-        }
-
-        .events-list {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-
-        .event-row {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 10px 14px;
-          background: var(--bg-white);
-          border: var(--border-thin);
-          border-radius: 8px;
-          box-shadow: 2px 2px 0px #11110F;
-        }
-
-        .event-num {
+        .schedule-org {
           font-family: var(--font-mono);
           font-size: 0.75rem;
           font-weight: 800;
+          color: var(--color-blue);
         }
 
-        .event-name {
-          font-family: var(--font-hero);
-          font-size: 0.95rem;
-          font-weight: 800;
-        }
-
-        .event-org {
-          font-family: var(--font-mono);
-          font-size: 0.6rem;
+        .schedule-desc {
+          font-size: 0.92rem;
+          line-height: 1.5;
           color: var(--text-gray);
-          margin-left: auto;
-        }
-
-        @media (max-width: 900px) {
-          .exp-grid, .journey-grid {
-            grid-template-columns: 1fr;
-          }
         }
       `}</style>
-    </>
+    </section>
   );
 }

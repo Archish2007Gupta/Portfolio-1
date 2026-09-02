@@ -1,558 +1,642 @@
 /* ============================================================
-   ProjectsSection.jsx — Scroll-Driven Horizontal Flow
-   ============================================================
-   Features:
-   - Sticky left "ONE FLOW." red card (remains fixed in place).
-   - Scroll-Driven Movement: As the user scrolls down the page vertically,
-     the project cards track dynamically translates to the left!
-   - Full responsive fallback for touch/mobile screens.
+   ProjectsSection.jsx — Nirmaan 2026 2-Column Grid Selected Work
    ============================================================ */
 
-import React, { useState, useEffect, useRef } from 'react';
-import { projects } from '../data/portfolioData.js';
-
-// Specific bullet points for each project
-const PROJECT_BULLETS = {
-  echonex: [
-    'Smart voice-controlled assistant combining ESP32 & sensors',
-    'AI interaction with real-time web control dashboard',
-    'Supabase integration for cloud state & automation',
-  ],
-  cleanzy: [
-    'On-demand waste pickup & scheduling platform',
-    'Smart route tracking & digital waste management',
-    'Clean UI/UX designed around user convenience',
-  ],
-  way2uni: [
-    'Campus discovery & interactive building navigation',
-    'AI-assisted routing for students & visitors',
-    'Integrated map vectors & facility guide',
-  ],
-  sparkhabit: [
-    'Platform for short daily creative challenges',
-    'Consistency tracking & streak system',
-    'Designed to spark visual exploration & habits',
-  ],
-};
-
-function ProjectThumbnail({ project }) {
-  return (
-    <div className="oneflow-thumb" style={{ background: project.accent + '20' }}>
-      <span className="oneflow-thumb__badge">
-        PROJECT {project.number}
-      </span>
-      <div className="oneflow-thumb__content">
-        <span className="oneflow-thumb__num">{project.number}</span>
-        <span className="oneflow-thumb__title">{project.title}</span>
-        <div className="oneflow-thumb__tags">
-          {project.tags.slice(0, 3).map((tag) => (
-            <span key={tag} className="oneflow-thumb__tag">{tag}</span>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
+import React from 'react';
+import { featuredProjects } from '../data/portfolioData.js';
+import { ArrowUpRight } from './Icons.jsx';
 
 export default function ProjectsSection() {
-  const outerSectionRef = useRef(null);
-  const trackRef = useRef(null);
-  const [translateX, setTranslateX] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!outerSectionRef.current || !trackRef.current) return;
-
-      // Measure the outer sticky section bounds
-      const section = outerSectionRef.current;
-      const rect = section.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-
-      // Total distance the section will be sticky
-      const totalStickyScroll = section.offsetHeight - windowHeight;
-      if (totalStickyScroll <= 0) return;
-
-      // Distance scrolled into the sticky section
-      const scrolled = -rect.top;
-      const progress = Math.max(0, Math.min(1, scrolled / totalStickyScroll));
-
-      // Calculate maximum horizontal shift needed for the track
-      const track = trackRef.current;
-      const maxShift = track.scrollWidth - track.clientWidth;
-
-      // Set smooth translateX position based on vertical page scroll progress
-      setTranslateX(progress * maxShift);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Initial position update
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Manual arrow button navigation
-  const scrollManual = (direction) => {
-    if (!outerSectionRef.current || !trackRef.current) return;
-    const track = trackRef.current;
-    const maxShift = track.scrollWidth - track.clientWidth;
-    const step = 380;
-    
-    setTranslateX((prev) => {
-      const next = direction === 'left' ? prev - step : prev + step;
-      return Math.max(0, Math.min(maxShift, next));
-    });
-  };
-
   return (
-    <div className="oneflow-sticky-outer" ref={outerSectionRef} id="projects">
-      <div className="oneflow-sticky-inner">
-        <div className="section oneflow-section">
-          {/* Top Header Badge */}
-          <div className="oneflow-header-bar">
-            <span className="sticker-tag sticker-tag--blue">✦ PROJECT INDEX / 04 PROJECTS</span>
-            <span className="sticker-tag sticker-tag--yellow">SCROLL TO EXPLORE WORK</span>
-          </div>
-
-          {/* Main Grid: Fixed Left Card + Scroll-Driven Right Track */}
-          <div className="oneflow-grid">
-            
-            {/* ── Left Column: Red Vertical Card (Kept Fixed) ── */}
-            <div className="oneflow-left-card">
-              <div className="oneflow-icon-wrap">
-                <div className="oneflow-diamond">
-                  <div className="oneflow-diamond__inner" />
-                </div>
-              </div>
-
-              <div className="oneflow-left-content">
-                <h2 className="oneflow-left-title">
-                  ONE FLOW.
-                </h2>
-                <p className="oneflow-left-desc">
-                  A few things I’ve built while figuring out how code, design and ideas can work together from kickoff to live deployment.
-                </p>
-              </div>
-
-              {/* Manual Arrow Buttons */}
-              <div className="oneflow-nav-arrows">
-                <button
-                  className="oneflow-arrow-btn"
-                  onClick={() => scrollManual('left')}
-                  aria-label="Scroll left"
-                >
-                  ←
-                </button>
-                <button
-                  className="oneflow-arrow-btn"
-                  onClick={() => scrollManual('right')}
-                  aria-label="Scroll right"
-                >
-                  →
-                </button>
-              </div>
-            </div>
-
-            {/* ── Right Column: Dynamically Translating Project Cards Track ── */}
-            <div className="oneflow-track-wrap">
-              <div
-                className="oneflow-track"
-                ref={trackRef}
-                style={{
-                  transform: `translateX(-${translateX}px)`,
-                }}
-              >
-                {projects.map((project) => {
-                  const bullets = PROJECT_BULLETS[project.id] || [];
-
-                  return (
-                    <div key={project.id} className="oneflow-card">
-                      <ProjectThumbnail project={project} />
-
-                      <div className="oneflow-card__body">
-                        <div className="oneflow-card__header">
-                          <h3 className="oneflow-card__title">{project.title}</h3>
-                          <span className="oneflow-card__subtitle">{project.category}</span>
-                        </div>
-
-                        <div className="oneflow-card__divider" />
-
-                        <ul className="oneflow-card__bullets">
-                          {bullets.map((bullet, i) => (
-                            <li key={i}>
-                              <span className="oneflow-bullet-dot">●</span>
-                              <span>{bullet}</span>
-                            </li>
-                          ))}
-                        </ul>
-
-                        <div className="oneflow-card__footer">
-                          {project.github ? (
-                            <a
-                              href={project.github}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="oneflow-link-btn"
-                            >
-                              VIEW PROJECT ↗
-                            </a>
-                          ) : (
-                            <span className="oneflow-link-btn oneflow-link-btn--disabled">
-                              IN DEVELOPMENT
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-          </div>
-        </div>
+    <section className="nirmaan-section" id="projects">
+      
+      {/* Section Header */}
+      <div className="nirmaan-section-title">
+        <span className="badge">03</span>
+        <h2>SELECTED WORK &amp; PROTOTYPES</h2>
       </div>
 
-      {/* ── Scoped Styling ── */}
+      <p className="projects-intro">
+        A curated selection of hardware-software integrations, full-stack web platforms, and creative technology experiments.
+      </p>
+
+      {/* 2-Column Projects Grid */}
+      <div className="projects-grid-2col">
+        {featuredProjects.map((project) => (
+          <article
+            key={project.id}
+            className="brutal-card project-card-2col clay-card"
+          >
+            {/* Card Banner Header */}
+            <div
+              className="card-header-banner"
+              style={{ background: project.accent, color: '#FFFFFF' }}
+            >
+              <span className="banner-tag">{project.tag}</span>
+              <span className="project-badge-pill">{project.badge}</span>
+            </div>
+
+            {/* Interactive Visual Preview Box */}
+            <div className="project-preview-wrap">
+              <div className="project-mockup-frame clay-card">
+                
+                {/* Mockup Top Window Bar */}
+                <div className="mockup-window-bar">
+                  <div className="mockup-window-dots">
+                    <span style={{ background: '#EF333A' }} />
+                    <span style={{ background: '#FFB200' }} />
+                    <span style={{ background: '#00AA3C' }} />
+                  </div>
+                  <span className="mockup-window-title">
+                    {project.title.toLowerCase()}.local
+                  </span>
+                </div>
+
+                {/* Mockup Interactive Screen Content */}
+                <div className="mockup-screen-content">
+                  
+                  {project.id === 'echonex' && (
+                    <div className="screen-echonex-telemetry">
+                      <div className="telemetry-chip">
+                        <span className="pulse-dot" />
+                        <span>ESP32 FIRMWARE ONLINE</span>
+                      </div>
+                      <div className="telemetry-gauge-grid">
+                        <div className="telemetry-tile">
+                          <span className="tile-label">VOICE AGENT</span>
+                          <span className="tile-val" style={{ color: '#0072E3' }}>READY</span>
+                        </div>
+                        <div className="telemetry-tile">
+                          <span className="tile-label">SENSORS</span>
+                          <span className="tile-val" style={{ color: '#00AA3C' }}>4 ACTIVE</span>
+                        </div>
+                        <div className="telemetry-tile">
+                          <span className="tile-label">CLOUD SYNC</span>
+                          <span className="tile-val" style={{ color: '#FFB200' }}>SUPABASE</span>
+                        </div>
+                      </div>
+                      <p className="telemetry-command-log">
+                        &gt; esp32_wifi_connected (192.168.1.42)<br />
+                        &gt; telemetry: temp=24.5C, humidity=58%
+                      </p>
+                    </div>
+                  )}
+
+                  {project.id === 'cleanzy' && (
+                    <div className="screen-cleanzy-dispatch">
+                      <div className="cleanzy-header">
+                        <span className="cleanzy-badge">DISPATCH RADAR</span>
+                        <span className="cleanzy-stat">12 ACTIVE BINS</span>
+                      </div>
+                      <div className="cleanzy-map-graphic">
+                        <div className="cleanzy-pin">📍 WARD 42 (85% FULL)</div>
+                        <div className="cleanzy-pin">🚛 FLEET UNIT #04 EN ROUTE</div>
+                      </div>
+                      <div className="cleanzy-schedule-bar">
+                        <span>NEXT PICKUP: TODAY 16:30</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {project.id === 'way2uni' && (
+                    <div className="screen-way2uni-nav">
+                      <div className="way2uni-top">
+                        <span className="way2uni-campus">BMSIT DIRECTORY</span>
+                        <span className="way2uni-live">OCCUPANCY</span>
+                      </div>
+                      <div className="way2uni-route-card">
+                        <div className="route-step">
+                          <span className="step-num">01</span>
+                          <span>Main Entrance → CSE Dept</span>
+                        </div>
+                        <div className="route-step">
+                          <span className="step-num">02</span>
+                          <span>Elevator B → IoT Lab</span>
+                        </div>
+                      </div>
+                      <div className="way2uni-eta">ETA: 3 MINS WALK (STEP-FREE)</div>
+                    </div>
+                  )}
+
+                  {project.id === 'sparkhabit' && (
+                    <div className="screen-sparkhabit-lab">
+                      <div className="spark-header">
+                        <span>DAILY SPRINT // DAY #18</span>
+                        <span className="spark-streak">🔥 18 DAYS</span>
+                      </div>
+                      <div className="spark-prompt-box">
+                        <p className="spark-prompt-title">TODAY&apos;S PROMPT:</p>
+                        <p className="spark-prompt-text">&ldquo;Tactile volume slider knob.&rdquo;</p>
+                      </div>
+                      <div className="spark-timer-bar">
+                        <span>04:12 REMAINING</span>
+                      </div>
+                    </div>
+                  )}
+
+                </div>
+
+              </div>
+            </div>
+
+            {/* Project Details Body */}
+            <div className="project-body-col">
+              
+              <div className="project-meta-row">
+                <span className="project-category-tag">{project.category}</span>
+              </div>
+
+              <h3 className="project-title">{project.title}</h3>
+
+              <p className="project-description">{project.description}</p>
+
+              {/* Key Capabilities */}
+              <div className="project-highlights-box">
+                <span className="highlights-title">KEY CAPABILITIES:</span>
+                <ul className="highlights-list">
+                  {project.highlights.map((h, i) => (
+                    <li key={i} className="highlight-item">
+                      <span className="highlight-bullet" style={{ color: project.accent }}>✦</span>
+                      <span>{h}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Tech Stack Pills */}
+              <div className="project-stack-pills">
+                {project.techStack.map((tech) => (
+                  <span key={tech} className="tech-pill">
+                    {tech}
+                  </span>
+                ))}
+              </div>
+
+              {/* Action Links */}
+              <div className="project-actions-row">
+                <a
+                  href={project.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="project-action-btn project-action-btn--primary clay-card"
+                >
+                  <span>VIEW REPOSITORY</span>
+                  <ArrowUpRight size={13} />
+                </a>
+
+                {project.liveUrl && (
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="project-action-btn project-action-btn--secondary clay-card"
+                  >
+                    <span>LIVE DEMO</span>
+                    <ArrowUpRight size={13} />
+                  </a>
+                )}
+              </div>
+
+            </div>
+
+          </article>
+        ))}
+      </div>
+
       <style>{`
-        /* Outer Sticky Container */
-        .oneflow-sticky-outer {
-          position: relative;
-          height: 250vh;
+        .projects-intro {
+          font-size: 1.05rem;
+          color: var(--text-gray);
+          max-width: 680px;
+          margin-bottom: 32px;
         }
 
-        .oneflow-sticky-inner {
-          position: sticky;
-          top: 90px;
-          height: calc(100vh - 110px);
-          display: flex;
-          align-items: center;
-          overflow: hidden;
-        }
-
-        .oneflow-section {
-          width: 100%;
-          padding-top: 10px;
-          padding-bottom: 10px;
-        }
-
-        .oneflow-header-bar {
-          display: flex;
-          gap: 10px;
-          margin-bottom: 16px;
-        }
-
-        .oneflow-grid {
+        /* ── 2-Column Grid Layout ── */
+        .projects-grid-2col {
           display: grid;
-          grid-template-columns: 350px 1fr;
+          grid-template-columns: 1fr;
           gap: 28px;
-          align-items: center;
         }
 
-        /* ── Left Column: Red Card (Original Scale - Untouched) ── */
-        .oneflow-left-card {
-          background: var(--nirmaan-red, #EF4444);
-          color: #FFFFFF;
-          border-radius: 32px;
-          border: var(--border-thick);
-          box-shadow: var(--shadow-tactile);
-          padding: 36px 28px;
+        @media (min-width: 900px) {
+          .projects-grid-2col {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 28px;
+          }
+        }
+
+        .project-card-2col {
           display: flex;
           flex-direction: column;
+          border-radius: var(--radius-brand);
+          overflow: hidden;
+          background-color: var(--bg-paper);
+        }
+
+        .card-header-banner {
+          display: flex;
+          align-items: center;
           justify-content: space-between;
-          height: 480px;
-          flex-shrink: 0;
-          z-index: 5;
+          padding: 10px 18px;
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
+          font-weight: 800;
+          letter-spacing: 0.06em;
         }
 
-        .oneflow-icon-wrap {
-          margin-bottom: 24px;
+        .banner-tag {
+          font-family: var(--font-display);
+          font-weight: 900;
         }
 
-        .oneflow-diamond {
-          width: 56px;
-          height: 56px;
-          border: 3px solid #11110F;
+        .project-badge-pill {
+          font-size: 0.62rem;
+          background: rgba(0, 0, 0, 0.25);
+          padding: 2px 8px;
+          border-radius: var(--radius-pill);
+          letter-spacing: 0.05em;
+        }
+
+        .project-preview-wrap {
+          padding: 16px 18px 0 18px;
+        }
+
+        /* Mockup Frame */
+        .project-mockup-frame {
           background: #11110F;
           border-radius: 14px;
-          transform: rotate(45deg);
+          overflow: hidden;
+          color: #FFFFFF;
+          border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        .mockup-window-bar {
+          background: #222220;
+          padding: 8px 12px;
           display: flex;
           align-items: center;
-          justify-content: center;
+          justify-content: space-between;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .oneflow-diamond__inner {
-          width: 24px;
-          height: 24px;
-          background: var(--nirmaan-yellow, #FFC900);
-          border: 2px solid #11110F;
-          border-radius: 4px;
-        }
-
-        .oneflow-left-title {
-          font-family: var(--font-hero);
-          font-size: clamp(2.4rem, 4vw, 3.5rem);
-          line-height: 0.95;
-          letter-spacing: -0.03em;
-          margin-bottom: 16px;
-          color: #FFFFFF;
-          text-shadow: 2px 2px 0px #11110F;
-        }
-
-        .oneflow-left-desc {
-          font-size: 0.95rem;
-          line-height: 1.55;
-          color: rgba(255, 255, 255, 0.92);
-          font-weight: 500;
-        }
-
-        .oneflow-nav-arrows {
+        .mockup-window-dots {
           display: flex;
-          gap: 12px;
-          margin-top: 24px;
+          gap: 5px;
         }
 
-        .oneflow-arrow-btn {
-          width: 42px;
-          height: 42px;
+        .mockup-window-dots span {
+          width: 8px;
+          height: 8px;
           border-radius: 50%;
-          border: 2px solid #11110F;
-          background: #FFFFFF;
-          color: #11110F;
-          font-size: 1.1rem;
-          font-weight: 800;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          box-shadow: 2px 2px 0px #11110F;
-          transition: all 0.2s ease;
         }
 
-        .oneflow-arrow-btn:hover {
-          background: var(--nirmaan-yellow);
-          transform: translate(-2px, -2px);
-          box-shadow: 4px 4px 0px #11110F;
-        }
-
-        /* ── Right Column: Dynamically Horizontal Scroll Track ── */
-        .oneflow-track-wrap {
-          overflow: hidden;
-          width: 100%;
-        }
-
-        .oneflow-track {
-          display: flex;
-          gap: 20px;
-          padding: 4px 0 12px 0;
-          transition: transform 0.1s ease-out;
-          will-change: transform;
-        }
-
-        /* Compact Project Card */
-        .oneflow-card {
-          flex: 0 0 300px;
-          background: var(--bg-cream-card, #FAF6F0);
-          border: var(--border-medium);
-          border-radius: 20px;
-          box-shadow: var(--shadow-tactile);
-          overflow: hidden;
-          display: flex;
-          flex-direction: column;
-          height: 390px;
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .oneflow-card:hover {
-          transform: translate(-3px, -3px);
-          box-shadow: var(--shadow-hover);
-        }
-
-        .oneflow-thumb {
-          height: 140px;
-          border-bottom: var(--border-medium);
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 12px;
-          overflow: hidden;
-        }
-
-        .oneflow-thumb__badge {
-          position: absolute;
-          top: 10px;
-          left: 10px;
-          background: #11110F;
-          color: #FFFFFF;
+        .mockup-window-title {
           font-family: var(--font-mono);
-          font-size: 0.55rem;
-          font-weight: 800;
-          letter-spacing: 0.1em;
-          padding: 3px 6px;
-          border-radius: 4px;
-          z-index: 2;
+          font-size: 0.62rem;
+          color: rgba(255, 255, 255, 0.6);
         }
 
-        .oneflow-thumb__content {
+        .mockup-screen-content {
+          padding: 14px 16px;
+          min-height: 150px;
           display: flex;
           flex-direction: column;
+          justify-content: center;
+        }
+
+        /* ECHONEX SCREEN */
+        .screen-echonex-telemetry {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .telemetry-chip {
+          display: flex;
           align-items: center;
+          gap: 6px;
+          font-family: var(--font-mono);
+          font-size: 0.65rem;
+          color: var(--color-green-light);
+          font-weight: 800;
+        }
+
+        .telemetry-gauge-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 6px;
+        }
+
+        .telemetry-tile {
+          background: rgba(255, 255, 255, 0.06);
+          border-radius: 8px;
+          padding: 6px 8px;
+          display: flex;
+          flex-direction: column;
           gap: 2px;
+        }
+
+        .tile-label {
+          font-family: var(--font-mono);
+          font-size: 0.52rem;
+          color: rgba(255, 255, 255, 0.5);
+        }
+
+        .tile-val {
+          font-family: var(--font-display);
+          font-size: 0.76rem;
+          font-weight: 900;
+        }
+
+        .telemetry-command-log {
+          font-family: var(--font-mono);
+          font-size: 0.58rem;
+          color: rgba(255, 255, 255, 0.65);
+          line-height: 1.4;
+          background: rgba(0, 0, 0, 0.4);
+          padding: 6px 10px;
+          border-radius: 6px;
+        }
+
+        /* CLEANZY SCREEN */
+        .screen-cleanzy-dispatch {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .cleanzy-header {
+          display: flex;
+          justify-content: space-between;
+          font-family: var(--font-mono);
+          font-size: 0.65rem;
+          font-weight: 800;
+        }
+
+        .cleanzy-badge { color: var(--color-green-light); }
+
+        .cleanzy-map-graphic {
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px dashed rgba(255, 255, 255, 0.2);
+          border-radius: 8px;
+          padding: 8px 10px;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+
+        .cleanzy-pin {
+          font-family: var(--font-mono);
+          font-size: 0.62rem;
+          font-weight: 700;
+          color: #FFFFFF;
+        }
+
+        .cleanzy-schedule-bar {
+          font-family: var(--font-mono);
+          font-size: 0.6rem;
+          color: var(--color-yellow);
+          font-weight: 800;
           text-align: center;
         }
 
-        .oneflow-thumb__num {
-          font-family: var(--font-hero);
-          font-size: 2.4rem;
-          font-weight: 900;
-          color: rgba(17, 17, 15, 0.15);
-          line-height: 1;
-        }
-
-        .oneflow-thumb__title {
-          font-family: var(--font-hero);
-          font-size: 1.15rem;
-          font-weight: 800;
-          color: #11110F;
-          letter-spacing: 0.04em;
-        }
-
-        .oneflow-thumb__tags {
-          display: flex;
-          gap: 4px;
-          flex-wrap: wrap;
-          justify-content: center;
-        }
-
-        .oneflow-thumb__tag {
-          font-family: var(--font-mono);
-          font-size: 0.5rem;
-          font-weight: 700;
-          padding: 2px 6px;
-          background: #FFFFFF;
-          border: 1px solid #11110F;
-          border-radius: 4px;
-        }
-
-        .oneflow-card__body {
-          padding: 16px;
+        /* WAY2UNI SCREEN */
+        .screen-way2uni-nav {
           display: flex;
           flex-direction: column;
-          gap: 10px;
-          flex: 1;
+          gap: 8px;
         }
 
-        .oneflow-card__header {
+        .way2uni-top {
           display: flex;
           justify-content: space-between;
-          align-items: baseline;
-          gap: 6px;
-        }
-
-        .oneflow-card__title {
-          font-family: var(--font-hero);
-          font-size: 1.15rem;
+          font-family: var(--font-mono);
+          font-size: 0.65rem;
           font-weight: 800;
-          letter-spacing: -0.01em;
         }
 
-        .oneflow-card__subtitle {
+        .way2uni-campus { color: var(--color-yellow); }
+        .way2uni-live { color: var(--color-green-light); }
+
+        .way2uni-route-card {
+          background: rgba(255, 255, 255, 0.06);
+          border-radius: 8px;
+          padding: 8px 10px;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+
+        .route-step {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 0.68rem;
+          font-weight: 600;
+        }
+
+        .step-num {
+          font-family: var(--font-mono);
+          font-size: 0.58rem;
+          background: rgba(255, 255, 255, 0.15);
+          padding: 1px 4px;
+          border-radius: 3px;
+        }
+
+        .way2uni-eta {
+          font-family: var(--font-mono);
+          font-size: 0.62rem;
+          color: #FFFFFF;
+          font-weight: 800;
+          text-align: center;
+        }
+
+        /* SPARKHABIT SCREEN */
+        .screen-sparkhabit-lab {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .spark-header {
+          display: flex;
+          justify-content: space-between;
+          font-family: var(--font-mono);
+          font-size: 0.65rem;
+          font-weight: 800;
+          color: rgba(255, 255, 255, 0.8);
+        }
+
+        .spark-streak { color: #FF6100; }
+
+        .spark-prompt-box {
+          background: rgba(171, 84, 247, 0.15);
+          border: 1px solid rgba(171, 84, 247, 0.3);
+          border-radius: 8px;
+          padding: 8px 10px;
+        }
+
+        .spark-prompt-title {
           font-family: var(--font-mono);
           font-size: 0.55rem;
-          font-weight: 700;
-          color: var(--text-gray);
-          letter-spacing: 0.06em;
+          color: var(--color-purple-light);
+          font-weight: 800;
+        }
+
+        .spark-prompt-text {
+          font-size: 0.72rem;
+          color: #FFFFFF;
+          font-weight: 600;
+          margin-top: 2px;
+        }
+
+        .spark-timer-bar {
+          font-family: var(--font-mono);
+          font-size: 0.6rem;
+          color: var(--color-yellow);
+          font-weight: 800;
+          text-align: center;
+        }
+
+        /* ── Project Body Details ── */
+        .project-body-col {
+          padding: 18px 20px 22px 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          flex: 1;
+          justify-content: space-between;
+        }
+
+        .project-meta-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .project-category-tag {
+          font-family: var(--font-mono);
+          font-size: 0.68rem;
+          font-weight: 800;
+          color: var(--text-muted);
+          letter-spacing: 0.08em;
           text-transform: uppercase;
         }
 
-        .oneflow-card__divider {
-          height: 1px;
-          background: rgba(17, 17, 15, 0.15);
-          width: 100%;
+        .project-title {
+          font-family: var(--font-display);
+          font-size: 1.6rem;
+          line-height: 1.05;
+          letter-spacing: -0.03em;
+          color: var(--text-ink);
         }
 
-        .oneflow-card__bullets {
-          list-style: none;
+        .project-description {
+          font-size: 0.88rem;
+          line-height: 1.5;
+          color: var(--text-gray);
+        }
+
+        /* Highlights Box */
+        .project-highlights-box {
+          background: rgba(244, 233, 225, 0.7);
+          border-radius: 12px;
+          padding: 12px 14px;
+          border: 1px solid rgba(0, 0, 0, 0.06);
           display: flex;
           flex-direction: column;
           gap: 6px;
-          font-size: 0.75rem;
-          color: #333330;
-          line-height: 1.3;
         }
 
-        .oneflow-card__bullets li {
-          display: flex;
-          align-items: flex-start;
-          gap: 6px;
-        }
-
-        .oneflow-bullet-dot {
-          color: var(--nirmaan-red, #EF4444);
-          font-size: 0.55rem;
-          margin-top: 2px;
-          flex-shrink: 0;
-        }
-
-        .oneflow-card__footer {
-          margin-top: auto;
-        }
-
-        .oneflow-link-btn {
+        .highlights-title {
           font-family: var(--font-mono);
           font-size: 0.6rem;
           font-weight: 800;
+          color: var(--text-muted);
           letter-spacing: 0.08em;
-          color: #11110F;
-          background: var(--nirmaan-yellow, #FFC900);
-          border: var(--border-medium);
+        }
+
+        .highlights-list {
+          list-style: none;
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+        }
+
+        .highlight-item {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 0.78rem;
+          font-weight: 600;
+          color: var(--text-ink);
+        }
+
+        .highlight-bullet {
+          font-size: 0.75rem;
+          font-weight: 900;
+        }
+
+        /* Stack Pills */
+        .project-stack-pills {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 5px;
+        }
+
+        .tech-pill {
+          font-family: var(--font-mono);
+          font-size: 0.62rem;
+          font-weight: 700;
+          background: #FFFFFF;
+          border: 1px solid #000000;
+          padding: 2px 8px;
           border-radius: var(--radius-pill);
-          padding: 6px 14px;
-          display: inline-block;
-          box-shadow: var(--shadow-tactile-sm);
-          text-decoration: none;
+          color: var(--text-ink);
+          box-shadow: 1px 1px 0px #000000;
+        }
+
+        /* Actions */
+        .project-actions-row {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+          margin-top: 4px;
+        }
+
+        .project-action-btn {
+          padding: 8px 16px;
+          border-radius: var(--radius-pill);
+          font-family: var(--font-display);
+          font-size: 0.72rem;
+          font-weight: 900;
+          letter-spacing: 0.06em;
+          display: flex;
+          align-items: center;
+          gap: 6px;
           transition: all 0.2s ease;
+          text-decoration: none;
         }
 
-        .oneflow-link-btn:hover {
-          background: var(--nirmaan-blue, #2563EB);
+        .project-action-btn--primary {
+          background: var(--text-ink);
           color: #FFFFFF;
-          transform: translate(-2px, -2px);
-          box-shadow: var(--shadow-hover);
         }
 
-        .oneflow-link-btn--disabled {
-          opacity: 0.5;
-          pointer-events: none;
-          background: #E5E5E5;
+        .project-action-btn--primary:hover {
+          background: var(--color-blue);
+          transform: translateY(-2px);
         }
 
-        /* Responsive Fallback */
-        @media (max-width: 900px) {
-          .oneflow-sticky-outer {
-            height: auto;
-          }
-          .oneflow-sticky-inner {
-            position: relative;
-            top: 0;
-            height: auto;
-          }
-          .oneflow-grid {
-            grid-template-columns: 1fr;
-          }
-          .oneflow-left-card {
-            height: auto;
-          }
-          .oneflow-track {
-            overflow-x: auto;
-            transform: none !important;
-          }
-          .oneflow-card {
-            flex: 0 0 300px;
-            height: 450px;
-          }
+        .project-action-btn--secondary {
+          background: var(--color-yellow);
+          color: var(--text-ink);
+        }
+
+        .project-action-btn--secondary:hover {
+          transform: translateY(-2px);
         }
       `}</style>
-    </div>
+    </section>
   );
 }

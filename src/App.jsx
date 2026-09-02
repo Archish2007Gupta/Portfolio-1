@@ -1,79 +1,141 @@
 /* ============================================================
-   App.jsx — Main Application Component
+   App.jsx — Archisha Gupta 2026 Digital Exhibition
    ============================================================
-   Assembles the entire personal digital exhibition for Archisha Gupta:
-   HERO → ABOUT → SKILLS → ONE FLOW / WORK → EXPERIENCE & JOURNEY →
-   DESIGN ARCHIVE → GITHUB → EXPERIMENTS → CONTACT → FOOTER
+   Built faithfully following the Nirmaan 2026 (Kishan0703/Nirmaan_2026)
+   design system, layout architecture, 3D artifacts, and mechanics.
    ============================================================ */
 
 import React, { useState } from 'react';
 
-// Import all section components
+// Section Components
 import Preloader from './components/Preloader.jsx';
 import Navbar from './components/Navbar.jsx';
 import Hero from './components/Hero.jsx';
 import MarqueeBanner from './components/MarqueeBanner.jsx';
+import SectionTitle from './components/SectionTitle.jsx';
 import AboutSection from './components/AboutSection.jsx';
 import Disciplines from './components/Disciplines.jsx';
 import ProjectsSection from './components/ProjectsSection.jsx';
-import JourneySection from './components/JourneySection.jsx';
 import DesignArchive from './components/DesignArchive.jsx';
 import GithubSection from './components/GithubSection.jsx';
-import BugHuntGame from './components/BugHuntGame.jsx';
 import ContactSection from './components/ContactSection.jsx';
 import Footer from './components/Footer.jsx';
 
+// Interactive Overlays & Real-Time Elements
+import ContactModal from './components/ContactModal.jsx';
+import LobbyNotificationListener from './components/LobbyNotificationListener.jsx';
+import WhatsappFloatingButton from './components/WhatsappFloatingButton.jsx';
+
+// Data
+import { marqueeOneItems, marqueeTwoItems } from './data/portfolioData.js';
+
 export default function App() {
   const [loading, setLoading] = useState(true);
+  const [contactModalOpen, setContactModalOpen] = useState(false);
+
+  const openContactModal = () => {
+    setContactModalOpen(true);
+  };
+
+  const closeContactModal = () => {
+    setContactModalOpen(false);
+  };
 
   return (
     <>
-      {/* ── Preloader ── */}
+      {/* ── System Preloader ── */}
       {loading && <Preloader onComplete={() => setLoading(false)} />}
 
-      {/* ── Main Site ── */}
+      {/* ── Main Portfolio Experience ── */}
       {!loading && (
         <>
-          {/* Left-Side Fixed Navigation Sidebar */}
-          <Navbar />
+          {/* Left Vertical Rail Navigation */}
+          <Navbar onOpenContact={openContactModal} />
 
-          <main>
-            {/* HERO Banner with Creative Compass & Headline */}
-            <Hero />
+          {/* Main Content (With left rail offset on desktop) */}
+          <main className="main-content-rail">
+            
+            {/* 00. Signature Hero */}
+            <Hero onOpenContact={openContactModal} />
 
-            {/* Marquee Banner */}
-            <MarqueeBanner />
+            {/* Marquee Banner Ribbon One */}
+            <MarqueeBanner
+              bgColorHex="#EF333A"
+              textColorHex="#FFB200"
+              items={marqueeOneItems}
+            />
 
-            {/* ABOUT — Profile & Statement */}
-            <AboutSection />
+            {/* Signature Nirmaan Section Divider 1 */}
+            <SectionTitle bgColor="#0072E3" textColor="#FFB200">
+              ENGINEERING CRAFT &amp; VALUES
+            </SectionTitle>
 
-            {/* SKILLS & WHAT I BUILD */}
-            <Disciplines />
+            {/* 01. Overview & 4 Core Values + Builder Route Flow */}
+            <AboutSection onOpenContact={openContactModal} />
 
-            {/* Divider Banner */}
-            <MarqueeBanner />
+            {/* Signature Nirmaan Section Divider 2 */}
+            <SectionTitle bgColor="#FFB200" textColor="#11110F">
+              CHALLENGE DOMAINS &amp; SYSTEMS
+            </SectionTitle>
 
-            {/* ONE FLOW / SELECTED WORK (Scroll-Driven Flow) */}
+            {/* 02. Domain Tracks & Capabilities + Skewed Track Wall */}
+            <Disciplines onOpenContact={openContactModal} />
+
+            {/* Marquee Banner Ribbon Two */}
+            <MarqueeBanner
+              bgColorHex="#0072E3"
+              textColorHex="#1BE349"
+              items={marqueeTwoItems}
+            />
+
+            {/* Signature Nirmaan Section Divider 3 */}
+            <SectionTitle bgColor="#EF333A" textColor="#FFFFFF">
+              SELECTED WORK &amp; PROTOTYPES
+            </SectionTitle>
+
+            {/* 03. Asymmetric Selected Work */}
             <ProjectsSection />
 
-            {/* EXPERIENCE, EDUCATION & HACKATHONS */}
-            <JourneySection />
+            {/* Signature Nirmaan Section Divider 4 */}
+            <SectionTitle bgColor="#00AA3C" textColor="#11110F">
+              DESIGN ARCHIVE &amp; GALLERY
+            </SectionTitle>
 
-            {/* DESIGN ARCHIVE */}
-            <DesignArchive />
+            {/* 04. Design Archive with Live Marquee */}
+            <DesignArchive onOpenContact={openContactModal} />
 
-            {/* GITHUB & CODE REPOSITORIES */}
+            {/* Signature Nirmaan Section Divider 5 */}
+            <SectionTitle bgColor="#AB54F7" textColor="#FFFFFF">
+              CODE RADAR &amp; COMMITS
+            </SectionTitle>
+
+            {/* 05. GitHub Radar & Repositories */}
             <GithubSection />
 
-            {/* EXPERIMENTS — Bug Hunt Game */}
-            <BugHuntGame />
+            {/* Signature Nirmaan Section Divider 6 */}
+            <SectionTitle bgColor="#FF6100" textColor="#FFFFFF">
+              NETWORK &amp; INBOX
+            </SectionTitle>
 
-            {/* CONTACT & RESUME CTA */}
-            <ContactSection />
+            {/* 06. FAQs & Direct Contact */}
+            <ContactSection onOpenContact={openContactModal} />
+
+            {/* Neo-Brutalist Grid Footer */}
+            <Footer onOpenContact={openContactModal} />
+
           </main>
 
-          {/* Footer */}
-          <Footer />
+          {/* Interactive "Let's Talk" Drawer Modal */}
+          <ContactModal
+            open={contactModalOpen}
+            onClose={closeContactModal}
+          />
+
+          {/* Real-time Activity Toast Notification Listener */}
+          <LobbyNotificationListener />
+
+          {/* Floating Quick Connect Button */}
+          <WhatsappFloatingButton onOpenContact={openContactModal} />
         </>
       )}
     </>

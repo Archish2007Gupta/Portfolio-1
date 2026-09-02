@@ -1,376 +1,616 @@
 /* ============================================================
-   BugHuntGame.jsx — "08 — EXPERIMENTS"
-   ============================================================
-   A playful mini-game: "CAN YOU BREAK THE INTERFACE?"
-   Visitors have 25 seconds to click hidden "bug" pins
-   scattered across a circuit-board-styled area.
-   
-   BEGINNER TIP:
-   - useRef stores the timer interval so we can clear it
-   - Math.random() places bugs at random positions
-   - State management tracks score, time, and game status
+   BugHuntGame.jsx — Nirmaan 2026 Bug Squasher Arcade Mini-Game
    ============================================================ */
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
-// Define bug positions (random-feeling but consistent layout)
-const BUG_POSITIONS = [
-  { top: '15%', left: '20%' },
-  { top: '35%', left: '70%' },
-  { top: '55%', left: '35%' },
-  { top: '25%', left: '85%' },
-  { top: '70%', left: '55%' },
-  { top: '80%', left: '15%' },
-  { top: '45%', left: '50%' },
-  { top: '65%', left: '80%' },
-];
+// Web Audio API Retro Sound Effects Synthesizer
+class SoundFx {
+  constructor() {
+    this.ctx = null;
+    this.muted = false;
+  }
+
+  init() {
+    if (!this.ctx && typeof window !== 'undefined') {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) {
+        this.ctx = new AudioCtx();
+      }
+    }
+  }
+
+  playSquash() {
+    if (this.muted) return;
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(440, this.ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(120, this.ctx.currentTime + 0.12);
+      gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.12);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.12);
+    } catch {
+      // Audio context policy
+    }
+  }
+
+  playGameOver() {
+    if (this.muted) return;
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(220, this.ctx.currentTime);
+      osc.frequency.linearRampToValueAtTime(110, this.ctx.currentTime + 0.4);
+      gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.4);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.4);
+    } catch {
+      // Audio context policy
+    }
+  }
+}
+
+const sfx = new SoundFx();
 
 export default function BugHuntGame() {
-  // Game state
-  const [gameState, setGameState] = useState('idle'); // idle | playing | done
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(30);
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(25);
-  const [found, setFound] = useState([]); // indices of found bugs
-  const timerRef = useRef(null);
+  const [highScore, setHighScore] = useState(0);
+  const [combo, setCombo] = useState(1);
+  const [isMuted, setIsMuted] = useState(false);
+  const [playerName, setPlayerName] = useState('');
+  const [showNameModal, setShowNameModal] = useState(false);
+  const [tempNameInput, setTempNameInput] = useState('');
+  const [bugs, setBugs] = useState([]);
+  const [splatters, setSplatters] = useState([]);
+  
+  const [leaderboard, setLeaderboard] = useState([
+    { name: 'Archisha', score: 28 },
+    { name: 'ByteMaster', score: 24 },
+    { name: 'BMSIT_Coder', score: 20 },
+    { name: 'BugHunter99', score: 16 },
+  ]);
 
-  const sectionRef = useRef(null);
-  const [visible, setVisible] = useState(false);
+  const arenaRef = useRef(null);
 
+  // Load highscore from localStorage
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold: 0.1 }
-    );
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
+    try {
+      const savedHigh = localStorage.getItem('archisha_bug_highscore');
+      if (savedHigh) setHighScore(parseInt(savedHigh, 10));
+      const savedName = localStorage.getItem('archisha_player_name');
+      if (savedName) setPlayerName(savedName);
+    } catch {
+      // Ignore
+    }
   }, []);
 
-  // Start the game
-  const startGame = useCallback(() => {
-    setGameState('playing');
-    setScore(0);
-    setFound([]);
-    setTimeLeft(25);
+  // Spawn bug
+  const spawnBug = useCallback(() => {
+    if (!arenaRef.current) return;
+    const rect = arenaRef.current.getBoundingClientRect();
+    const maxX = Math.max(20, rect.width - 60);
+    const maxY = Math.max(20, rect.height - 60);
 
-    // Start countdown timer
-    timerRef.current = setInterval(() => {
+    const newBug = {
+      id: Math.random().toString(36).substring(2, 9),
+      x: Math.floor(Math.random() * maxX),
+      y: Math.floor(Math.random() * maxY),
+      speed: Math.random() > 0.5 ? 'fast' : 'normal',
+    };
+
+    setBugs((prev) => [...prev.slice(-6), newBug]);
+  }, []);
+
+  // Game timer loop
+  useEffect(() => {
+    if (!isPlaying) return;
+
+    const gameInterval = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
-          clearInterval(timerRef.current);
-          setGameState('done');
+          clearInterval(gameInterval);
+          endGame();
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
-  }, []);
 
-  // Click a bug
-  const catchBug = (index) => {
-    if (gameState !== 'playing' || found.includes(index)) return;
-    setFound((prev) => [...prev, index]);
-    setScore((prev) => prev + 1);
+    const spawnInterval = setInterval(() => {
+      spawnBug();
+    }, 850);
 
-    // If all bugs found, end game early
-    if (found.length + 1 >= BUG_POSITIONS.length) {
-      clearInterval(timerRef.current);
-      setGameState('done');
+    return () => {
+      clearInterval(gameInterval);
+      clearInterval(spawnInterval);
+    };
+  }, [isPlaying, spawnBug]);
+
+  const startGame = () => {
+    if (!playerName) {
+      setShowNameModal(true);
+      return;
+    }
+    sfx.init();
+    setIsPlaying(true);
+    setTimeLeft(30);
+    setScore(0);
+    setCombo(1);
+    setBugs([]);
+    setSplatters([]);
+    setTimeout(() => spawnBug(), 200);
+  };
+
+  const endGame = () => {
+    setIsPlaying(false);
+    sfx.playGameOver();
+
+    setHighScore((prevHigh) => {
+      const newHigh = Math.max(prevHigh, score);
+      try {
+        localStorage.setItem('archisha_bug_highscore', String(newHigh));
+      } catch {
+        // Ignore
+      }
+      return newHigh;
+    });
+
+    if (playerName && score > 0) {
+      setLeaderboard((prev) => {
+        const updated = [...prev, { name: playerName, score }].sort(
+          (a, b) => b.score - a.score
+        );
+        return updated.slice(0, 5);
+      });
     }
   };
 
-  // Reset game
-  const resetGame = () => {
-    clearInterval(timerRef.current);
-    setGameState('idle');
-    setScore(0);
-    setFound([]);
-    setTimeLeft(25);
+  const squashBug = (bugId, e) => {
+    e.stopPropagation();
+    sfx.playSquash();
+
+    const clickedBug = bugs.find((b) => b.id === bugId);
+    if (clickedBug) {
+      setSplatters((prev) => [
+        ...prev.slice(-4),
+        { id: Math.random(), x: clickedBug.x, y: clickedBug.y },
+      ]);
+    }
+
+    setScore((s) => s + combo);
+    setCombo((c) => Math.min(c + 1, 5));
+    setBugs((prev) => prev.filter((b) => b.id !== bugId));
   };
 
-  // Cleanup timer on unmount
-  useEffect(() => {
-    return () => clearInterval(timerRef.current);
-  }, []);
+  const toggleMute = () => {
+    sfx.muted = !isMuted;
+    setIsMuted(!isMuted);
+  };
+
+  const handleSaveName = () => {
+    const finalName = tempNameInput.trim() || 'GuestBuilder';
+    setPlayerName(finalName);
+    try {
+      localStorage.setItem('archisha_player_name', finalName);
+    } catch {
+      // Ignore
+    }
+    setShowNameModal(false);
+    startGame();
+  };
 
   return (
-    <section className="bughunt section" ref={sectionRef}>
-      <div className={`section-header ${visible ? 'bh--visible' : ''}`}>
-        <span className="section-number">08</span>
-        <h2>EXPERIMENTS</h2>
+    <section className="nirmaan-section" id="game">
+      
+      {/* Section Header */}
+      <div className="nirmaan-section-title">
+        <span className="badge">06</span>
+        <h2>BUG SQUASHER ARCADE</h2>
       </div>
 
-      <div className={`bh__container ${visible ? 'bh--visible' : ''}`}>
-        {/* Header */}
-        <div className="bh__header">
-          <h3 className="bh__title">CAN YOU BREAK THE INTERFACE?</h3>
-          <p className="bh__subtitle">
-            Find the hidden bugs on the board. You have 25 seconds.
-          </p>
-        </div>
-
-        {/* Stats Bar */}
-        <div className="bh__stats">
-          <div className="bh__stat">
-            <span className="meta-label">TIME</span>
-            <span className="bh__stat-value">{String(timeLeft).padStart(2, '0')}s</span>
+      {/* Main Arcade Frame (Matching Nirmaan game.tsx) */}
+      <div className="arcade-cabinet-frame brutal-card">
+        
+        {/* Top Arcade Header Bar */}
+        <div className="arcade-header-bar">
+          <div className="arcade-header-left">
+            <span className="arcade-tag">RETRO EXPERIMENT 06</span>
+            <span className="arcade-badge">30-SEC DEBUG QUEST</span>
           </div>
-          <div className="bh__stat">
-            <span className="meta-label">SCORE</span>
-            <span className="bh__stat-value">{score}</span>
-          </div>
-          <div className="bh__stat">
-            <span className="meta-label">FOUND</span>
-            <span className="bh__stat-value">{found.length}/{BUG_POSITIONS.length}</span>
-          </div>
-        </div>
 
-        {/* Game Board */}
-        <div className="bh__board card">
-          {/* Grid lines (decorative) */}
-          <div className="bh__grid-lines" />
-
-          {/* Bug pins */}
-          {BUG_POSITIONS.map((pos, i) => (
-            <button
-              key={i}
-              className={`bh__bug ${found.includes(i) ? 'bh__bug--found' : ''} ${gameState === 'playing' ? 'bh__bug--active' : ''}`}
-              style={{ top: pos.top, left: pos.left }}
-              onClick={() => catchBug(i)}
-              aria-label={`Bug ${i + 1}`}
-            >
-              {found.includes(i) ? '✓' : '🐛'}
+          <div className="arcade-stats-pills">
+            <div className="stat-pill">
+              <span className="stat-pill-label">TIME</span>
+              <span className="stat-pill-val" style={{ color: timeLeft <= 5 ? '#EF333A' : '#000000' }}>
+                {timeLeft}s
+              </span>
+            </div>
+            <div className="stat-pill">
+              <span className="stat-pill-label">SCORE</span>
+              <span className="stat-pill-val">{score}</span>
+            </div>
+            <div className="stat-pill">
+              <span className="stat-pill-label">HIGH</span>
+              <span className="stat-pill-val">{highScore}</span>
+            </div>
+            <button onClick={toggleMute} className="stat-pill stat-pill--btn">
+              {isMuted ? '🔇 MUTED' : '🔊 SOUND'}
             </button>
-          ))}
+          </div>
+        </div>
 
-          {/* Idle overlay */}
-          {gameState === 'idle' && (
-            <div className="bh__overlay">
-              <button className="bh__start-btn" onClick={startGame}>
-                START HUNT ↗
+        <div className="arcade-content-grid">
+          
+          {/* Game Arena Board */}
+          <div className="arcade-board-wrap">
+            <div
+              ref={arenaRef}
+              className="arcade-arena-canvas"
+              onClick={() => isPlaying && setCombo(1)}
+            >
+              {!isPlaying && (
+                <div className="arena-welcome-overlay">
+                  <span className="arena-trophy-icon">👾</span>
+                  <h3 className="arena-title">READY TO DEBUG?</h3>
+                  <p className="arena-subtitle">
+                    Tap the moving red bugs before the 30s timer runs out to climb the scoreboard.
+                  </p>
+                  <button onClick={startGame} className="arena-start-btn clay-card">
+                    {playerName ? 'START QUEST' : 'SET NAME & PLAY'}
+                  </button>
+                </div>
+              )}
+
+              {/* Splatter marks */}
+              {splatters.map((sp) => (
+                <div
+                  key={sp.id}
+                  className="splatter-mark"
+                  style={{ left: sp.x, top: sp.y }}
+                >
+                  💥
+                </div>
+              ))}
+
+              {/* Live Bug Sprites */}
+              {isPlaying &&
+                bugs.map((bug) => (
+                  <button
+                    key={bug.id}
+                    onClick={(e) => squashBug(bug.id, e)}
+                    className="bug-sprite"
+                    style={{ left: bug.x, top: bug.y }}
+                    aria-label="Squash Bug"
+                  >
+                    🐞
+                  </button>
+                ))}
+            </div>
+          </div>
+
+          {/* Leaderboard Panel */}
+          <div className="arcade-leaderboard-panel">
+            <div className="leaderboard-header">
+              <span className="leaderboard-title">🏆 LOCAL LEADERBOARD</span>
+            </div>
+
+            <div className="leaderboard-list">
+              {leaderboard.map((entry, idx) => (
+                <div key={idx} className="leaderboard-item">
+                  <div className="leaderboard-item-rank">
+                    <span className="rank-num">#{idx + 1}</span>
+                    <span className="player-name">{entry.name}</span>
+                  </div>
+                  <span className="player-score">{entry.score} PTS</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="leaderboard-footer">
+              <span className="leaderboard-note">
+                PLAYER: <strong>{playerName || 'ANONYMOUS'}</strong>
+              </span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* Name Input Modal */}
+      {showNameModal && (
+        <div className="dialog-backdrop">
+          <div className="dialog-content text-ink">
+            <h3 style={{ fontSize: '1.6rem', marginBottom: '8px' }}>
+              ENTER PLAYER NAME
+            </h3>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-gray)', marginBottom: '20px' }}>
+              Set your handle to record your debug score on the scoreboard.
+            </p>
+
+            <div className="field" style={{ marginBottom: '24px' }}>
+              <span>Player Handle</span>
+              <input
+                type="text"
+                placeholder="e.g. CodeNinja"
+                value={tempNameInput}
+                onChange={(e) => setTempNameInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSaveName()}
+                autoFocus
+              />
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+              <button
+                onClick={() => setShowNameModal(false)}
+                className="sticker-tag"
+              >
+                CANCEL
+              </button>
+              <button
+                onClick={handleSaveName}
+                className="arena-start-btn clay-card"
+                style={{ padding: '10px 20px', fontSize: '0.8rem' }}
+              >
+                SAVE & START
               </button>
             </div>
-          )}
-
-          {/* Done overlay */}
-          {gameState === 'done' && (
-            <div className="bh__overlay">
-              <p className="bh__done-text">
-                {score >= BUG_POSITIONS.length
-                  ? 'NICE. YOU FOUND ALL THE BUGS. 🎉'
-                  : `YOU FOUND ${score} OUT OF ${BUG_POSITIONS.length} BUGS.`}
-              </p>
-              <p className="bh__done-sub">YOU JUST EXPLORED THE INTERFACE.</p>
-              <div className="bh__done-actions">
-                <button className="bh__reset-btn" onClick={resetGame}>
-                  TRY AGAIN
-                </button>
-                <a href="#projects" className="bh__explore-btn">
-                  EXPLORE MY WORK ↗
-                </a>
-              </div>
-            </div>
-          )}
+          </div>
         </div>
-      </div>
+      )}
 
       <style>{`
-        .bh__container {
-          opacity: 0;
-          transform: translateY(25px);
-          transition: all 0.6s ease 0.1s;
-        }
-
-        .bh__header {
-          margin-bottom: var(--space-lg);
-        }
-
-        .bh__title {
-          font-family: var(--font-display);
-          font-size: clamp(1.2rem, 3vw, 2rem);
-          font-weight: 800;
-          color: var(--accent-red);
-          margin-bottom: var(--space-sm);
-        }
-
-        .bh__subtitle {
-          font-size: 0.85rem;
-          color: var(--text-gray);
-        }
-
-        .bh__stats {
-          display: flex;
-          gap: var(--space-xl);
-          margin-bottom: var(--space-lg);
-        }
-
-        .bh__stat {
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-        }
-
-        .bh__stat-value {
-          font-family: var(--font-mono);
-          font-size: 1.5rem;
-          font-weight: 700;
-        }
-
-        .bh__board {
-          position: relative;
-          height: 350px;
+        .arcade-cabinet-frame {
+          background: #11110F;
+          border-radius: var(--radius-card);
           overflow: hidden;
-          background:
-            repeating-linear-gradient(
-              0deg,
-              transparent,
-              transparent 40px,
-              rgba(17, 17, 15, 0.04) 40px,
-              rgba(17, 17, 15, 0.04) 41px
-            ),
-            repeating-linear-gradient(
-              90deg,
-              transparent,
-              transparent 40px,
-              rgba(17, 17, 15, 0.04) 40px,
-              rgba(17, 17, 15, 0.04) 41px
-            );
+          color: #FFFFFF;
         }
 
-        .bh__bug {
-          position: absolute;
-          width: 36px;
-          height: 36px;
-          border-radius: 50%;
-          border: none;
-          background: transparent;
-          font-size: 1.1rem;
-          cursor: default;
-          transition: all 0.3s ease;
-          opacity: 0.15;
+        .arcade-header-bar {
+          background: #222220;
+          padding: 16px 24px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 12px;
+          border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .arcade-header-left {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .arcade-tag {
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
+          font-weight: 800;
+          color: var(--color-yellow);
+        }
+
+        .arcade-badge {
+          font-family: var(--font-mono);
+          font-size: 0.65rem;
+          background: rgba(255, 255, 255, 0.15);
+          padding: 2px 8px;
+          border-radius: var(--radius-pill);
+        }
+
+        .arcade-stats-pills {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+
+        .stat-pill {
+          background: #FFFFFF;
+          color: var(--text-ink);
+          border-radius: var(--radius-pill);
+          padding: 4px 12px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
+          font-weight: 800;
+        }
+
+        .stat-pill-label {
+          color: var(--text-muted);
+          font-size: 0.65rem;
+        }
+
+        .stat-pill--btn {
+          cursor: pointer;
+          background: var(--color-yellow);
+        }
+
+        .arcade-content-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          padding: 20px;
+          gap: 20px;
+        }
+
+        @media (min-width: 900px) {
+          .arcade-content-grid {
+            grid-template-columns: 2fr 1fr;
+            padding: 24px;
+          }
+        }
+
+        /* Arena Canvas */
+        .arcade-arena-canvas {
+          background: #000000;
+          border: 2px solid rgba(255, 255, 255, 0.15);
+          border-radius: 18px;
+          height: 320px;
+          position: relative;
+          overflow: hidden;
           display: flex;
           align-items: center;
           justify-content: center;
+          cursor: crosshair;
         }
 
-        .bh__bug--active {
-          cursor: pointer;
-          opacity: 0.3;
-        }
-
-        .bh__bug--active:hover {
-          opacity: 1;
-          transform: scale(1.3);
-          background: rgba(255, 85, 61, 0.15);
-        }
-
-        .bh__bug--found {
-          opacity: 1 !important;
-          background: var(--accent-green) !important;
-          color: white;
-          font-size: 0.8rem;
-          font-weight: 700;
-          pointer-events: none;
-        }
-
-        .bh__overlay {
-          position: absolute;
-          inset: 0;
+        .arena-welcome-overlay {
           display: flex;
           flex-direction: column;
           align-items: center;
-          justify-content: center;
-          gap: var(--space-md);
-          background: rgba(245, 238, 228, 0.85);
-          backdrop-filter: blur(4px);
-        }
-
-        .bh__start-btn {
-          font-family: var(--font-mono);
-          font-size: 0.8rem;
-          font-weight: 700;
-          letter-spacing: 0.12em;
-          padding: 14px 32px;
-          background: var(--text-black);
-          color: var(--bg-cream);
-          border: var(--border);
-          border-radius: var(--radius-full);
-          box-shadow: var(--shadow-tactile-sm);
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-
-        .bh__start-btn:hover {
-          background: var(--accent-red);
-          transform: translate(-2px, -2px);
-          box-shadow: var(--shadow-hover);
-        }
-
-        .bh__done-text {
-          font-family: var(--font-display);
-          font-size: 1.2rem;
-          font-weight: 800;
           text-align: center;
+          gap: 12px;
+          padding: 24px;
+          z-index: 10;
         }
 
-        .bh__done-sub {
-          font-family: var(--font-mono);
-          font-size: 0.65rem;
-          letter-spacing: 0.15em;
-          color: var(--text-gray);
+        .arena-trophy-icon {
+          font-size: 3rem;
+          animation: driftUp 3s ease-in-out infinite;
         }
 
-        .bh__done-actions {
+        .arena-title {
+          font-family: var(--font-display);
+          font-size: 1.6rem;
+          color: var(--color-yellow);
+        }
+
+        .arena-subtitle {
+          font-size: 0.88rem;
+          color: rgba(255, 255, 255, 0.7);
+          max-width: 380px;
+        }
+
+        .arena-start-btn {
+          background: var(--color-yellow);
+          color: var(--text-ink);
+          padding: 12px 28px;
+          border-radius: var(--radius-pill);
+          font-family: var(--font-display);
+          font-size: 0.85rem;
+          font-weight: 900;
+          letter-spacing: 0.06em;
+          margin-top: 6px;
+          transition: transform 0.2s ease;
+        }
+
+        .arena-start-btn:hover {
+          transform: scale(1.05);
+        }
+
+        .bug-sprite {
+          position: absolute;
+          width: 44px;
+          height: 44px;
+          font-size: 24px;
           display: flex;
-          gap: var(--space-md);
-          margin-top: var(--space-sm);
-        }
-
-        .bh__reset-btn,
-        .bh__explore-btn {
-          font-family: var(--font-mono);
-          font-size: 0.65rem;
-          font-weight: 700;
-          letter-spacing: 0.1em;
-          padding: 10px 20px;
-          border-radius: var(--radius-full);
+          align-items: center;
+          justify-content: center;
+          background: var(--color-red);
+          border: 2px solid #FFFFFF;
+          border-radius: 50%;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
           cursor: pointer;
-          text-decoration: none;
-          transition: all 0.2s ease;
+          animation: nodePulse 1.2s ease-in-out infinite;
+          transform-origin: center;
         }
 
-        .bh__reset-btn {
-          border: var(--border);
-          background: transparent;
-          color: var(--text-black);
+        .bug-sprite:hover {
+          transform: scale(1.15);
         }
 
-        .bh__explore-btn {
-          background: var(--text-black);
-          color: var(--bg-cream);
-          border: var(--border);
+        .splatter-mark {
+          position: absolute;
+          font-size: 24px;
+          pointer-events: none;
+          animation: fadeOut 0.8s forwards;
         }
 
-        .bh__reset-btn:hover {
-          background: var(--text-black);
-          color: var(--bg-cream);
+        @keyframes fadeOut {
+          0% { opacity: 1; transform: scale(1); }
+          100% { opacity: 0; transform: scale(1.5); }
         }
 
-        .bh__explore-btn:hover {
-          background: var(--accent-blue);
+        /* Leaderboard Panel */
+        .arcade-leaderboard-panel {
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 18px;
+          padding: 18px;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
         }
 
-        .bh--visible {
-          opacity: 1 !important;
-          transform: translateY(0) !important;
+        .leaderboard-title {
+          font-family: var(--font-mono);
+          font-size: 0.75rem;
+          font-weight: 800;
+          color: var(--color-yellow);
+          letter-spacing: 0.06em;
         }
 
-        @media (max-width: 480px) {
-          .bh__board {
-            height: 280px;
-          }
-          .bh__stats {
-            gap: var(--space-lg);
-          }
+        .leaderboard-list {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          flex: 1;
+        }
+
+        .leaderboard-item {
+          background: rgba(255, 255, 255, 0.06);
+          border-radius: 10px;
+          padding: 8px 12px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-family: var(--font-mono);
+          font-size: 0.75rem;
+        }
+
+        .leaderboard-item-rank {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .rank-num {
+          color: rgba(255, 255, 255, 0.5);
+        }
+
+        .player-name {
+          font-weight: 700;
+          color: #FFFFFF;
+        }
+
+        .player-score {
+          font-weight: 800;
+          color: var(--color-yellow);
+        }
+
+        .leaderboard-footer {
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          padding-top: 10px;
+          font-family: var(--font-mono);
+          font-size: 0.7rem;
+          color: rgba(255, 255, 255, 0.6);
         }
       `}</style>
     </section>
