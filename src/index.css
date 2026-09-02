@@ -1,0 +1,191 @@
+/* ============================================================
+   ARCHISHA PORTFOLIO — NIRMAAN-INSPIRED DESIGN SYSTEM
+   ============================================================ */
+
+/* --- CSS Reset --- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* --- Design Tokens --- */
+:root {
+  /* Canvas Background: Keep warm cream as requested (no dark cosmic hero) */
+  --bg-cream: #F5EEE4;
+  --bg-cream-card: #FAF6F0;
+  --bg-white: #FFFFFF;
+  --text-black: #11110F;
+  --text-gray: #555550;
+  --text-muted: #888880;
+
+  /* NIRMAAN High-Energy Palette */
+  --nirmaan-blue: #2563EB;
+  --nirmaan-yellow: #FFC900;
+  --nirmaan-orange: #FF5722;
+  --nirmaan-red: #EF4444;
+  --nirmaan-green: #10B981;
+  --nirmaan-purple: #8B5CF6;
+  --nirmaan-pink: #EC4899;
+
+  /* Fonts */
+  --font-hero: 'Clash Display', 'Unbounded', 'Syne', sans-serif;
+  --font-heading: 'Unbounded', 'Syne', sans-serif;
+  --font-body: 'Space Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Borders & Tactile Shadows */
+  --border-thick: 3px solid #11110F;
+  --border-medium: 2px solid #11110F;
+  --border-thin: 1px solid #11110F;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 9999px;
+
+  /* Tactile Solid Offset Shadow */
+  --shadow-tactile: 5px 5px 0px #11110F;
+  --shadow-tactile-sm: 3px 3px 0px #11110F;
+  --shadow-tactile-lg: 8px 8px 0px #11110F;
+  --shadow-hover: 7px 7px 0px #11110F;
+}
+
+/* Base setup */
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-cream);
+  color: var(--text-black);
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-hero);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+/* --- Top Multi-Color Stripe Header --- */
+.top-stripe-bar {
+  display: flex;
+  height: 8px;
+  width: 100%;
+}
+.top-stripe-bar span {
+  flex: 1;
+}
+
+/* --- Tactile Card Base --- */
+.nirmaan-card {
+  background: var(--bg-white);
+  border: var(--border-medium);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-tactile);
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1);
+  position: relative;
+}
+
+.nirmaan-card:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Color Header Card Banner */
+.card-header-banner {
+  padding: 8px 14px;
+  border-bottom: var(--border-medium);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Sticker Tags */
+.sticker-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: var(--border-thin);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: 2px 2px 0px #11110F;
+  background: var(--bg-white);
+}
+
+.sticker-tag--blue { background: var(--nirmaan-blue); color: white; }
+.sticker-tag--yellow { background: var(--nirmaan-yellow); color: #11110F; }
+.sticker-tag--orange { background: var(--nirmaan-orange); color: white; }
+.sticker-tag--green { background: var(--nirmaan-green); color: white; }
+.sticker-tag--purple { background: var(--nirmaan-purple); color: white; }
+
+/* Section Headers */
+.section {
+  padding: var(--space-3xl, 80px) 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.nirmaan-section-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.nirmaan-section-title .badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 6px 14px;
+  background: var(--text-black);
+  color: var(--nirmaan-yellow);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-tactile-sm);
+}
+
+.nirmaan-section-title h2 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-cream);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--text-black);
+  border-radius: 4px;
+}
