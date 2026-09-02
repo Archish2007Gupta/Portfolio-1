@@ -28,8 +28,8 @@ export default function SectionTitle({
         .nirmaan-section-divider {
           border-top: var(--border-thick);
           border-bottom: var(--border-thick);
-          padding: 16px 24px;
-          margin: 40px 0;
+          padding: 14px 24px;
+          margin: 36px 0 28px 0;
           user-select: none;
         }
 

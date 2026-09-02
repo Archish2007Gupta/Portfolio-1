@@ -67,7 +67,7 @@ export default function Disciplines({ onOpenContact }) {
   const translateX = -(scrollProgress * scrollRange);
 
   return (
-    <section id="tracks" className="my-gap w-full nirmaan-flow-section" data-reveal>
+    <section id="tracks" className="w-full nirmaan-flow-section" data-reveal>
       
       {/* ── DESKTOP LAYOUT (>= 1024px): Smooth Sticky Horizontal Scroll Track ── */}
       <div
@@ -225,9 +225,9 @@ export default function Disciplines({ onOpenContact }) {
       </div>
 
       <style>{`
-        .disciplines-flow-section {
+        .nirmaan-flow-section {
           width: 100%;
-          margin: 40px 0;
+          margin: 0 0 44px 0;
         }
 
         /* ── DESKTOP STICKY SCROLL CONTAINER (Original Nirmaan Flow Sizing) ── */

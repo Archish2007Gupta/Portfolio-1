@@ -117,8 +117,14 @@ export default function AboutSection({ onOpenContact }) {
       <style>{`
         .about-section {
           max-width: 1320px;
-          margin: 0 auto;
-          padding: 40px 20px 60px;
+          margin: 0 auto 44px auto;
+          padding: 0 16px;
+        }
+
+        @media (min-width: 640px) {
+          .about-section {
+            padding: 0 20px;
+          }
         }
 
         .about-grid {

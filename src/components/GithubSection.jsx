@@ -56,7 +56,7 @@ export default function GithubSection() {
 
       {/* GitHub Live Activity Matrix Card */}
       <div className="brutal-card github-activity-card clay-card">
-        <div className="card-header-banner" style={{ background: 'var(--color-purple)' }}>
+        <div className="card-header-banner" style={{ background: 'var(--color-blue, #0072E3)' }}>
           <div className="flex items-center gap-2">
             <SocialGithub size={16} />
             <span>LIVE GITHUB TELEMETRY // @Archish2007Gupta</span>

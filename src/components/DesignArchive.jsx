@@ -172,6 +172,11 @@ export default function DesignArchive({ onOpenContact }) {
       )}
 
       <style>{`
+        .nirmaan-gallery-section {
+          padding: 0;
+          margin-bottom: 44px;
+        }
+
         .design-dept-container {
           background-color: #EF333A;
           border-radius: 36px;

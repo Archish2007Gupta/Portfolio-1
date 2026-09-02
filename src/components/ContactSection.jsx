@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { faqs, socialLinks, profile } from '../data/portfolioData.js';
 
 export default function ContactSection({ onOpenContact }) {
-  const [openFaqIndex, setOpenFaqIndex] = useState(0);
+  const [openFaqIndex, setOpenFaqIndex] = useState(null);
 
   const toggleFaq = (idx) => {
     setOpenFaqIndex(openFaqIndex === idx ? null : idx);
@@ -17,8 +17,8 @@ export default function ContactSection({ onOpenContact }) {
       
       {/* Section Header */}
       <div className="nirmaan-section-title">
-        <span className="badge">06</span>
-        <h2>FAQ & CONTACT CHANNELS</h2>
+        <span className="badge">07</span>
+        <h2>FAQ &amp; CONTACT CHANNELS</h2>
       </div>
 
       <div className="contact-main-grid">

@@ -331,29 +331,32 @@ button {
 }
 
 .nirmaan-section {
-  padding: 60px 16px;
+  padding: 0;
+  margin-bottom: 40px;
   max-width: 1400px;
-  margin: 0 auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 @media (min-width: 768px) {
   .nirmaan-section {
-    padding: 80px 24px;
+    padding: 0;
+    margin-bottom: 48px;
   }
 }
 
 .nirmaan-section-title {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 32px;
+  gap: 14px;
+  margin-bottom: 20px;
 }
 
 .nirmaan-section-title .badge {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 800;
-  padding: 6px 16px;
+  padding: 5px 14px;
   background: var(--text-ink);
   color: var(--color-yellow);
   border-radius: var(--radius-pill);
@@ -362,8 +365,8 @@ button {
 }
 
 .nirmaan-section-title h2 {
-  font-size: clamp(2rem, 4vw, 3.4rem);
-  line-height: 1;
+  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+  line-height: 1.1;
   letter-spacing: -0.03em;
 }
 

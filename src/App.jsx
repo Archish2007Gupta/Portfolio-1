@@ -98,7 +98,7 @@ export default function App() {
             <ProjectsSection />
 
             {/* Signature Nirmaan Section Divider: Certificates */}
-            <SectionTitle bgColor="#0072E3" textColor="#FFB200">
+            <SectionTitle bgColor="#AB54F7" textColor="#FFB200">
               CREDENTIALS &amp; CERTIFICATES VAULT
             </SectionTitle>
 
@@ -106,7 +106,7 @@ export default function App() {
             <CertificatesGallery onOpenContact={openContactModal} />
 
             {/* Signature Nirmaan Section Divider 5 */}
-            <SectionTitle bgColor="#AB54F7" textColor="#FFFFFF">
+            <SectionTitle bgColor="#0072E3" textColor="#FFFFFF">
               CODE RADAR &amp; COMMITS
             </SectionTitle>
 

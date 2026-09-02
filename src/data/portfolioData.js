@@ -4,13 +4,13 @@
 
 // ── Navigation Items (Left Rail & Mobile Menu) ──
 export const sideNavItems = [
-  { id: 'hero', num: '00', title: 'Start', bg: '#11110F', textColor: '#FFFFFF' },
   { id: 'overview', num: '01', title: 'Overview', bg: '#0072E3', textColor: '#FFFFFF' },
   { id: 'tracks', num: '02', title: 'Domain Tracks', bg: '#FFB200', textColor: '#11110F' },
-  { id: 'projects', num: '03', title: 'Selected Work', bg: '#FF6100', textColor: '#FFFFFF' },
-  { id: 'gallery', num: '04', title: 'Design Archive', bg: '#00AA3C', textColor: '#11110F' },
-  { id: 'github', num: '05', title: 'Code Radar', bg: '#AB54F7', textColor: '#FFFFFF' },
-  { id: 'contact', num: '06', title: 'Contact', bg: '#FFB200', textColor: '#11110F' },
+  { id: 'projects', num: '03', title: 'Selected Work', bg: '#EF333A', textColor: '#FFFFFF' },
+  { id: 'certificates', num: '04', title: 'Certificates', bg: '#AB54F7', textColor: '#FFFFFF' },
+  { id: 'github', num: '05', title: 'Code Radar', bg: '#0072E3', textColor: '#FFFFFF' },
+  { id: 'gallery', num: '06', title: 'Design Gallery', bg: '#EF333A', textColor: '#FFFFFF' },
+  { id: 'contact', num: '07', title: 'Contact', bg: '#FFB200', textColor: '#11110F' },
 ];
 
 // ── Profile Information ──

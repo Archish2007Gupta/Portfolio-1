@@ -26,30 +26,30 @@ export default function CertificatesGallery({ onOpenContact }) {
     ...certificatesData,
   ];
 
-  // Helper to pause autoplay temporarily and resume after idle
-  const pauseAndScheduleResume = useCallback((delay = 2000) => {
+  // Helper to pause autoplay temporarily during active drag and resume after release
+  const pauseAndScheduleResume = useCallback((delay = 1500) => {
     isInteracting.current = true;
     if (resumeTimeout.current) clearTimeout(resumeTimeout.current);
     resumeTimeout.current = setTimeout(() => {
-      if (!isHovered.current && !isDragging.current) {
+      if (!isDragging.current) {
         isInteracting.current = false;
       }
     }, delay);
   }, []);
 
-  // Continuous Autoplay Ticker (60fps)
+  // Continuous Autoplay Ticker (60fps — does NOT stop on hover)
   useEffect(() => {
     const scrollContainer = scrollerRef.current;
     if (!scrollContainer) return;
 
     let lastTime = performance.now();
-    const speed = 1.05; // balanced golden speed (between 0.75 and 1.4)
+    const speed = 1.05; // balanced continuous glide speed
 
     const tick = (now) => {
       const delta = Math.min((now - lastTime) / 16.67, 2); // normalize delta time
       lastTime = now;
 
-      if (!isInteracting.current && !isHovered.current && scrollContainer) {
+      if (!isInteracting.current && scrollContainer) {
         const maxLoopWidth = scrollContainer.scrollWidth / 2;
         scrollContainer.scrollLeft += speed * delta;
 
@@ -72,7 +72,7 @@ export default function CertificatesGallery({ onOpenContact }) {
     };
   }, []);
 
-  // ── Mouse Drag & Touch Handlers ──
+  // ── Mouse Drag & Touch Handlers (Active user control) ──
   const handleMouseDown = (e) => {
     if (!scrollerRef.current) return;
     isDragging.current = true;
@@ -96,24 +96,13 @@ export default function CertificatesGallery({ onOpenContact }) {
   const handleMouseUpOrLeave = () => {
     if (isDragging.current) {
       isDragging.current = false;
-      pauseAndScheduleResume(1800);
+      pauseAndScheduleResume(1200);
     }
   };
 
   // Wheel / Trackpad scroll interrupt
   const handleWheel = () => {
-    pauseAndScheduleResume(2000);
-  };
-
-  // Hover interrupt
-  const handleMouseEnter = () => {
-    isHovered.current = true;
-  };
-
-  const handleMouseLeave = () => {
-    isHovered.current = false;
-    isDragging.current = false;
-    pauseAndScheduleResume(800);
+    pauseAndScheduleResume(1500);
   };
 
   // Touch support for mobile
@@ -122,7 +111,7 @@ export default function CertificatesGallery({ onOpenContact }) {
   };
 
   const handleTouchEnd = () => {
-    pauseAndScheduleResume(2000);
+    pauseAndScheduleResume(1500);
   };
 
   // Card Click (Modal opener)
@@ -157,15 +146,13 @@ export default function CertificatesGallery({ onOpenContact }) {
           </button>
         </div>
 
-        {/* Live Continuous Autoplay Scroller with Interactive Interrupt */}
+        {/* Live Continuous Autoplay Scroller (Does NOT stop on hover) */}
         <div
           ref={scrollerRef}
           className="gallery-scroller-viewport"
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUpOrLeave}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
           onWheel={handleWheel}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
@@ -288,16 +275,16 @@ export default function CertificatesGallery({ onOpenContact }) {
       <style>{`
         .nirmaan-gallery-section {
           padding: 0;
-          margin-bottom: 24px;
+          margin-bottom: 44px;
         }
 
         .gallery-container {
-          background-color: var(--color-purple, #AB54F7);
+          background-color: #AB54F7;
           padding: 28px 20px;
           border-radius: var(--radius-brand, 32px);
-          border: 2.5px solid #11110F;
-          box-shadow: 6px 6px 0px #11110F;
-          color: #F4E9E1;
+          border: 2.5px solid #111111;
+          box-shadow: 6px 6px 0px #111111;
+          color: #F5F2EB;
           overflow: hidden;
         }
 
@@ -327,7 +314,7 @@ export default function CertificatesGallery({ onOpenContact }) {
           font-size: 0.72rem;
           font-weight: 800;
           letter-spacing: 0.12em;
-          color: var(--color-yellow, #FFB200);
+          color: #FFB200;
           text-transform: uppercase;
           display: block;
           margin-bottom: 4px;
@@ -343,15 +330,15 @@ export default function CertificatesGallery({ onOpenContact }) {
         }
 
         .gallery-action-btn {
-          background: #F4E9E1;
-          color: #11110F;
+          background: #F5F2EB;
+          color: #111111;
           font-family: var(--font-display);
           font-size: 0.88rem;
           font-weight: 900;
           padding: 11px 22px;
           border-radius: 9999px;
-          border: 2px solid #11110F;
-          box-shadow: 3px 3px 0px #11110F;
+          border: 2px solid #111111;
+          box-shadow: 3px 3px 0px #111111;
           display: inline-flex;
           align-items: center;
           gap: 8px;
@@ -361,9 +348,10 @@ export default function CertificatesGallery({ onOpenContact }) {
         }
 
         .gallery-action-btn:hover {
-          background: var(--color-yellow, #FFB200);
+          background: #D97706;
+          color: #FFFFFF;
           transform: translateY(-2px);
-          box-shadow: 5px 5px 0px #11110F;
+          box-shadow: 5px 5px 0px #111111;
         }
 
         /* ── Autoplay Scroller Viewport (No scrollbar) ── */
