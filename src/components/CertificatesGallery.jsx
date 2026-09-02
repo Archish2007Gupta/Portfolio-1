@@ -43,7 +43,7 @@ export default function CertificatesGallery({ onOpenContact }) {
     if (!scrollContainer) return;
 
     let lastTime = performance.now();
-    const speed = 0.75; // pixels per frame
+    const speed = 1.05; // balanced golden speed (between 0.75 and 1.4)
 
     const tick = (now) => {
       const delta = Math.min((now - lastTime) / 16.67, 2); // normalize delta time
