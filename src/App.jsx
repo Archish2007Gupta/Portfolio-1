@@ -23,6 +23,7 @@ import ContactSection from './components/ContactSection.jsx';
 import Footer from './components/Footer.jsx';
 
 // Interactive Overlays & Real-Time Elements
+import CustomCursor from './components/CustomCursor.jsx';
 import ContactModal from './components/ContactModal.jsx';
 import LobbyNotificationListener from './components/LobbyNotificationListener.jsx';
 import WhatsappFloatingButton from './components/WhatsappFloatingButton.jsx';
@@ -50,6 +51,9 @@ export default function App() {
       {/* ── Main Portfolio Experience ── */}
       {!loading && (
         <>
+          {/* Custom Interactive Orbit & Spark Cursor */}
+          <CustomCursor />
+
           {/* Left Vertical Rail Navigation */}
           <Navbar onOpenContact={openContactModal} />
 
