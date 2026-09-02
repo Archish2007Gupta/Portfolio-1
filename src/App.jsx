@@ -17,6 +17,7 @@ import AboutSection from './components/AboutSection.jsx';
 import Disciplines from './components/Disciplines.jsx';
 import ProjectsSection from './components/ProjectsSection.jsx';
 import DesignArchive from './components/DesignArchive.jsx';
+import CertificatesGallery from './components/CertificatesGallery.jsx';
 import GithubSection from './components/GithubSection.jsx';
 import ContactSection from './components/ContactSection.jsx';
 import Footer from './components/Footer.jsx';
@@ -96,13 +97,13 @@ export default function App() {
             {/* 03. Asymmetric Selected Work */}
             <ProjectsSection />
 
-            {/* Signature Nirmaan Section Divider 4 */}
-            <SectionTitle bgColor="#00AA3C" textColor="#11110F">
-              DESIGN ARCHIVE &amp; GALLERY
+            {/* Signature Nirmaan Section Divider: Certificates */}
+            <SectionTitle bgColor="#0072E3" textColor="#FFB200">
+              CREDENTIALS &amp; CERTIFICATES VAULT
             </SectionTitle>
 
-            {/* 04. Design Archive with Live Marquee */}
-            <DesignArchive onOpenContact={openContactModal} />
+            {/* 04. Certificates Vault Marquee */}
+            <CertificatesGallery onOpenContact={openContactModal} />
 
             {/* Signature Nirmaan Section Divider 5 */}
             <SectionTitle bgColor="#AB54F7" textColor="#FFFFFF">
@@ -111,6 +112,14 @@ export default function App() {
 
             {/* 05. GitHub Radar & Repositories */}
             <GithubSection />
+
+            {/* Signature Nirmaan Section Divider 4 */}
+            <SectionTitle bgColor="#00AA3C" textColor="#11110F">
+              DESIGN ARCHIVE &amp; GALLERY
+            </SectionTitle>
+
+            {/* 06. Design Archive with Live Marquee */}
+            <DesignArchive onOpenContact={openContactModal} />
 
             {/* Signature Nirmaan Section Divider 6 */}
             <SectionTitle bgColor="#FF6100" textColor="#FFFFFF">

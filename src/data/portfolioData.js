@@ -415,6 +415,76 @@ export const designGallery = [
   },
 ];
 
+// ── Certificates & Accreditations Vault ──
+export const certificatesData = [
+  {
+    id: 1,
+    title: 'Full-Stack Web Development',
+    issuer: 'Meta / Coursera',
+    date: '2025',
+    color: '#0072E3',
+    category: 'Full Stack',
+    credentialId: 'CRED-FS-84920',
+    tags: ['React', 'JavaScript', 'REST APIs'],
+    description: 'Advanced responsive frontend architecture and state management systems.',
+  },
+  {
+    id: 2,
+    title: 'Python for Computer Science & Automation',
+    issuer: 'HackerRank Certified',
+    date: '2025',
+    color: '#FFB200',
+    category: 'Programming',
+    credentialId: 'CRED-PY-39104',
+    tags: ['Python', 'Automation', 'Algorithms'],
+    description: 'Algorithmic problem solving, data structures, and script automation.',
+  },
+  {
+    id: 3,
+    title: 'UI/UX Design Systems & Typography',
+    issuer: 'Figma Design Specialist',
+    date: '2025',
+    color: '#EF333A',
+    category: 'Design Systems',
+    credentialId: 'CRED-UX-19402',
+    tags: ['Figma', 'UI/UX', 'Design Ops'],
+    description: 'Tactile design tokens, wireframing, micro-interactions, and component libraries.',
+  },
+  {
+    id: 4,
+    title: 'Embedded Systems & IoT Microcontrollers',
+    issuer: 'BMSIT Innovation Labs',
+    date: '2025',
+    color: '#00AA3C',
+    category: 'Hardware & IoT',
+    credentialId: 'CRED-IOT-55021',
+    tags: ['ESP32', 'C++', 'Sensors'],
+    description: 'Firmware development, sensor telemetry streams, and hardware relays.',
+  },
+  {
+    id: 5,
+    title: 'Decode2Deploy Hackathon Recognition',
+    issuer: 'Coding Club BMSIT',
+    date: '2025',
+    color: '#AB54F7',
+    category: 'Hackathon Award',
+    credentialId: 'CRED-HACK-77291',
+    tags: ['Hackathon', 'Sprint', 'Prototype'],
+    description: 'Award of distinction in 24-hour collegiate prototyping and fast deployment.',
+  },
+  {
+    id: 6,
+    title: 'Leadership & Editorial Excellence',
+    issuer: 'Rotaract Club BMS Yelahanka',
+    date: '2025',
+    color: '#FF6100',
+    category: 'Editorial Direction',
+    credentialId: 'CRED-DIR-66014',
+    tags: ['Editorial', 'Leadership', 'Content'],
+    description: 'Recognized for creative publication design, club communications, and media.',
+  },
+];
+
 // ── GitHub Repositories ──
 export const githubRepos = [
   {

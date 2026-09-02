@@ -1,326 +1,385 @@
 /* ============================================================
-   DesignArchive.jsx — Nirmaan 2026 Exact Event Gallery Format
+   DesignArchive.jsx — Exact Nirmaan Department / Gallery Grid Format
    ============================================================ */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { designGallery } from '../data/portfolioData.js';
-import { ArrowUpRight } from './Icons.jsx';
+import { ArrowUpRight, CloseIcon } from './Icons.jsx';
 
 export default function DesignArchive({ onOpenContact }) {
-  // Triplicated array for smooth infinite marquee loop
-  const marqueeItems = [...designGallery, ...designGallery, ...designGallery];
+  const [selectedAsset, setSelectedAsset] = useState(null);
+
+  // Curated showcase of 6 design assets
+  const items = designGallery.slice(0, 6);
 
   return (
-    <section id="design-archive" className="nirmaan-gallery-section" data-reveal>
-      <div className="gallery-card-wrapper clay-card">
+    <section id="gallery" className="nirmaan-gallery-section" data-reveal>
+      {/* Red Clay Container (Matching attached Nirmaan Department showcase) */}
+      <div className="design-dept-container clay-card">
         
-        {/* Header with Navigation Link */}
-        <div className="gallery-header-row">
-          <div>
-            <span className="gallery-kicker">
-              ARCHISHA ARCHIVES // LIVE REEL
-            </span>
-            <h2 className="gallery-headline">
-              Design Gallery
-            </h2>
-          </div>
-
-          {/* Action Trigger Button */}
-          <button
-            onClick={onOpenContact}
-            className="gallery-action-btn clay-card"
-          >
-            <span>View Full Archive</span>
-            <ArrowUpRight size={16} />
-          </button>
+        {/* Top Header Row */}
+        <div className="dept-header-top">
+          <span className="dept-kicker">ARCHISHA 2026 // VISUAL WORKS</span>
+          <span className="dept-count-pill">6 WORKS</span>
         </div>
 
-        {/* Single Row Horizontal Infinite Scroller */}
-        <div className="gallery-scroller-viewport">
-          <div className="gallery-marquee-track">
-            {marqueeItems.map((item, i) => (
-              <div
-                key={`${item.id}-${i}`}
-                className="gallery-card-item"
-                onClick={onOpenContact}
-              >
-                <div className="gallery-card-inner clay-card">
-                  
-                  {/* Aspect Video Preview Visual Canvas */}
-                  <div
-                    className="gallery-preview-canvas"
-                    style={{ background: item.color }}
-                  >
-                    <div className="canvas-gradient-overlay" />
-                    
-                    {/* Badge & Category */}
-                    <div className="canvas-top-bar">
-                      <span className="canvas-cat-badge">{item.category}</span>
-                      <span className="canvas-id-badge">#{String(item.id).padStart(2, '0')}</span>
-                    </div>
+        {/* Big Headline */}
+        <h2 className="dept-headline">DESIGN GALLERY</h2>
 
-                    {/* Graphic Artwork Simulation */}
-                    <div className="canvas-artwork-center">
-                      <div className="artwork-icon-wrap">
-                        {item.category === 'Branding' && '✦'}
-                        {item.category === 'Posters' && '✹'}
-                        {item.category === 'ID Cards' && '🪪'}
-                        {item.category === 'Apparel' && '👕'}
-                        {item.category === 'UI/UX' && '❖'}
-                        {item.category === 'Certificates' && '🏆'}
-                        {item.category === 'Social Media' && '📱'}
-                      </div>
-                      <p className="artwork-title-preview">{item.title}</p>
-                    </div>
+        {/* Subtext Description */}
+        <p className="dept-description">
+          The visual identity, branding systems, hackathon collaterals, and print designs crafted by Archisha.
+        </p>
 
-                    {/* Bottom Tag Bar */}
-                    <div className="canvas-bottom-bar">
-                      <span>{item.tags[0]}</span>
-                      <span>✦</span>
-                      <span>{item.tags[1] || 'Design'}</span>
-                    </div>
-
-                  </div>
-
+        {/* 2-Column Grid of White Member/Asset Cards */}
+        <div className="dept-cards-grid">
+          {items.map((item) => (
+            <div
+              key={item.id}
+              className="dept-card clay-card"
+              onClick={() => setSelectedAsset(item)}
+            >
+              {/* Top Info Row */}
+              <div className="dept-card-top">
+                
+                {/* Left: Thumbnail Icon/Preview Squircle */}
+                <div
+                  className="dept-thumb-frame"
+                  style={{ background: item.color }}
+                >
+                  <span className="dept-thumb-icon">
+                    {item.id === 1 && '🎨'}
+                    {item.id === 2 && '⚡'}
+                    {item.id === 3 && '🪪'}
+                    {item.id === 4 && '👕'}
+                    {item.id === 5 && '📱'}
+                    {item.id === 6 && '📰'}
+                  </span>
                 </div>
+
+                {/* Right: Title, Category & Badges */}
+                <div className="dept-card-info">
+                  <h3 className="dept-item-title">{item.title.toUpperCase()}</h3>
+                  <p className="dept-item-subtitle">{item.category} (Coding Club &amp; Events)</p>
+                  
+                  {/* Badges Stack */}
+                  <div className="dept-badges-stack">
+                    <span className="badge-pill badge-pill--yellow">
+                      {item.category.toUpperCase()}
+                    </span>
+                    {item.tags[0] && (
+                      <span className="badge-pill badge-pill--black">
+                        {item.tags[0].toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
               </div>
-            ))}
-          </div>
+
+              {/* Divider Line */}
+              <div className="dept-divider" />
+
+              {/* Bottom Action Bar */}
+              <div className="dept-card-bottom">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedAsset(item);
+                  }}
+                  className="dept-pill-btn"
+                >
+                  <span>DETAILS</span>
+                  <ArrowUpRight size={11} />
+                </button>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onOpenContact) onOpenContact();
+                    else setSelectedAsset(item);
+                  }}
+                  className="dept-pill-btn"
+                >
+                  <span>VIEW ASSET</span>
+                  <ArrowUpRight size={11} />
+                </button>
+              </div>
+
+            </div>
+          ))}
         </div>
 
       </div>
 
-      <style>{`
-        .nirmaan-gallery-section {
-          width: 100%;
-          margin: 40px 0;
-        }
+      {/* Interactive Asset Detail Modal */}
+      {selectedAsset && (
+        <div className="dialog-backdrop" onClick={() => setSelectedAsset(null)} role="dialog" aria-modal="true">
+          <div className="dialog-content text-ink cert-modal-content" onClick={(e) => e.stopPropagation()}>
+            
+            <button
+              onClick={() => setSelectedAsset(null)}
+              className="modal-close-btn clay-card"
+              aria-label="Close dialog"
+            >
+              <CloseIcon size={16} />
+            </button>
 
-        .gallery-card-wrapper {
-          background-color: var(--color-purple);
-          padding: 24px;
-          border-radius: var(--radius-brand);
-          border: 2px solid rgba(255, 255, 255, 0.2);
-          color: #FFFFFF;
-          overflow: hidden;
+            {/* Modal Header Banner */}
+            <div className="cert-modal-header" style={{ background: selectedAsset.color, color: '#FFFFFF' }}>
+              <div className="cert-modal-badge-row">
+                <span className="canvas-cat-badge">🎨 {selectedAsset.category}</span>
+                <span className="cert-gold-seal">★ ARCHISHA PORTFOLIO</span>
+              </div>
+              <h2 className="cert-modal-title">{selectedAsset.title}</h2>
+              <p className="cert-modal-date">Curated Visual Specimen · 2025–2026</p>
+            </div>
+
+            {/* Modal Body */}
+            <div className="cert-modal-body">
+              <p className="cert-modal-desc">{selectedAsset.description}</p>
+              
+              <div className="cert-skills-box">
+                <span className="cert-skills-label">DESIGN SPECIFICATIONS &amp; TOOLS:</span>
+                <div className="about-pills-row">
+                  {selectedAsset.tags.map((tag) => (
+                    <span key={tag} className="tech-pill">
+                      ✦ {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="cert-id-bar clay-card">
+                <div>
+                  <p className="quick-label">DELIVERABLE TYPE</p>
+                  <p className="quick-val">{selectedAsset.category} System</p>
+                </div>
+                <button
+                  onClick={() => {
+                    setSelectedAsset(null);
+                    if (onOpenContact) onOpenContact();
+                  }}
+                  className="cert-verify-btn clay-card"
+                >
+                  Request Full High-Res Figma File ↗
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        .design-dept-container {
+          background-color: #EF333A;
+          border-radius: 36px;
+          padding: 32px 24px 36px 24px;
+          border: 3px solid #000000;
+          box-shadow: 6px 6px 0px #000000;
+          color: #11110F;
         }
 
         @media (min-width: 640px) {
-          .gallery-card-wrapper {
-            padding: 32px 28px;
+          .design-dept-container {
+            border-radius: 40px;
+            padding: 40px 36px 44px 36px;
           }
         }
 
-        /* ── Header Row ── */
-        .gallery-header-row {
+        .dept-header-top {
           display: flex;
-          flex-wrap: wrap;
-          align-items: center;
           justify-content: space-between;
-          gap: 16px;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-          padding-bottom: 20px;
-          margin-bottom: 24px;
+          align-items: center;
+          margin-bottom: 8px;
         }
 
-        .gallery-kicker {
-          font-family: var(--font-display);
-          font-size: clamp(10px, 1.5vw, 12px);
-          text-transform: uppercase;
-          letter-spacing: 0.12em;
-          color: var(--color-yellow);
+        .dept-kicker {
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
           font-weight: 900;
-          display: block;
+          letter-spacing: 0.08em;
+          color: #11110F;
         }
 
-        .gallery-headline {
-          font-family: var(--font-display);
-          font-size: clamp(1.8rem, 3.5vw, 2.6rem);
-          text-transform: uppercase;
+        .dept-count-pill {
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
+          font-weight: 900;
+          letter-spacing: 0.06em;
           color: #FFFFFF;
-          font-weight: 900;
-          line-height: 1.05;
-          margin-top: 4px;
-          letter-spacing: -0.03em;
         }
 
-        .gallery-action-btn {
-          border-radius: var(--radius-pill);
-          background-color: var(--color-yellow);
-          padding: 10px 20px;
+        .dept-headline {
           font-family: var(--font-display);
-          font-size: 0.82rem;
-          text-transform: uppercase;
+          font-size: clamp(2.2rem, 5vw, 3.6rem);
+          font-weight: 900;
+          line-height: 0.95;
+          letter-spacing: -0.04em;
+          color: #11110F;
+          margin: 4px 0 14px 0;
+        }
+
+        .dept-description {
+          font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+          font-weight: 700;
+          color: #11110F;
+          line-height: 1.4;
+          max-width: 780px;
+          margin-bottom: 28px;
+        }
+
+        /* ── Cards Grid (3 in one row on desktop) ── */
+        .dept-cards-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+
+        @media (min-width: 640px) {
+          .dept-cards-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+          }
+        }
+
+        @media (min-width: 1025px) {
+          .dept-cards-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+          }
+        }
+
+        /* ── White Card ── */
+        .dept-card {
+          background: #FFFFFF;
+          border-radius: 22px;
+          padding: 18px 18px;
+          border: 2px solid #000000;
+          box-shadow: 4px 4px 0px #000000;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          cursor: pointer;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .dept-card:hover {
+          transform: translateY(-3px) scale(1.01);
+          box-shadow: 6px 6px 0px #000000;
+        }
+
+        .dept-card-top {
+          display: flex;
+          align-items: flex-start;
+          gap: 14px;
+        }
+
+        .dept-thumb-frame {
+          width: 58px;
+          height: 58px;
+          border-radius: 16px;
+          border: 2px solid #000000;
+          box-shadow: 2px 2px 0px #000000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .dept-thumb-icon {
+          font-size: 1.6rem;
+          filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .dept-card-info {
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+          flex: 1;
+        }
+
+        .dept-item-title {
+          font-family: var(--font-display);
+          font-size: 1.05rem;
           font-weight: 900;
           color: #11110F;
-          border: none;
-          cursor: pointer;
+          line-height: 1.15;
+          letter-spacing: -0.02em;
+        }
+
+        .dept-item-subtitle {
+          font-size: 0.78rem;
+          font-weight: 700;
+          color: rgba(17, 17, 15, 0.7);
+        }
+
+        .dept-badges-stack {
           display: flex;
           align-items: center;
           gap: 6px;
-          transition: all 0.2s ease;
-          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+          margin-top: 6px;
+          flex-wrap: wrap;
         }
 
-        .gallery-action-btn:hover {
-          transform: scale(1.05);
-          background-color: #FFFFFF;
-        }
-
-        .gallery-action-btn:active {
-          transform: translateY(2px);
-        }
-
-        /* ── Single Row Horizontal Scroller ── */
-        .gallery-scroller-viewport {
-          position: relative;
-          width: 100%;
-          overflow: hidden;
-          padding: 10px 0;
-        }
-
-        .gallery-marquee-track {
-          display: flex;
-          width: max-content;
-          gap: 20px;
-          align-items: center;
-          animation: marqueeScroll 34s linear infinite;
-        }
-
-        .gallery-marquee-track:hover {
-          animation-play-state: paused;
-        }
-
-        @keyframes marqueeScroll {
-          0% {
-            transform: translateX(0%);
-          }
-          100% {
-            transform: translateX(-33.333%);
-          }
-        }
-
-        .gallery-card-item {
-          flex-shrink: 0;
-          width: 260px;
-          cursor: pointer;
-        }
-
-        @media (min-width: 640px) {
-          .gallery-card-item {
-            width: 320px;
-          }
-        }
-
-        .gallery-card-inner {
-          background-color: var(--bg-paper);
-          padding: 10px;
-          border-radius: 20px;
-          color: var(--text-ink);
-          border: 2px solid rgba(255, 255, 255, 0.4);
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-          transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-          overflow: hidden;
-        }
-
-        .gallery-card-inner:hover {
-          transform: scale(1.03);
-        }
-
-        /* ── Preview Canvas (Aspect Video) ── */
-        .gallery-preview-canvas {
-          position: relative;
-          aspect-ratio: 16 / 9;
-          width: 100%;
-          overflow: hidden;
-          border-radius: 14px;
-          border: 1px solid rgba(255, 255, 255, 0.3);
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          padding: 14px;
-          color: #FFFFFF;
-          transition: transform 0.5s ease;
-        }
-
-        .gallery-preview-canvas:hover {
-          transform: scale(1.04);
-        }
-
-        .canvas-gradient-overlay {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.45) 100%);
-          pointer-events: none;
-        }
-
-        .canvas-top-bar {
-          position: relative;
-          z-index: 2;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .canvas-cat-badge {
-          font-family: var(--font-mono);
-          font-size: 0.58rem;
-          font-weight: 900;
-          background: rgba(0, 0, 0, 0.4);
-          padding: 2px 8px;
-          border-radius: var(--radius-pill);
-          text-transform: uppercase;
-          letter-spacing: 0.06em;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .canvas-id-badge {
+        .badge-pill {
           font-family: var(--font-mono);
           font-size: 0.62rem;
-          font-weight: 800;
-          color: var(--color-yellow);
-        }
-
-        .canvas-artwork-center {
-          position: relative;
-          z-index: 2;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-          gap: 6px;
-        }
-
-        .artwork-icon-wrap {
-          font-size: 1.8rem;
-          line-height: 1;
-          filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-        }
-
-        .artwork-title-preview {
-          font-family: var(--font-display);
-          font-size: 0.88rem;
           font-weight: 900;
-          text-transform: uppercase;
-          letter-spacing: -0.01em;
-          line-height: 1.15;
-          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-          max-width: 90%;
+          letter-spacing: 0.05em;
+          padding: 2px 8px;
+          border-radius: 9999px;
+          line-height: 1.2;
         }
 
-        .canvas-bottom-bar {
-          position: relative;
-          z-index: 2;
+        .badge-pill--yellow {
+          background: #FFB200;
+          color: #11110F;
+          border: 1px solid #000000;
+          box-shadow: 1px 1px 0px #000000;
+        }
+
+        .badge-pill--black {
+          background: #11110F;
+          color: #FFFFFF;
+        }
+
+        .dept-divider {
+          height: 1px;
+          background: rgba(17, 17, 15, 0.1);
+          margin: 14px 0 12px 0;
+        }
+
+        .dept-card-bottom {
           display: flex;
-          justify-content: center;
+          justify-content: flex-end;
           align-items: center;
-          gap: 6px;
+          gap: 8px;
+        }
+
+        .dept-pill-btn {
+          background: #11110F;
+          color: #FFFFFF;
+          padding: 6px 14px;
+          border-radius: 9999px;
           font-family: var(--font-mono);
-          font-size: 0.55rem;
-          font-weight: 800;
-          color: rgba(255, 255, 255, 0.85);
-          text-transform: uppercase;
-          letter-spacing: 0.06em;
+          font-size: 0.68rem;
+          font-weight: 900;
+          letter-spacing: 0.05em;
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          border: 1px solid transparent;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .dept-pill-btn:hover {
+          background: #FFB200;
+          color: #11110F;
+          border-color: #000000;
+          transform: translateY(-1px);
         }
       `}</style>
     </section>
