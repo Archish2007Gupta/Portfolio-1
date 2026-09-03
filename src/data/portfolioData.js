@@ -419,6 +419,19 @@ export const designGallery = [
 export const certificatesData = [
   {
     id: 1,
+    title: 'Google Solution Challenge 2026: Build with AI',
+    issuer: 'Google | Build with AI',
+    date: '2026',
+    color: '#4285F4',
+    category: 'Google & AI Innovation',
+    credentialId: '2026H2S07SCBWAI-PS04255',
+    tags: ['Google Solution Challenge', 'Build with AI', 'Prototype Submission', 'Social Innovation'],
+    file: '/certificates/Archisha Gupta Google challenge.png',
+    fileType: 'image',
+    description: 'Certificate of Participation in recognition of successful prototype submission for Solution Challenge 2026: Build with AI, celebrating innovation and problem-solving.',
+  },
+  {
+    id: 2,
     title: 'AI Hackathon 2026 Innovation Award',
     issuer: 'AI Innovation Sprint',
     date: '2026',
@@ -431,7 +444,7 @@ export const certificatesData = [
     description: 'Awarded for developing autonomous AI-driven prototypes and intelligent software systems during the intensive competitive sprint.',
   },
   {
-    id: 2,
+    id: 3,
     title: 'Generative AI & LLM Specialization',
     issuer: 'Gen AI Academy',
     date: '2025',
@@ -444,7 +457,7 @@ export const certificatesData = [
     description: 'Certified in Generative AI architecture, prompt optimization, neural synthesis, and modern transformer model workflows.',
   },
   {
-    id: 3,
+    id: 4,
     title: 'ImpactX Leadership & Social Innovation',
     issuer: 'ImpactX Global',
     date: '2025',
@@ -457,7 +470,7 @@ export const certificatesData = [
     description: 'Recognized for impactful leadership, community-centric project execution, and sustainable technical innovation.',
   },
   {
-    id: 4,
+    id: 5,
     title: 'Built and Conquer 3.0 Hackathon Sprint',
     issuer: 'Collegiate Hackathon Series',
     date: '2026',
@@ -470,7 +483,7 @@ export const certificatesData = [
     description: 'Certificate of achievement for full-stack prototyping, real-time deployment, and outstanding hackathon execution.',
   },
   {
-    id: 5,
+    id: 6,
     title: 'Hackaphasia Technical Hackathon',
     issuer: 'Hackaphasia 2025',
     date: '2025',
@@ -483,7 +496,7 @@ export const certificatesData = [
     description: 'Demonstrated exceptional algorithmic problem solving and cross-functional technical teamwork under tight time constraints.',
   },
   {
-    id: 6,
+    id: 7,
     title: 'MATLAB Technical Computing Onramp',
     issuer: 'MathWorks',
     date: '2025',
@@ -496,7 +509,7 @@ export const certificatesData = [
     description: 'Comprehensive mastery of MATLAB scripting, array manipulation, mathematical visualization, and computational modeling.',
   },
   {
-    id: 7,
+    id: 8,
     title: 'MATLAB Linear Algebra & Matrix Computing',
     issuer: 'MathWorks',
     date: '2025',
@@ -509,7 +522,7 @@ export const certificatesData = [
     description: 'Specialized credential in linear systems, matrix transformations, vector spaces, and applied linear algebra solutions.',
   },
   {
-    id: 8,
+    id: 9,
     title: 'Overclock Hackathon Technical Award',
     issuer: 'Overclock Sprint',
     date: '2026',
@@ -522,7 +535,7 @@ export const certificatesData = [
     description: 'Award of distinction in the competitive 24-hour Overclock technical hackathon and development challenge.',
   },
   {
-    id: 9,
+    id: 10,
     title: 'Overskill Innovation & Engineering Program',
     issuer: 'Overskill Labs',
     date: '2026',
@@ -535,7 +548,7 @@ export const certificatesData = [
     description: 'Certified in advanced engineering practices, modern tooling, and collaborative software development methodology.',
   },
   {
-    id: 10,
+    id: 11,
     title: 'Technical Distinction & Coursework Excellence',
     issuer: 'Technical & Academic Board',
     date: '2026',
