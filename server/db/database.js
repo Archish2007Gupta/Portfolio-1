@@ -47,6 +47,10 @@ export function initDatabase() {
     if (!hasStatus) {
       dbInstance.exec("ALTER TABLE contacts ADD COLUMN status TEXT NOT NULL DEFAULT 'new'");
     }
+
+    dbInstance.exec("CREATE INDEX IF NOT EXISTS idx_contacts_status ON contacts(status)");
+    dbInstance.exec("CREATE INDEX IF NOT EXISTS idx_contacts_created_at ON contacts(created_at DESC)");
+    dbInstance.exec("CREATE INDEX IF NOT EXISTS idx_projects_stars ON projects_cache(stars DESC)");
   } catch (err) {
     console.error('[DATABASE] Migration error checking schema:', err);
   }

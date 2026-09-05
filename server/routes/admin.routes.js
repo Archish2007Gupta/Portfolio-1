@@ -12,5 +12,8 @@ router.get('/session', adminController.getSession);
 
 // Protected admin endpoints
 router.get('/stats', requireAdmin, adminController.getDashboardStats);
+router.get('/messages', requireAdmin, adminController.getMessages);
+router.patch('/messages/:id', requireAdmin, adminController.updateMessageStatus);
+router.delete('/messages/:id', requireAdmin, adminController.deleteMessage);
 
 export default router;

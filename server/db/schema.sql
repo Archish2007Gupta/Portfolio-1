@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS sessions (
 
 -- Indices for performance
 CREATE INDEX IF NOT EXISTS idx_contacts_created_at ON contacts(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_contacts_status ON contacts(status);
 CREATE INDEX IF NOT EXISTS idx_projects_stars ON projects_cache(stars DESC);
 CREATE INDEX IF NOT EXISTS idx_certificates_category ON certificates(category);
 CREATE INDEX IF NOT EXISTS idx_sessions_expired_at ON sessions(expired_at);
