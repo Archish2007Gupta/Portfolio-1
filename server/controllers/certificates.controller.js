@@ -1,15 +1,20 @@
-/**
- * Certificates controller placeholder.
- * Logic will be implemented in the certificates phase.
- */
+import certificateService from '../services/certificate.service.js';
+
 export const certificatesController = {
+  /**
+   * Public endpoint to get automatically discovered certificates.
+   * Single source of truth: public/certificates/
+   * GET /api/certificates
+   */
   async getCertificates(req, res, next) {
     try {
-      res.status(501).json({
-        success: false,
-        message: 'Certificates endpoint not yet implemented.'
+      const certificates = await certificateService.getCertificates();
+      res.status(200).json({
+        success: true,
+        certificates
       });
     } catch (err) {
+      console.error('[CERTIFICATES CONTROLLER] Error retrieving certificates:', err);
       next(err);
     }
   }

@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import path from 'path';
 import env from './config/env.js';
 import { apiLimiter } from './middleware/rateLimit.js';
 import { errorHandler, notFoundHandler, AppError } from './middleware/errorHandler.js';
@@ -22,8 +23,17 @@ if (env.isProduction) {
   app.set('trust proxy', 1);
 }
 
-// Security HTTP headers
-app.use(helmet());
+// Security HTTP headers (allow cross-origin viewing for public certificates & assets)
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' }
+}));
+
+// Serve static certificates from public/certificates with traversal protection
+const certificatesDir = path.join(env.PATHS.ROOT, 'public', 'certificates');
+app.use('/certificates', express.static(certificatesDir, {
+  dotfiles: 'ignore',
+  index: false
+}));
 
 // CORS Configuration - Restrict to configured client origin
 const corsOptions = {

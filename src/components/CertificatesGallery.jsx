@@ -3,16 +3,51 @@
    ============================================================ */
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { certificatesData } from '../data/portfolioData.js';
+import { getCertificates } from '../services/certificatesApi.js';
 import { ArrowUpRight, CloseIcon } from './Icons.jsx';
 
 export default function CertificatesGallery({ onOpenContact }) {
+  const [certificates, setCertificates] = useState([]);
+  const [loadingCerts, setLoadingCerts] = useState(true);
   const [selectedCert, setSelectedCert] = useState(null);
   const scrollerRef = useRef(null);
   const animFrameId = useRef(null);
   const isInteracting = useRef(false);
   const isHovered = useRef(false);
   const resumeTimeout = useRef(null);
+
+  // Fetch certificates dynamically from filesystem API
+  useEffect(() => {
+    let isMounted = true;
+    async function loadCertificates() {
+      try {
+        setLoadingCerts(true);
+        const data = await getCertificates();
+        if (isMounted) {
+          if (data && Array.isArray(data.certificates)) {
+            setCertificates(data.certificates);
+          } else {
+            setCertificates([]);
+          }
+        }
+      } catch (err) {
+        console.warn('[CERTIFICATES] Failed to fetch dynamic certificates:', err);
+        if (isMounted) {
+          setCertificates([]);
+        }
+      } finally {
+        if (isMounted) {
+          setLoadingCerts(false);
+        }
+      }
+    }
+
+    loadCertificates();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Drag state
   const isDragging = useRef(false);
@@ -21,10 +56,10 @@ export default function CertificatesGallery({ onOpenContact }) {
   const hasDragged = useRef(false);
 
   // Duplicated list once for infinite continuous 60fps loop
-  const marqueeItems = [
-    ...certificatesData,
-    ...certificatesData,
-  ];
+  const marqueeItems = certificates.length > 0 ? [
+    ...certificates,
+    ...certificates,
+  ] : [];
 
   // Helper to pause autoplay temporarily during active drag and resume after release
   const pauseAndScheduleResume = useCallback((delay = 1500) => {
@@ -147,53 +182,69 @@ export default function CertificatesGallery({ onOpenContact }) {
         </div>
 
         {/* Live Continuous Autoplay Scroller (Does NOT stop on hover) */}
-        <div
-          ref={scrollerRef}
-          className="gallery-scroller-viewport"
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUpOrLeave}
-          onWheel={handleWheel}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
-          <div className="gallery-items-track">
-            {marqueeItems.map((cert, index) => (
-              <div
-                key={`${cert.id}-${index}`}
-                className="gallery-card-item"
-                onClick={() => handleCardClick(cert)}
-              >
-                <div className="gallery-card-inner clay-card">
-                  
-                  {/* Full Card Certificate Visual Canvas */}
-                  <div className="cert-full-card-canvas">
-                    <div className="cert-full-img-wrap">
-                      <img
-                        src={cert.file}
-                        alt={cert.title}
-                        className="cert-full-img"
-                        loading="lazy"
-                        draggable="false"
-                      />
-                      
-                      {/* Minimal Floating Corner Badges */}
-                      <div className="cert-img-badge-overlay">
-                        <span className="cert-hover-tag">
-                          🏛️ {cert.issuer}
-                        </span>
-                        <span className="cert-click-pill">
-                          VIEW FULL ↗
-                        </span>
+        {marqueeItems.length === 0 && !loadingCerts ? (
+          <div className="gallery-empty-state">
+            <span className="empty-kicker">✦ VERIFIED VAULT</span>
+            <p>No certificates found in <code>public/certificates/</code>.</p>
+          </div>
+        ) : (
+          <div
+            ref={scrollerRef}
+            className="gallery-scroller-viewport"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUpOrLeave}
+            onWheel={handleWheel}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
+            <div className="gallery-items-track">
+              {marqueeItems.map((cert, index) => (
+                <div
+                  key={`${cert.id}-${index}`}
+                  className="gallery-card-item"
+                  onClick={() => handleCardClick(cert)}
+                >
+                  <div className="gallery-card-inner clay-card">
+                    
+                    {/* Full Card Certificate Visual Canvas */}
+                    <div className="cert-full-card-canvas">
+                      <div className="cert-full-img-wrap">
+                        {cert.fileType === 'pdf' || (cert.file && cert.file.endsWith('.pdf')) ? (
+                          <div className="cert-pdf-card-preview">
+                            <span className="pdf-corner-tag">PDF DOCUMENT</span>
+                            <span className="pdf-icon-symbol">📄</span>
+                            <h4 className="pdf-card-title">{cert.title}</h4>
+                            <span className="pdf-view-hint">VIEW CREDENTIAL ↗</span>
+                          </div>
+                        ) : (
+                          <img
+                            src={cert.file}
+                            alt={cert.title}
+                            className="cert-full-img"
+                            loading="lazy"
+                            draggable="false"
+                          />
+                        )}
+                        
+                        {/* Minimal Floating Corner Badges */}
+                        <div className="cert-img-badge-overlay">
+                          <span className="cert-hover-tag">
+                            🏛️ {cert.issuer || cert.category}
+                          </span>
+                          <span className="cert-click-pill">
+                            VIEW FULL ↗
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
       </div>
 
@@ -214,9 +265,11 @@ export default function CertificatesGallery({ onOpenContact }) {
             <div className="cert-lightbox-header">
               <div className="cert-lightbox-header-left">
                 <div className="cert-lightbox-tags">
-                  <span className="cert-tag-pill">🏛️ {selectedCert.issuer}</span>
+                  <span className="cert-tag-pill">🏛️ {selectedCert.issuer || selectedCert.category}</span>
                   <span className="cert-tag-gold">★ VERIFIED RECORD</span>
-                  <span className="cert-tag-mono">{selectedCert.credentialId}</span>
+                  {selectedCert.credentialId && (
+                    <span className="cert-tag-mono">{selectedCert.credentialId}</span>
+                  )}
                 </div>
                 <h3 className="cert-lightbox-title">{selectedCert.title}</h3>
               </div>
@@ -229,7 +282,7 @@ export default function CertificatesGallery({ onOpenContact }) {
                   className="cert-lightbox-open-btn clay-card"
                   title="Open high-res original in new tab"
                 >
-                  <span>Open Full Pic</span>
+                  <span>{selectedCert.fileType === 'pdf' ? 'Open PDF ↗' : 'Open Full Pic ↗'}</span>
                   <ArrowUpRight size={14} />
                 </a>
 
@@ -245,18 +298,36 @@ export default function CertificatesGallery({ onOpenContact }) {
 
             {/* Main High-Resolution Full Picture Display */}
             <div className="cert-lightbox-image-viewer">
-              <img
-                src={selectedCert.file}
-                alt={selectedCert.title}
-                className="cert-lightbox-full-img"
-              />
+              {selectedCert.fileType === 'pdf' || (selectedCert.file && selectedCert.file.endsWith('.pdf')) ? (
+                <div className="cert-lightbox-pdf-view">
+                  <div className="pdf-modal-icon">📄</div>
+                  <h4 className="pdf-modal-title">{selectedCert.title}</h4>
+                  <p className="pdf-modal-sub">Verified PDF Document ({selectedCert.filename})</p>
+                  <a
+                    href={selectedCert.file}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="gallery-action-btn clay-card"
+                    style={{ marginTop: 14, display: 'inline-flex' }}
+                  >
+                    <span>Open High-Resolution PDF ↗</span>
+                    <ArrowUpRight size={14} />
+                  </a>
+                </div>
+              ) : (
+                <img
+                  src={selectedCert.file}
+                  alt={selectedCert.title}
+                  className="cert-lightbox-full-img"
+                />
+              )}
             </div>
 
             {/* Footer Bar with Tags & Description */}
             <div className="cert-lightbox-footer">
               <div className="cert-lightbox-tags-row">
                 <span className="cert-competencies-label">ACCREDITED SKILLS:</span>
-                {selectedCert.tags.map((tag) => (
+                {selectedCert.tags && selectedCert.tags.map((tag) => (
                   <span key={tag} className="tech-pill">
                     ✦ {tag}
                   </span>
@@ -273,6 +344,109 @@ export default function CertificatesGallery({ onOpenContact }) {
       )}
 
       <style>{`
+        .cert-pdf-card-preview {
+          width: 100%;
+          min-height: 240px;
+          background: #11110F;
+          color: #FFFFFF;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 20px 16px;
+          text-align: center;
+          position: relative;
+        }
+
+        .pdf-corner-tag {
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          font-family: var(--font-mono);
+          font-size: 0.58rem;
+          font-weight: 800;
+          background: #EF333A;
+          color: #FFFFFF;
+          padding: 2px 6px;
+          border-radius: 4px;
+        }
+
+        .pdf-icon-symbol {
+          font-size: 2.5rem;
+          margin-bottom: 8px;
+        }
+
+        .pdf-card-title {
+          font-family: var(--font-display);
+          font-size: 0.88rem;
+          font-weight: 900;
+          margin: 0 0 6px 0;
+          color: #FFFFFF;
+          line-height: 1.3;
+        }
+
+        .pdf-view-hint {
+          font-family: var(--font-mono);
+          font-size: 0.6rem;
+          font-weight: 800;
+          color: #FFB200;
+        }
+
+        .cert-lightbox-pdf-view {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 40px 20px;
+          background: #111115;
+          color: #FFFFFF;
+          border-radius: 12px;
+          text-align: center;
+        }
+
+        .pdf-modal-icon {
+          font-size: 3.2rem;
+          margin-bottom: 8px;
+        }
+
+        .pdf-modal-title {
+          font-family: var(--font-display);
+          font-size: 1.25rem;
+          font-weight: 900;
+          margin: 0 0 4px 0;
+        }
+
+        .pdf-modal-sub {
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
+          color: rgba(255, 255, 255, 0.6);
+          margin: 0;
+        }
+
+        .gallery-empty-state {
+          padding: 40px 20px;
+          text-align: center;
+          background: rgba(0, 0, 0, 0.15);
+          border-radius: 16px;
+          font-family: var(--font-mono);
+          font-size: 0.85rem;
+          color: #FFFFFF;
+        }
+
+        .gallery-empty-state .empty-kicker {
+          display: block;
+          font-size: 0.7rem;
+          font-weight: 800;
+          color: #FFB200;
+          margin-bottom: 6px;
+        }
+
+        .gallery-empty-state code {
+          background: rgba(0, 0, 0, 0.3);
+          padding: 2px 6px;
+          border-radius: 4px;
+        }
+
         .nirmaan-gallery-section {
           padding: 0;
           margin-bottom: 44px;
