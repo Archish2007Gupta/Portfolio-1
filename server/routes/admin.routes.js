@@ -1,11 +1,16 @@
 import { Router } from 'express';
 import { adminController } from '../controllers/admin.controller.js';
-import { requireAuth } from '../middleware/auth.js';
-import { strictLimiter } from '../middleware/rateLimit.js';
+import { requireAdmin } from '../middleware/auth.js';
+import { loginLimiter } from '../middleware/rateLimit.js';
 
 const router = Router();
 
-router.post('/login', strictLimiter, adminController.login);
-router.get('/stats', requireAuth, adminController.getDashboardStats);
+// Public authentication endpoints (with dedicated brute-force rate limiter)
+router.post('/login', loginLimiter, adminController.login);
+router.post('/logout', adminController.logout);
+router.get('/session', adminController.getSession);
+
+// Protected admin endpoints
+router.get('/stats', requireAdmin, adminController.getDashboardStats);
 
 export default router;

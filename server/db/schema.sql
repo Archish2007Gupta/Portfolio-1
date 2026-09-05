@@ -46,10 +46,19 @@ CREATE TABLE IF NOT EXISTS admin_users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Sessions Table for server-side session store
+CREATE TABLE IF NOT EXISTS sessions (
+    sid TEXT PRIMARY KEY,
+    sess TEXT NOT NULL,
+    expired_at INTEGER NOT NULL
 );
 
 -- Indices for performance
 CREATE INDEX IF NOT EXISTS idx_contacts_created_at ON contacts(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_projects_stars ON projects_cache(stars DESC);
 CREATE INDEX IF NOT EXISTS idx_certificates_category ON certificates(category);
+CREATE INDEX IF NOT EXISTS idx_sessions_expired_at ON sessions(expired_at);

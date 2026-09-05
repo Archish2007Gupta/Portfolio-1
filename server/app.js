@@ -5,6 +5,10 @@ import env from './config/env.js';
 import { apiLimiter } from './middleware/rateLimit.js';
 import { errorHandler, notFoundHandler, AppError } from './middleware/errorHandler.js';
 
+import session from 'express-session';
+import { SqliteSessionStore } from './db/sessionStore.js';
+import { getDb } from './db/database.js';
+
 // Route imports
 import contactRoutes from './routes/contact.routes.js';
 import projectsRoutes from './routes/projects.routes.js';
@@ -12,6 +16,11 @@ import certificatesRoutes from './routes/certificates.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 
 const app = express();
+
+// Trust reverse proxy in production for secure cookies
+if (env.isProduction) {
+  app.set('trust proxy', 1);
+}
 
 // Security HTTP headers
 app.use(helmet());
@@ -43,6 +52,21 @@ app.use(cors(corsOptions));
 // Body parsers
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+
+// Server-side session management with SQLite store
+app.use(session({
+  name: 'portfolio_sid',
+  secret: env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: new SqliteSessionStore({ db: getDb() }),
+  cookie: {
+    httpOnly: true,
+    secure: env.isProduction,
+    sameSite: env.isProduction ? (process.env.COOKIE_SAMESITE || 'lax') : 'lax',
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
 
 // Health Check Endpoint (not throttled)
 app.get('/api/health', (req, res) => {

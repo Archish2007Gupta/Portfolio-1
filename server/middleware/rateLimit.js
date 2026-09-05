@@ -28,7 +28,22 @@ export const strictLimiter = rateLimit({
   }
 });
 
+/**
+ * Dedicated rate limiter for admin login brute-force protection
+ */
+export const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes window
+  max: 10, // Max 10 attempts per 15 minutes per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many login attempts. Please try again after 15 minutes.'
+  }
+});
+
 export default {
   apiLimiter,
-  strictLimiter
+  strictLimiter,
+  loginLimiter
 };

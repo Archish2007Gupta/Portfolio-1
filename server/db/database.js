@@ -34,6 +34,38 @@ export function initDatabase() {
     console.warn(`[DATABASE] Schema file not found at ${env.PATHS.SCHEMA_FILE}`);
   }
 
+  // Safe incremental migrations
+  try {
+    const tableInfo = dbInstance.prepare("PRAGMA table_info(admin_users)").all();
+    const hasUpdatedAt = tableInfo.some(col => col.name === 'updated_at');
+    if (!hasUpdatedAt) {
+      dbInstance.exec("ALTER TABLE admin_users ADD COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP");
+    }
+  } catch (err) {
+    console.error('[DATABASE] Migration error checking admin_users table:', err);
+  }
+
+  // Seed or sync configured admin user from environment
+  if (env.ADMIN_USERNAME && env.ADMIN_PASSWORD_HASH) {
+    try {
+      const existing = dbInstance.prepare(
+        'SELECT id, password_hash FROM admin_users WHERE username = ?'
+      ).get(env.ADMIN_USERNAME);
+
+      if (!existing) {
+        dbInstance.prepare(
+          'INSERT INTO admin_users (username, password_hash, created_at, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)'
+        ).run(env.ADMIN_USERNAME, env.ADMIN_PASSWORD_HASH);
+      } else if (existing.password_hash !== env.ADMIN_PASSWORD_HASH) {
+        dbInstance.prepare(
+          'UPDATE admin_users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE username = ?'
+        ).run(env.ADMIN_PASSWORD_HASH, env.ADMIN_USERNAME);
+      }
+    } catch (err) {
+      console.error('[DATABASE] Error syncing admin credentials:', err);
+    }
+  }
+
   return dbInstance;
 }
 

@@ -28,10 +28,20 @@ import ContactModal from './components/ContactModal.jsx';
 import LobbyNotificationListener from './components/LobbyNotificationListener.jsx';
 import WhatsappFloatingButton from './components/WhatsappFloatingButton.jsx';
 
+import AdminPage from './components/AdminPage.jsx';
+
 // Data
 import { marqueeOneItems, marqueeTwoItems } from './data/portfolioData.js';
 
 export default function App() {
+  // Check if current URL path is /admin
+  const isAdminRoute = typeof window !== 'undefined' && 
+    (window.location.pathname === '/admin' || window.location.pathname.startsWith('/admin'));
+
+  if (isAdminRoute) {
+    return <AdminPage />;
+  }
+
   const [loading, setLoading] = useState(true);
   const [contactModalOpen, setContactModalOpen] = useState(false);
 
