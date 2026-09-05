@@ -1,15 +1,49 @@
-/* ============================================================
-   GithubSection.jsx — Nirmaan 2026 Code Radar & Live Contribution Table
-   ============================================================ */
-
 import React, { useState, useEffect } from 'react';
 import { githubRepos, profile } from '../data/portfolioData.js';
+import { getProjects } from '../services/projectsApi.js';
 import { ArrowUpRight, SocialGithub } from './Icons.jsx';
+
+const LANG_COLORS = {
+  JavaScript: '#F7DF1E',
+  TypeScript: '#3178C6',
+  HTML: '#E34F26',
+  CSS: '#1572B6',
+  'C++': '#F34B7D',
+  C: '#555555',
+  Python: '#3776AB',
+  React: '#00D8FF',
+  Shell: '#89E051'
+};
 
 export default function GithubSection() {
   const [contributionData, setContributionData] = useState(null);
   const [totalCommits, setTotalCommits] = useState(240);
   const [loading, setLoading] = useState(true);
+  const [dynamicRepos, setDynamicRepos] = useState([]);
+  const [reposLoading, setReposLoading] = useState(true);
+
+  // Fetch dynamic repositories from portfolio backend
+  useEffect(() => {
+    async function loadDynamicProjects() {
+      try {
+        setReposLoading(true);
+        const data = await getProjects();
+        if (data && Array.isArray(data.projects)) {
+          // Display repositories that are not selected work
+          const nonSelected = data.projects.filter(
+            (p) => p.classification !== 'selected'
+          );
+          setDynamicRepos(nonSelected);
+        }
+      } catch (err) {
+        console.warn('[GITHUB SECTION] Could not fetch dynamic repos, falling back to static list:', err);
+      } finally {
+        setReposLoading(false);
+      }
+    }
+
+    loadDynamicProjects();
+  }, []);
 
   // Fetch real GitHub contribution table
   useEffect(() => {
@@ -162,44 +196,54 @@ export default function GithubSection() {
 
       {/* Top Repositories Grid */}
       <div className="repos-grid">
-        {githubRepos.map((repo) => (
-          <div key={repo.name} className="brutal-card repo-card clay-card">
-            <div className="repo-card-top">
-              <div className="repo-title-wrap">
-                <span className="repo-icon">📁</span>
-                <h3 className="repo-name">{repo.name}</h3>
-              </div>
-              <span
-                className="repo-lang-pill"
-                style={{ borderColor: repo.langColor }}
-              >
+        {(dynamicRepos.length > 0 ? dynamicRepos : githubRepos).map((repo) => {
+          const repoName = repo.name;
+          const repoLang = repo.language || repo.lang || 'Code';
+          const repoLangColor = repo.langColor || LANG_COLORS[repoLang] || '#0072E3';
+          const repoDesc = repo.description || repo.desc || 'Open source repository by @Archish2007Gupta.';
+          const repoStars = typeof repo.stars === 'number' ? repo.stars : (repo.stargazers_count || 0);
+          const repoForks = typeof repo.forks === 'number' ? repo.forks : (repo.forks_count || 0);
+          const repoUrl = repo.html_url || repo.url || `https://github.com/Archish2007Gupta/${repoName}`;
+
+          return (
+            <div key={repoName} className="brutal-card repo-card clay-card">
+              <div className="repo-card-top">
+                <div className="repo-title-wrap">
+                  <span className="repo-icon">📁</span>
+                  <h3 className="repo-name">{repoName}</h3>
+                </div>
                 <span
-                  className="lang-dot"
-                  style={{ background: repo.langColor }}
-                />
-                {repo.lang}
-              </span>
-            </div>
-
-            <p className="repo-desc">{repo.desc}</p>
-
-            <div className="repo-card-footer">
-              <div className="repo-stats">
-                <span className="repo-stat">⭐ {repo.stars}</span>
-                <span className="repo-stat">🔀 {repo.forks}</span>
+                  className="repo-lang-pill"
+                  style={{ borderColor: repoLangColor }}
+                >
+                  <span
+                    className="lang-dot"
+                    style={{ background: repoLangColor }}
+                  />
+                  {repoLang}
+                </span>
               </div>
-              <a
-                href={repo.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="repo-link-btn clay-card"
-              >
-                <span>VIEW CODE</span>
-                <ArrowUpRight size={12} />
-              </a>
+
+              <p className="repo-desc">{repoDesc}</p>
+
+              <div className="repo-card-footer">
+                <div className="repo-stats">
+                  <span className="repo-stat">⭐ {repoStars}</span>
+                  <span className="repo-stat">🔀 {repoForks}</span>
+                </div>
+                <a
+                  href={repoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="repo-link-btn clay-card"
+                >
+                  <span>VIEW CODE</span>
+                  <ArrowUpRight size={12} />
+                </a>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Profile Link Banner */}

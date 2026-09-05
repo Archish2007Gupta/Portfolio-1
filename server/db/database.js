@@ -48,9 +48,33 @@ export function initDatabase() {
       dbInstance.exec("ALTER TABLE contacts ADD COLUMN status TEXT NOT NULL DEFAULT 'new'");
     }
 
+    // Projects Cache table migration
+    const projectsTableInfo = dbInstance.prepare("PRAGMA table_info(projects_cache)").all();
+    const existingCols = new Set(projectsTableInfo.map(c => c.name));
+    const neededCols = [
+      { name: 'full_name', type: 'TEXT' },
+      { name: 'created_at_gh', type: 'TEXT' },
+      { name: 'pushed_at', type: 'TEXT' },
+      { name: 'default_branch', type: 'TEXT' },
+      { name: 'owner', type: 'TEXT' },
+      { name: 'readme', type: 'TEXT' },
+      { name: 'classification', type: "TEXT DEFAULT 'github'" },
+      { name: 'data_json', type: 'TEXT' },
+      { name: 'cached_at', type: 'DATETIME DEFAULT CURRENT_TIMESTAMP' }
+    ];
+
+    for (const col of neededCols) {
+      if (!existingCols.has(col.name)) {
+        dbInstance.exec(`ALTER TABLE projects_cache ADD COLUMN ${col.name} ${col.type}`);
+      }
+    }
+
+    // Safe index creation
     dbInstance.exec("CREATE INDEX IF NOT EXISTS idx_contacts_status ON contacts(status)");
     dbInstance.exec("CREATE INDEX IF NOT EXISTS idx_contacts_created_at ON contacts(created_at DESC)");
     dbInstance.exec("CREATE INDEX IF NOT EXISTS idx_projects_stars ON projects_cache(stars DESC)");
+    dbInstance.exec("CREATE INDEX IF NOT EXISTS idx_projects_classification ON projects_cache(classification)");
+    dbInstance.exec("CREATE INDEX IF NOT EXISTS idx_projects_custom_order ON projects_cache(custom_order ASC)");
   } catch (err) {
     console.error('[DATABASE] Migration error checking schema:', err);
   }

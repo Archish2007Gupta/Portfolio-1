@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS projects_cache (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     github_id INTEGER UNIQUE,
     name TEXT NOT NULL,
+    full_name TEXT,
     description TEXT,
     html_url TEXT,
     homepage TEXT,
@@ -24,9 +25,17 @@ CREATE TABLE IF NOT EXISTS projects_cache (
     stars INTEGER DEFAULT 0,
     forks INTEGER DEFAULT 0,
     language TEXT,
+    created_at_gh TEXT,
     updated_at TEXT,
+    pushed_at TEXT,
+    default_branch TEXT,
+    owner TEXT,
+    readme TEXT,
+    classification TEXT DEFAULT 'github',
     is_featured INTEGER DEFAULT 0,
-    custom_order INTEGER DEFAULT 0,
+    custom_order INTEGER DEFAULT 9999,
+    data_json TEXT, -- complete normalized JSON object
+    cached_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     last_synced DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

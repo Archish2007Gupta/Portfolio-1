@@ -3,7 +3,7 @@ import { projectsController } from '../controllers/projects.controller.js';
 
 const router = Router();
 
+// Public endpoint to retrieve projects
 router.get('/', projectsController.getProjects);
-router.post('/sync', projectsController.syncProjects);
 
 export default router;

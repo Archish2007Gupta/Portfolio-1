@@ -1,12 +1,70 @@
 /* ============================================================
    ProjectsSection.jsx — Nirmaan 2026 2-Column Grid Selected Work
+   Dynamic GitHub Integration (GitHub as Single Source of Truth)
    ============================================================ */
 
-import React from 'react';
-import { featuredProjects } from '../data/portfolioData.js';
+import React, { useState, useEffect } from 'react';
+import { getProjects } from '../services/projectsApi.js';
 import { ArrowUpRight } from './Icons.jsx';
 
+const ACCENT_PALETTE = ['#0072E3', '#00AA3C', '#FFB200', '#AB54F7', '#EF333A', '#FF6100'];
+
+/**
+ * Determine if a project has a specialized interactive visual mockup
+ */
+function getVisualKey(project) {
+  const name = (project.name || '').toLowerCase();
+  if (name.includes('echonex')) return 'echonex';
+  if (name.includes('cleanzy')) return 'cleanzy';
+  if (name.includes('way2uni')) return 'way2uni';
+  if (name.includes('sparkhabit')) return 'sparkhabit';
+  return 'generic';
+}
+
 export default function ProjectsSection() {
+  const [selectedProjects, setSelectedProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadProjects() {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getProjects();
+        if (isMounted) {
+          if (data && Array.isArray(data.projects)) {
+            // Strictly filter by classification === 'selected' (portfolio + featured)
+            const selected = data.projects.filter(
+              (p) => p.classification === 'selected'
+            );
+            setSelectedProjects(selected);
+          } else {
+            setSelectedProjects([]);
+          }
+        }
+      } catch (err) {
+        if (isMounted) {
+          console.error('[PROJECTS] Failed to fetch dynamic projects:', err);
+          setError('Projects temporarily unavailable.');
+          setSelectedProjects([]);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadProjects();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
     <section className="nirmaan-section" id="projects">
       
@@ -20,188 +78,280 @@ export default function ProjectsSection() {
         A curated selection of hardware-software integrations, full-stack web platforms, and creative technology experiments.
       </p>
 
-      {/* 2-Column Projects Grid */}
-      <div className="projects-grid-2col">
-        {featuredProjects.map((project) => (
-          <article
-            key={project.id}
-            className="brutal-card project-card-2col clay-card"
-          >
-            {/* Card Banner Header */}
-            <div
-              className="card-header-banner"
-              style={{ background: project.accent, color: '#FFFFFF' }}
-            >
-              <span className="banner-tag">{project.tag}</span>
-              <span className="project-badge-pill">{project.badge}</span>
-            </div>
+      {/* Loading State */}
+      {loading && (
+        <div className="projects-loading-banner brutal-card clay-card">
+          <span className="pulse-dot" style={{ width: 10, height: 10, background: 'var(--color-blue, #0072E3)' }} />
+          <span>SYNCHRONIZING REPOSITORIES FROM GITHUB TELEMETRY...</span>
+        </div>
+      )}
 
-            {/* Interactive Visual Preview Box */}
-            <div className="project-preview-wrap">
-              <div className="project-mockup-frame clay-card">
-                
-                {/* Mockup Top Window Bar */}
-                <div className="mockup-window-bar">
-                  <div className="mockup-window-dots">
-                    <span style={{ background: '#EF333A' }} />
-                    <span style={{ background: '#FFB200' }} />
-                    <span style={{ background: '#00AA3C' }} />
-                  </div>
-                  <span className="mockup-window-title">
-                    {project.title.toLowerCase()}.local
-                  </span>
-                </div>
+      {/* Error State */}
+      {!loading && error && (
+        <div className="projects-empty-card brutal-card clay-card">
+          <div className="empty-indicator">⚠️</div>
+          <h3>PROJECTS TEMPORARILY UNAVAILABLE</h3>
+          <p>{error}</p>
+        </div>
+      )}
 
-                {/* Mockup Interactive Screen Content */}
-                <div className="mockup-screen-content">
-                  
-                  {project.id === 'echonex' && (
-                    <div className="screen-echonex-telemetry">
-                      <div className="telemetry-chip">
-                        <span className="pulse-dot" />
-                        <span>ESP32 FIRMWARE ONLINE</span>
-                      </div>
-                      <div className="telemetry-gauge-grid">
-                        <div className="telemetry-tile">
-                          <span className="tile-label">VOICE AGENT</span>
-                          <span className="tile-val" style={{ color: '#0072E3' }}>READY</span>
-                        </div>
-                        <div className="telemetry-tile">
-                          <span className="tile-label">SENSORS</span>
-                          <span className="tile-val" style={{ color: '#00AA3C' }}>4 ACTIVE</span>
-                        </div>
-                        <div className="telemetry-tile">
-                          <span className="tile-label">CLOUD SYNC</span>
-                          <span className="tile-val" style={{ color: '#FFB200' }}>SUPABASE</span>
-                        </div>
-                      </div>
-                      <p className="telemetry-command-log">
-                        &gt; esp32_wifi_connected (192.168.1.42)<br />
-                        &gt; telemetry: temp=24.5C, humidity=58%
-                      </p>
-                    </div>
-                  )}
+      {/* Empty State (when 0 projects are tagged portfolio + featured) */}
+      {!loading && !error && selectedProjects.length === 0 && (
+        <div className="projects-empty-card brutal-card clay-card">
+          <div className="empty-indicator">✦</div>
+          <h3>NO FEATURED PROJECTS YET</h3>
+          <p>
+            Repositories tagged with <code>portfolio</code> and <code>featured</code> on GitHub will automatically appear here in Selected Work.
+          </p>
+        </div>
+      )}
 
-                  {project.id === 'cleanzy' && (
-                    <div className="screen-cleanzy-dispatch">
-                      <div className="cleanzy-header">
-                        <span className="cleanzy-badge">DISPATCH RADAR</span>
-                        <span className="cleanzy-stat">12 ACTIVE BINS</span>
-                      </div>
-                      <div className="cleanzy-map-graphic">
-                        <div className="cleanzy-pin">📍 WARD 42 (85% FULL)</div>
-                        <div className="cleanzy-pin">🚛 FLEET UNIT #04 EN ROUTE</div>
-                      </div>
-                      <div className="cleanzy-schedule-bar">
-                        <span>NEXT PICKUP: TODAY 16:30</span>
-                      </div>
-                    </div>
-                  )}
+      {/* 2-Column Projects Grid for Selected Work */}
+      {!loading && !error && selectedProjects.length > 0 && (
+        <div className="projects-grid-2col">
+          {selectedProjects.map((project, index) => {
+            const accent = ACCENT_PALETTE[index % ACCENT_PALETTE.length];
+            const visualKey = getVisualKey(project);
+            const tagNumber = String(index + 1).padStart(2, '0');
+            const displayTitle = (project.name || 'PROJECT').toUpperCase();
+            const category = project.language ? `${project.language} · Web Platform` : 'Full Stack Application';
 
-                  {project.id === 'way2uni' && (
-                    <div className="screen-way2uni-nav">
-                      <div className="way2uni-top">
-                        <span className="way2uni-campus">BMSIT DIRECTORY</span>
-                        <span className="way2uni-live">OCCUPANCY</span>
-                      </div>
-                      <div className="way2uni-route-card">
-                        <div className="route-step">
-                          <span className="step-num">01</span>
-                          <span>Main Entrance → CSE Dept</span>
-                        </div>
-                        <div className="route-step">
-                          <span className="step-num">02</span>
-                          <span>Elevator B → IoT Lab</span>
-                        </div>
-                      </div>
-                      <div className="way2uni-eta">ETA: 3 MINS WALK (STEP-FREE)</div>
-                    </div>
-                  )}
-
-                  {project.id === 'sparkhabit' && (
-                    <div className="screen-sparkhabit-lab">
-                      <div className="spark-header">
-                        <span>DAILY SPRINT // DAY #18</span>
-                        <span className="spark-streak">🔥 18 DAYS</span>
-                      </div>
-                      <div className="spark-prompt-box">
-                        <p className="spark-prompt-title">TODAY&apos;S PROMPT:</p>
-                        <p className="spark-prompt-text">&ldquo;Tactile volume slider knob.&rdquo;</p>
-                      </div>
-                      <div className="spark-timer-bar">
-                        <span>04:12 REMAINING</span>
-                      </div>
-                    </div>
-                  )}
-
-                </div>
-
-              </div>
-            </div>
-
-            {/* Project Details Body */}
-            <div className="project-body-col">
-              
-              <div className="project-meta-row">
-                <span className="project-category-tag">{project.category}</span>
-              </div>
-
-              <h3 className="project-title">{project.title}</h3>
-
-              <p className="project-description">{project.description}</p>
-
-              {/* Key Capabilities */}
-              <div className="project-highlights-box">
-                <span className="highlights-title">KEY CAPABILITIES:</span>
-                <ul className="highlights-list">
-                  {project.highlights.map((h, i) => (
-                    <li key={i} className="highlight-item">
-                      <span className="highlight-bullet" style={{ color: project.accent }}>✦</span>
-                      <span>{h}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Tech Stack Pills */}
-              <div className="project-stack-pills">
-                {project.techStack.map((tech) => (
-                  <span key={tech} className="tech-pill">
-                    {tech}
-                  </span>
-                ))}
-              </div>
-
-              {/* Action Links */}
-              <div className="project-actions-row">
-                <a
-                  href={project.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="project-action-btn project-action-btn--primary clay-card"
+            return (
+              <article
+                key={project.id || project.name}
+                className="brutal-card project-card-2col clay-card"
+              >
+                {/* Card Banner Header */}
+                <div
+                  className="card-header-banner"
+                  style={{ background: accent, color: '#FFFFFF' }}
                 >
-                  <span>VIEW REPOSITORY</span>
-                  <ArrowUpRight size={13} />
-                </a>
+                  <span className="banner-tag">FEATURED {tagNumber}</span>
+                  <span className="project-badge-pill">
+                    {project.language ? project.language.toUpperCase() : 'GITHUB REPO'}
+                  </span>
+                </div>
 
-                {project.liveUrl && (
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="project-action-btn project-action-btn--secondary clay-card"
-                  >
-                    <span>LIVE DEMO</span>
-                    <ArrowUpRight size={13} />
-                  </a>
-                )}
-              </div>
+                {/* Interactive Visual Preview Box */}
+                <div className="project-preview-wrap">
+                  <div className="project-mockup-frame clay-card">
+                    
+                    {/* Mockup Top Window Bar */}
+                    <div className="mockup-window-bar">
+                      <div className="mockup-window-dots">
+                        <span style={{ background: '#EF333A' }} />
+                        <span style={{ background: '#FFB200' }} />
+                        <span style={{ background: '#00AA3C' }} />
+                      </div>
+                      <span className="mockup-window-title">
+                        {project.name.toLowerCase()}.local
+                      </span>
+                    </div>
 
-            </div>
+                    {/* Mockup Interactive Screen Content */}
+                    <div className="mockup-screen-content">
+                      
+                      {visualKey === 'echonex' && (
+                        <div className="screen-echonex-telemetry">
+                          <div className="telemetry-chip">
+                            <span className="pulse-dot" />
+                            <span>ESP32 FIRMWARE ONLINE</span>
+                          </div>
+                          <div className="telemetry-gauge-grid">
+                            <div className="telemetry-tile">
+                              <span className="tile-label">VOICE AGENT</span>
+                              <span className="tile-val" style={{ color: '#0072E3' }}>READY</span>
+                            </div>
+                            <div className="telemetry-tile">
+                              <span className="tile-label">SENSORS</span>
+                              <span className="tile-val" style={{ color: '#00AA3C' }}>4 ACTIVE</span>
+                            </div>
+                            <div className="telemetry-tile">
+                              <span className="tile-label">CLOUD SYNC</span>
+                              <span className="tile-val" style={{ color: '#FFB200' }}>SUPABASE</span>
+                            </div>
+                          </div>
+                          <p className="telemetry-command-log">
+                            &gt; esp32_wifi_connected (192.168.1.42)<br />
+                            &gt; telemetry: temp=24.5C, humidity=58%
+                          </p>
+                        </div>
+                      )}
 
-          </article>
-        ))}
-      </div>
+                      {visualKey === 'cleanzy' && (
+                        <div className="screen-cleanzy-dispatch">
+                          <div className="cleanzy-header">
+                            <span className="cleanzy-badge">DISPATCH RADAR</span>
+                            <span className="cleanzy-stat">12 ACTIVE BINS</span>
+                          </div>
+                          <div className="cleanzy-map-graphic">
+                            <div className="cleanzy-pin">📍 WARD 42 (85% FULL)</div>
+                            <div className="cleanzy-pin">🚛 FLEET UNIT #04 EN ROUTE</div>
+                          </div>
+                          <div className="cleanzy-schedule-bar">
+                            <span>NEXT PICKUP: TODAY 16:30</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {visualKey === 'way2uni' && (
+                        <div className="screen-way2uni-nav">
+                          <div className="way2uni-top">
+                            <span className="way2uni-campus">BMSIT DIRECTORY</span>
+                            <span className="way2uni-live">OCCUPANCY</span>
+                          </div>
+                          <div className="way2uni-route-card">
+                            <div className="route-step">
+                              <span className="step-num">01</span>
+                              <span>Main Entrance → CSE Dept</span>
+                            </div>
+                            <div className="route-step">
+                              <span className="step-num">02</span>
+                              <span>Elevator B → IoT Lab</span>
+                            </div>
+                          </div>
+                          <div className="way2uni-eta">ETA: 3 MINS WALK (STEP-FREE)</div>
+                        </div>
+                      )}
+
+                      {visualKey === 'sparkhabit' && (
+                        <div className="screen-sparkhabit-lab">
+                          <div className="spark-header">
+                            <span>DAILY SPRINT // DAY #18</span>
+                            <span className="spark-streak">🔥 18 DAYS</span>
+                          </div>
+                          <div className="spark-prompt-box">
+                            <p className="spark-prompt-title">TODAY&apos;S PROMPT:</p>
+                            <p className="spark-prompt-text">&ldquo;Tactile volume slider knob.&rdquo;</p>
+                          </div>
+                          <div className="spark-timer-bar">
+                            <span>04:12 REMAINING</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {visualKey === 'generic' && (
+                        <div className="screen-generic-telemetry">
+                          <div className="telemetry-chip">
+                            <span className="pulse-dot" />
+                            <span>GITHUB REPOSITORY ONLINE</span>
+                          </div>
+                          <div className="telemetry-gauge-grid">
+                            <div className="telemetry-tile">
+                              <span className="tile-label">PRIMARY LANG</span>
+                              <span className="tile-val" style={{ color: '#0072E3' }}>
+                                {project.language || 'CODE'}
+                              </span>
+                            </div>
+                            <div className="telemetry-tile">
+                              <span className="tile-label">STARS</span>
+                              <span className="tile-val" style={{ color: '#FFB200' }}>
+                                ⭐ {project.stars}
+                              </span>
+                            </div>
+                            <div className="telemetry-tile">
+                              <span className="tile-label">DEFAULT BRANCH</span>
+                              <span className="tile-val" style={{ color: '#00AA3C' }}>
+                                {project.default_branch || 'main'}
+                              </span>
+                            </div>
+                          </div>
+                          <p className="telemetry-command-log">
+                            &gt; repository: {project.full_name || project.name}<br />
+                            &gt; telemetry: active git tree
+                          </p>
+                        </div>
+                      )}
+
+                    </div>
+
+                  </div>
+                </div>
+
+                {/* Project Details Body */}
+                <div className="project-body-col">
+                  
+                  <div className="project-meta-row">
+                    <span className="project-category-tag">{category}</span>
+                  </div>
+
+                  <h3 className="project-title">{displayTitle}</h3>
+
+                  <p className="project-description">
+                    {project.description || 'Open source project hosted on GitHub by @Archish2007Gupta.'}
+                  </p>
+
+                  {/* Key Capabilities */}
+                  <div className="project-highlights-box">
+                    <span className="highlights-title">KEY CAPABILITIES:</span>
+                    <ul className="highlights-list">
+                      {project.highlights && project.highlights.length > 0 ? (
+                        project.highlights.map((h, i) => (
+                          <li key={i} className="highlight-item">
+                            <span className="highlight-bullet" style={{ color: accent }}>✦</span>
+                            <span>{h}</span>
+                          </li>
+                        ))
+                      ) : (
+                        <>
+                          <li className="highlight-item">
+                            <span className="highlight-bullet" style={{ color: accent }}>✦</span>
+                            <span>Real-time GitHub metrics: {project.stars} stars, {project.forks} forks</span>
+                          </li>
+                          <li className="highlight-item">
+                            <span className="highlight-bullet" style={{ color: accent }}>✦</span>
+                            <span>Maintained branch: {project.default_branch || 'main'}</span>
+                          </li>
+                        </>
+                      )}
+                    </ul>
+                  </div>
+
+                  {/* Tech Stack Pills */}
+                  <div className="project-stack-pills">
+                    {project.techStack && project.techStack.length > 0 ? (
+                      project.techStack.map((tech) => (
+                        <span key={tech} className="tech-pill">
+                          {tech}
+                        </span>
+                      ))
+                    ) : project.language ? (
+                      <span className="tech-pill">{project.language}</span>
+                    ) : null}
+                  </div>
+
+                  {/* Action Links */}
+                  <div className="project-actions-row">
+                    <a
+                      href={project.html_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="project-action-btn project-action-btn--primary clay-card"
+                    >
+                      <span>VIEW REPOSITORY</span>
+                      <ArrowUpRight size={13} />
+                    </a>
+
+                    {project.homepage && (
+                      <a
+                        href={project.homepage}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="project-action-btn project-action-btn--secondary clay-card"
+                      >
+                        <span>LIVE DEMO</span>
+                        <ArrowUpRight size={13} />
+                      </a>
+                    )}
+                  </div>
+
+                </div>
+
+              </article>
+            );
+          })}
+        </div>
+      )}
 
       <style>{`
         .projects-intro {
@@ -209,6 +359,65 @@ export default function ProjectsSection() {
           color: var(--text-gray);
           max-width: 680px;
           margin-bottom: 32px;
+        }
+
+        /* ── Loading Banner ── */
+        .projects-loading-banner {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 16px 20px;
+          background-color: var(--bg-paper);
+          border-radius: var(--radius-brand);
+          font-family: var(--font-mono);
+          font-size: 0.8rem;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          color: var(--text-main);
+          margin-bottom: 28px;
+        }
+
+        /* ── Empty Card ── */
+        .projects-empty-card {
+          padding: 48px 24px;
+          text-align: center;
+          background-color: var(--bg-paper);
+          border-radius: var(--radius-brand);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 28px;
+        }
+
+        .projects-empty-card .empty-indicator {
+          font-size: 2rem;
+          color: var(--color-blue);
+        }
+
+        .projects-empty-card h3 {
+          font-family: var(--font-display);
+          font-size: 1.3rem;
+          font-weight: 900;
+          margin: 0;
+          letter-spacing: -0.01em;
+        }
+
+        .projects-empty-card p {
+          color: var(--text-gray);
+          max-width: 520px;
+          margin: 0;
+          font-size: 0.92rem;
+          line-height: 1.5;
+        }
+
+        .projects-empty-card code {
+          background: rgba(0, 114, 227, 0.12);
+          color: var(--color-blue);
+          padding: 2px 6px;
+          border-radius: 4px;
+          font-family: var(--font-mono);
+          font-weight: 700;
         }
 
         /* ── 2-Column Grid Layout ── */
@@ -305,7 +514,8 @@ export default function ProjectsSection() {
         }
 
         /* ECHONEX SCREEN */
-        .screen-echonex-telemetry {
+        .screen-echonex-telemetry,
+        .screen-generic-telemetry {
           display: flex;
           flex-direction: column;
           gap: 8px;
@@ -317,7 +527,7 @@ export default function ProjectsSection() {
           gap: 6px;
           font-family: var(--font-mono);
           font-size: 0.65rem;
-          color: var(--color-green-light);
+          color: var(--color-green-light, #1BE349);
           font-weight: 800;
         }
 
@@ -350,12 +560,10 @@ export default function ProjectsSection() {
 
         .telemetry-command-log {
           font-family: var(--font-mono);
-          font-size: 0.58rem;
-          color: rgba(255, 255, 255, 0.65);
+          font-size: 0.6rem;
+          color: rgba(255, 255, 255, 0.45);
+          margin: 0;
           line-height: 1.4;
-          background: rgba(0, 0, 0, 0.4);
-          padding: 6px 10px;
-          border-radius: 6px;
         }
 
         /* CLEANZY SCREEN */
@@ -368,36 +576,40 @@ export default function ProjectsSection() {
         .cleanzy-header {
           display: flex;
           justify-content: space-between;
-          font-family: var(--font-mono);
-          font-size: 0.65rem;
-          font-weight: 800;
+          align-items: center;
         }
 
-        .cleanzy-badge { color: var(--color-green-light); }
+        .cleanzy-badge {
+          background: var(--color-green, #00AA3C);
+          color: #FFFFFF;
+          font-size: 0.58rem;
+          font-weight: 800;
+          padding: 2px 6px;
+          border-radius: 4px;
+        }
+
+        .cleanzy-stat {
+          font-family: var(--font-mono);
+          font-size: 0.6rem;
+          color: #FFB200;
+        }
 
         .cleanzy-map-graphic {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px dashed rgba(255, 255, 255, 0.2);
-          border-radius: 8px;
-          padding: 8px 10px;
+          background: rgba(255, 255, 255, 0.04);
+          border-radius: 6px;
+          padding: 8px;
           display: flex;
           flex-direction: column;
           gap: 4px;
-        }
-
-        .cleanzy-pin {
           font-family: var(--font-mono);
-          font-size: 0.62rem;
-          font-weight: 700;
-          color: #FFFFFF;
+          font-size: 0.58rem;
+          color: rgba(255, 255, 255, 0.8);
         }
 
         .cleanzy-schedule-bar {
           font-family: var(--font-mono);
-          font-size: 0.6rem;
-          color: var(--color-yellow);
-          font-weight: 800;
-          text-align: center;
+          font-size: 0.56rem;
+          color: rgba(255, 255, 255, 0.4);
         }
 
         /* WAY2UNI SCREEN */
@@ -411,17 +623,22 @@ export default function ProjectsSection() {
           display: flex;
           justify-content: space-between;
           font-family: var(--font-mono);
-          font-size: 0.65rem;
-          font-weight: 800;
+          font-size: 0.6rem;
         }
 
-        .way2uni-campus { color: var(--color-yellow); }
-        .way2uni-live { color: var(--color-green-light); }
+        .way2uni-campus {
+          font-weight: 800;
+          color: #FFB200;
+        }
+
+        .way2uni-live {
+          color: #1BE349;
+        }
 
         .way2uni-route-card {
-          background: rgba(255, 255, 255, 0.06);
-          border-radius: 8px;
-          padding: 8px 10px;
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 6px;
+          padding: 6px 8px;
           display: flex;
           flex-direction: column;
           gap: 4px;
@@ -429,214 +646,204 @@ export default function ProjectsSection() {
 
         .route-step {
           display: flex;
-          align-items: center;
           gap: 6px;
-          font-size: 0.68rem;
-          font-weight: 600;
+          font-size: 0.58rem;
+          color: rgba(255, 255, 255, 0.85);
         }
 
         .step-num {
           font-family: var(--font-mono);
-          font-size: 0.58rem;
-          background: rgba(255, 255, 255, 0.15);
-          padding: 1px 4px;
-          border-radius: 3px;
+          color: #0072E3;
+          font-weight: 800;
         }
 
         .way2uni-eta {
           font-family: var(--font-mono);
-          font-size: 0.62rem;
-          color: #FFFFFF;
-          font-weight: 800;
-          text-align: center;
+          font-size: 0.56rem;
+          color: rgba(255, 255, 255, 0.45);
         }
 
         /* SPARKHABIT SCREEN */
         .screen-sparkhabit-lab {
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 6px;
         }
 
         .spark-header {
           display: flex;
           justify-content: space-between;
           font-family: var(--font-mono);
-          font-size: 0.65rem;
+          font-size: 0.6rem;
+          color: #AB54F7;
           font-weight: 800;
-          color: rgba(255, 255, 255, 0.8);
         }
 
-        .spark-streak { color: #FF6100; }
+        .spark-streak {
+          color: #FFB200;
+        }
 
         .spark-prompt-box {
-          background: rgba(171, 84, 247, 0.15);
-          border: 1px solid rgba(171, 84, 247, 0.3);
-          border-radius: 8px;
-          padding: 8px 10px;
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 6px;
+          padding: 6px 8px;
         }
 
         .spark-prompt-title {
           font-family: var(--font-mono);
-          font-size: 0.55rem;
-          color: var(--color-purple-light);
-          font-weight: 800;
+          font-size: 0.5rem;
+          color: rgba(255, 255, 255, 0.4);
+          margin: 0 0 2px 0;
         }
 
         .spark-prompt-text {
-          font-size: 0.72rem;
+          font-size: 0.65rem;
+          font-weight: 700;
           color: #FFFFFF;
-          font-weight: 600;
-          margin-top: 2px;
+          margin: 0;
         }
 
         .spark-timer-bar {
           font-family: var(--font-mono);
-          font-size: 0.6rem;
-          color: var(--color-yellow);
-          font-weight: 800;
-          text-align: center;
+          font-size: 0.55rem;
+          color: rgba(255, 255, 255, 0.45);
         }
 
-        /* ── Project Body Details ── */
+        /* Project Body Column */
         .project-body-col {
-          padding: 18px 20px 22px 20px;
+          padding: 22px;
           display: flex;
           flex-direction: column;
-          gap: 14px;
           flex: 1;
-          justify-content: space-between;
         }
 
         .project-meta-row {
-          display: flex;
-          align-items: center;
-          gap: 8px;
+          margin-bottom: 6px;
         }
 
         .project-category-tag {
           font-family: var(--font-mono);
-          font-size: 0.68rem;
-          font-weight: 800;
-          color: var(--text-muted);
-          letter-spacing: 0.08em;
+          font-size: 0.72rem;
+          color: var(--text-gray);
+          font-weight: 700;
           text-transform: uppercase;
+          letter-spacing: 0.04em;
         }
 
         .project-title {
           font-family: var(--font-display);
-          font-size: 1.6rem;
-          line-height: 1.05;
-          letter-spacing: -0.03em;
-          color: var(--text-ink);
+          font-size: 1.55rem;
+          font-weight: 900;
+          color: var(--text-main);
+          margin: 0 0 10px 0;
+          letter-spacing: -0.02em;
         }
 
         .project-description {
           font-size: 0.88rem;
           line-height: 1.5;
           color: var(--text-gray);
+          margin: 0 0 16px 0;
         }
 
-        /* Highlights Box */
+        /* Highlights */
         .project-highlights-box {
-          background: rgba(244, 233, 225, 0.7);
-          border-radius: 12px;
-          padding: 12px 14px;
-          border: 1px solid rgba(0, 0, 0, 0.06);
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
+          background: rgba(0, 0, 0, 0.03);
+          border: 1px dashed rgba(0, 0, 0, 0.15);
+          border-radius: 8px;
+          padding: 10px 14px;
+          margin-bottom: 16px;
         }
 
         .highlights-title {
+          display: block;
           font-family: var(--font-mono);
-          font-size: 0.6rem;
+          font-size: 0.62rem;
           font-weight: 800;
           color: var(--text-muted);
-          letter-spacing: 0.08em;
+          letter-spacing: 0.06em;
+          margin-bottom: 6px;
         }
 
         .highlights-list {
           list-style: none;
+          padding: 0;
+          margin: 0;
           display: flex;
           flex-direction: column;
-          gap: 5px;
+          gap: 4px;
         }
 
         .highlight-item {
           display: flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 0.78rem;
+          align-items: baseline;
+          gap: 8px;
+          font-size: 0.76rem;
+          color: var(--text-main);
           font-weight: 600;
-          color: var(--text-ink);
         }
 
         .highlight-bullet {
-          font-size: 0.75rem;
-          font-weight: 900;
+          font-size: 0.7rem;
         }
 
-        /* Stack Pills */
+        /* Tech Stack */
         .project-stack-pills {
           display: flex;
           flex-wrap: wrap;
-          gap: 5px;
+          gap: 6px;
+          margin-bottom: 20px;
         }
 
         .tech-pill {
           font-family: var(--font-mono);
-          font-size: 0.62rem;
+          font-size: 0.68rem;
           font-weight: 700;
-          background: #FFFFFF;
-          border: 1px solid #000000;
-          padding: 2px 8px;
+          padding: 3px 8px;
           border-radius: var(--radius-pill);
-          color: var(--text-ink);
-          box-shadow: 1px 1px 0px #000000;
+          background: rgba(0, 0, 0, 0.06);
+          color: var(--text-main);
         }
 
         /* Actions */
         .project-actions-row {
+          margin-top: auto;
           display: flex;
-          gap: 8px;
-          flex-wrap: wrap;
-          margin-top: 4px;
+          gap: 10px;
         }
 
         .project-action-btn {
-          padding: 8px 16px;
-          border-radius: var(--radius-pill);
-          font-family: var(--font-display);
-          font-size: 0.72rem;
-          font-weight: 900;
-          letter-spacing: 0.06em;
-          display: flex;
+          flex: 1;
+          display: inline-flex;
           align-items: center;
+          justify-content: center;
           gap: 6px;
-          transition: all 0.2s ease;
+          padding: 10px 14px;
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
+          font-weight: 800;
+          letter-spacing: 0.04em;
           text-decoration: none;
+          border-radius: var(--radius-brand);
+          transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .project-action-btn:hover {
+          transform: translateY(-2px);
         }
 
         .project-action-btn--primary {
-          background: var(--text-ink);
+          background-color: #11110F;
           color: #FFFFFF;
         }
 
-        .project-action-btn--primary:hover {
-          background: var(--color-blue);
-          transform: translateY(-2px);
-        }
-
         .project-action-btn--secondary {
-          background: var(--color-yellow);
-          color: var(--text-ink);
-        }
-
-        .project-action-btn--secondary:hover {
-          transform: translateY(-2px);
+          background-color: #FFFFFF;
+          color: #11110F;
+          border: 1px solid rgba(0, 0, 0, 0.15);
         }
       `}</style>
+
     </section>
   );
 }
