@@ -8,6 +8,8 @@ import { CloseIcon } from './Icons.jsx';
 
 export default function ContactModal({ open, onClose }) {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -17,13 +19,44 @@ export default function ContactModal({ open, onClose }) {
 
   if (!open) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (loading) return;
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+          role: formData.role,
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok && data.success) {
+        setSubmitted(true);
+      } else {
+        setError(data.message || 'Unable to send your message right now. Please try again.');
+      }
+    } catch (err) {
+      setError('Unable to connect right now. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleReset = () => {
     setSubmitted(false);
+    setError('');
     setFormData({ name: '', email: '', role: 'Software / Frontend', message: '' });
     onClose();
   };
@@ -78,6 +111,12 @@ export default function ContactModal({ open, onClose }) {
           </div>
         ) : (
           <form className="modal-form" onSubmit={handleSubmit}>
+            {error && (
+              <div className="modal-error-box" role="alert">
+                <span>⚠️ {error}</span>
+              </div>
+            )}
+
             <div className="form-grid-two">
               <label className="field">
                 <span>Your Name / Handle</span>
@@ -87,6 +126,7 @@ export default function ContactModal({ open, onClose }) {
                   placeholder="e.g. Alex Chen"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  disabled={loading}
                 />
               </label>
 
@@ -98,6 +138,7 @@ export default function ContactModal({ open, onClose }) {
                   placeholder="e.g. builder@tech.org"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  disabled={loading}
                 />
               </label>
             </div>
@@ -107,6 +148,7 @@ export default function ContactModal({ open, onClose }) {
               <select
                 value={formData.role}
                 onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                disabled={loading}
               >
                 <option>Software / Frontend Engineering</option>
                 <option>UI/UX &amp; Design Systems</option>
@@ -124,11 +166,17 @@ export default function ContactModal({ open, onClose }) {
                 placeholder="Tell me about your project, timeline, or idea..."
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                disabled={loading}
               />
             </label>
 
-            <button type="submit" className="modal-submit-btn clay-card">
-              SEND MESSAGE ↗
+            <button
+              type="submit"
+              className="modal-submit-btn clay-card"
+              disabled={loading}
+              style={{ opacity: loading ? 0.75 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}
+            >
+              {loading ? 'SENDING MESSAGE...' : 'SEND MESSAGE ↗'}
             </button>
           </form>
         )}
@@ -225,6 +273,20 @@ export default function ContactModal({ open, onClose }) {
           font-family: var(--font-display);
           font-size: 0.72rem;
           font-weight: 900;
+        }
+
+        .modal-error-box {
+          background: rgba(239, 51, 58, 0.12);
+          border: 1.5px solid var(--color-red);
+          border-radius: 12px;
+          padding: 10px 14px;
+          color: var(--color-red);
+          font-size: 0.82rem;
+          font-weight: 700;
+          font-family: var(--font-mono);
+          display: flex;
+          align-items: center;
+          gap: 8px;
         }
 
         .modal-form {

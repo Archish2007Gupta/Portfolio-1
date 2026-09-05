@@ -42,8 +42,23 @@ export const loginLimiter = rateLimit({
   }
 });
 
+/**
+ * Dedicated rate limiter for contact form submissions (5 submissions per 15 min per IP)
+ */
+export const contactLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes window
+  max: 5, // Limit each IP to 5 submissions per window
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many contact submissions from this IP. Please try again after 15 minutes.'
+  }
+});
+
 export default {
   apiLimiter,
   strictLimiter,
-  loginLimiter
+  loginLimiter,
+  contactLimiter
 };

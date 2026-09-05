@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS contacts (
     email TEXT NOT NULL,
     subject TEXT,
     message TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'new',
     is_read INTEGER DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
@@ -62,3 +63,4 @@ CREATE INDEX IF NOT EXISTS idx_contacts_created_at ON contacts(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_projects_stars ON projects_cache(stars DESC);
 CREATE INDEX IF NOT EXISTS idx_certificates_category ON certificates(category);
 CREATE INDEX IF NOT EXISTS idx_sessions_expired_at ON sessions(expired_at);
+

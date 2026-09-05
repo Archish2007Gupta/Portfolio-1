@@ -36,13 +36,19 @@ export function initDatabase() {
 
   // Safe incremental migrations
   try {
-    const tableInfo = dbInstance.prepare("PRAGMA table_info(admin_users)").all();
-    const hasUpdatedAt = tableInfo.some(col => col.name === 'updated_at');
+    const adminTableInfo = dbInstance.prepare("PRAGMA table_info(admin_users)").all();
+    const hasUpdatedAt = adminTableInfo.some(col => col.name === 'updated_at');
     if (!hasUpdatedAt) {
       dbInstance.exec("ALTER TABLE admin_users ADD COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP");
     }
+
+    const contactsTableInfo = dbInstance.prepare("PRAGMA table_info(contacts)").all();
+    const hasStatus = contactsTableInfo.some(col => col.name === 'status');
+    if (!hasStatus) {
+      dbInstance.exec("ALTER TABLE contacts ADD COLUMN status TEXT NOT NULL DEFAULT 'new'");
+    }
   } catch (err) {
-    console.error('[DATABASE] Migration error checking admin_users table:', err);
+    console.error('[DATABASE] Migration error checking schema:', err);
   }
 
   // Seed or sync configured admin user from environment
