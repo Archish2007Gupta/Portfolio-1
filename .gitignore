@@ -36,3 +36,13 @@ Thumbs.db
 # Temporary files
 .cache/
 .temp/
+
+# SQLite Database & Backend
+server/data/*.db
+server/data/*.db-journal
+server/data/*.db-wal
+server/data/*.db-shm
+*.db
+server/node_modules/
+server/.env
+
