@@ -17,6 +17,7 @@ import certificatesRoutes from './routes/certificates.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import experienceRoutes from './routes/experience.routes.js';
 import skillsRoutes from './routes/skills.routes.js';
+import resumeRoutes from './routes/resume.routes.js';
 
 const app = express();
 
@@ -35,6 +36,16 @@ const certificatesDir = path.join(env.PATHS.ROOT, 'public', 'certificates');
 app.use('/certificates', express.static(certificatesDir, {
   dotfiles: 'ignore',
   index: false
+}));
+
+// Serve static resume from public/resume with traversal protection and cache headers
+const resumeDir = path.join(env.PATHS.ROOT, 'public', 'resume');
+app.use('/resume', express.static(resumeDir, {
+  dotfiles: 'ignore',
+  index: false,
+  setHeaders: (res) => {
+    res.setHeader('Cache-Control', 'public, max-age=60, must-revalidate');
+  }
 }));
 
 // CORS Configuration - Restrict to configured client origin
@@ -97,6 +108,7 @@ app.use('/api/projects', projectsRoutes);
 app.use('/api/certificates', certificatesRoutes);
 app.use('/api/experience', experienceRoutes);
 app.use('/api/skills', skillsRoutes);
+app.use('/api/resume', resumeRoutes);
 app.use('/api/admin', adminRoutes);
 
 // 404 Handler for undefined routes
