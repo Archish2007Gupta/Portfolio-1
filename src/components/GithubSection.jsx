@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { githubRepos, profile } from '../data/portfolioData.js';
 import { getProjects } from '../services/projectsApi.js';
 import { ArrowUpRight, SocialGithub } from './Icons.jsx';
+import useAnalytics from '../hooks/useAnalytics.js';
 
 const LANG_COLORS = {
   JavaScript: '#F7DF1E',
@@ -16,6 +17,7 @@ const LANG_COLORS = {
 };
 
 export default function GithubSection() {
+  const { trackGithubClick } = useAnalytics();
   const [contributionData, setContributionData] = useState(null);
   const [totalCommits, setTotalCommits] = useState(240);
   const [loading, setLoading] = useState(true);
@@ -184,6 +186,7 @@ export default function GithubSection() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="matrix-view-link"
+                onClick={() => trackGithubClick('contribution_graph')}
               >
                 <span>View Full Contribution Graph on GitHub</span>
                 <ArrowUpRight size={12} />
@@ -236,6 +239,7 @@ export default function GithubSection() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="repo-link-btn clay-card"
+                  onClick={() => trackGithubClick(repoName)}
                 >
                   <span>VIEW CODE</span>
                   <ArrowUpRight size={12} />
@@ -260,6 +264,7 @@ export default function GithubSection() {
             target="_blank"
             rel="noopener noreferrer"
             className="github-profile-btn clay-card"
+            onClick={() => trackGithubClick('github_profile')}
           >
             <span>GITHUB @Archish2007Gupta</span>
             <ArrowUpRight size={14} />

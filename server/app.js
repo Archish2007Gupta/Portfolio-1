@@ -18,6 +18,7 @@ import adminRoutes from './routes/admin.routes.js';
 import experienceRoutes from './routes/experience.routes.js';
 import skillsRoutes from './routes/skills.routes.js';
 import resumeRoutes from './routes/resume.routes.js';
+import analyticsRoutes from './routes/analytics.routes.js';
 
 const app = express();
 
@@ -109,6 +110,7 @@ app.use('/api/certificates', certificatesRoutes);
 app.use('/api/experience', experienceRoutes);
 app.use('/api/skills', skillsRoutes);
 app.use('/api/resume', resumeRoutes);
+app.use('/api/analytics', analyticsRoutes);
 app.use('/api/admin', adminRoutes);
 
 // 404 Handler for undefined routes

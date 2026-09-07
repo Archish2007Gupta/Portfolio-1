@@ -1,61 +1,71 @@
 /* ============================================================
-   Hero.jsx — Kinetic Brutalism Hero Component
+   Hero.jsx — Nirmaan 2026 Signature Hero Exhibition
    ============================================================ */
 
 import React from 'react';
 import { liveMetrics, heroCards } from '../data/portfolioData.js';
 import { ArrowUpRight } from './Icons.jsx';
 import useResume from '../hooks/useResume.js';
+import useAnalytics from '../hooks/useAnalytics.js';
 
 export default function Hero({ onOpenContact }) {
   const resume = useResume();
+  const { trackResumeView } = useAnalytics();
   return (
     <section className="hero-section" id="hero">
       {/* Top Multi-Color Stripe Bar */}
-      <div className="hero-stripe-bar">
-        <span style={{ background: '#EF333A' }} />
-        <span style={{ background: '#FFB200' }} />
-        <span style={{ background: '#00AA3C' }} />
-        <span style={{ background: '#0072E3' }} />
-        <span style={{ background: '#AB54F7' }} />
+      <div className="top-stripe-bar">
+        <span style={{ background: 'var(--color-red)' }} />
+        <span style={{ background: 'var(--color-orange)' }} />
+        <span style={{ background: 'var(--color-yellow)' }} />
+        <span style={{ background: 'var(--color-green)' }} />
+        <span style={{ background: 'var(--color-blue)' }} />
+        <span style={{ background: 'var(--color-purple)' }} />
       </div>
 
-      <div className="hero-container">
-        {/* Top Status & Year Pill */}
-        <div className="hero-meta-row">
-          <div className="hero-meta-pill">
-            <span className="hero-meta-pill__dot" />
-            <span className="hero-meta-pill__text">SYSTEM STATUS: ALL RADARS OPERATIONAL</span>
-          </div>
-          <div className="hero-year-badge clay-badge">
-            <span>EDITION &apos;26</span>
-          </div>
-        </div>
-
-        {/* Massive Typographic Display */}
-        <div className="hero-headline-block">
-          <h1 className="hero-headline">
-            <span className="hero-headline__line hero-headline__line--1">
-              ARCHISHA
+      <div className="hero-inner">
+        {/* Left Column: Bold Editorial Statement */}
+        <div className="hero-main-col">
+          
+          {/* Top Pill Badges */}
+          <div className="hero-badge-stack">
+            <span className="sticker-tag sticker-tag--blue">
+              ✦ ARCHISHA GUPTA
             </span>
-            <span className="hero-headline__line hero-headline__line--2">
-              <span className="hero-name-accent">GUPTA</span>
-              <span className="hero-badge-tag clay-badge">B.TECH CSE &apos;29</span>
+            <span className="sticker-tag sticker-tag--yellow">
+              CSE @ BMSIT 2025–29
+            </span>
+            <span className="sticker-tag sticker-tag--green-light">
+              ● AVAILABLE FOR ROLES
+            </span>
+          </div>
+
+          {/* Big Typography Headline with Staggered Delays */}
+          <h1 className="hero-title">
+            <span className="hero-title-line" style={{ color: 'var(--color-yellow)' }}>
+              MOST BUILDERS
+            </span>
+            <span className="hero-title-line">
+              PICK A SIDE.
+            </span>
+            <span className="hero-title-line hero-title-line--accent">
+              I DON&apos;T.
             </span>
           </h1>
 
-          <p className="hero-subheadline">
-            Full-Stack Systems Builder &amp; Creative Technologist crafting high-impact digital experiences,
-            distributed backend engines, and modern visual identities.
+          {/* Subtext Statement */}
+          <p className="hero-description">
+            Building at the intersection of <strong style={{ color: 'var(--color-blue)' }}>code</strong> and{' '}
+            <strong style={{ color: 'var(--color-orange)' }}>design</strong>. Design Associate @{' '}
+            <span className="hero-highlight">Coding Club BMSIT</span> &amp; Editorial Director @{' '}
+            <span className="hero-highlight">Rotaract BMS Yelahanka</span>. Exploring Web Experiences, UI/UX Systems, AI, and IoT Hardware.
           </p>
-        </div>
 
-        {/* Action Button Strip & Metrics */}
-        <div className="hero-interactive-strip">
-          <div className="hero-cta-group">
-            <a href="#projects" className="hero-primary-btn clay-btn">
+          {/* Action CTAs */}
+          <div className="hero-action-row">
+            <a href="#projects" className="hero-primary-btn clay-card">
               <span>EXPLORE WORK</span>
-              <ArrowUpRight size={18} />
+              <ArrowUpRight size={14} />
             </a>
             <button
               onClick={onOpenContact}
@@ -71,6 +81,7 @@ export default function Hero({ onOpenContact }) {
                 className="hero-resume-btn clay-card"
                 title="View Archisha's Resume (PDF)"
                 id="hero-view-cv-btn"
+                onClick={() => trackResumeView()}
               >
                 <span>VIEW CV</span>
                 <ArrowUpRight size={14} />
@@ -80,184 +91,215 @@ export default function Hero({ onOpenContact }) {
 
           {/* Mini Skill Cards */}
           <div className="hero-mini-cards-grid">
-            {heroCards.map((card, idx) => (
-              <div
-                key={idx}
-                className="hero-mini-card clay-card"
-                style={{ '--card-accent': card.accent }}
-              >
-                <div className="hero-mini-card__header">
-                  <span className="hero-mini-card__tag">{card.tag}</span>
-                  <span className="hero-mini-card__dot" style={{ background: card.accent }} />
+            {heroCards.map((card) => (
+              <div key={card.number} className="brutal-card hero-mini-card">
+                <div
+                  className="card-header-banner"
+                  style={{ background: card.accent }}
+                >
+                  <span>{card.number}</span>
+                  <span>{card.title}</span>
                 </div>
-                <h2 className="hero-mini-card__title">{card.title}</h2>
-                <p className="hero-mini-card__metric">{card.metric}</p>
+                <div className="hero-card-body">
+                  <ul>
+                    {card.items.map((item) => (
+                      <li key={item}>✦ {item}</li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             ))}
           </div>
+
         </div>
 
-        {/* Live Metrics Row */}
-        <div className="hero-metrics-ribbon">
-          {liveMetrics.map((item, idx) => (
-            <div key={idx} className="hero-metric-cell">
-              <span className="hero-metric-cell__value">{item.value}</span>
-              <span className="hero-metric-cell__label">{item.label}</span>
+        {/* Right Column: Builder Telemetry & Live Status Station */}
+        <div className="hero-side-col">
+          
+          {/* Live Metrics Card (Matching Nirmaan Live Event Card) */}
+          <div className="clay-card hero-metrics-card">
+            <div className="metrics-card-header">
+              <span className="metrics-status-pill">
+                <span className="pulse-dot" />
+                <span>BUILDER TELEMETRY</span>
+              </span>
+              <span className="metrics-loc-tag">BLR, INDIA</span>
             </div>
-          ))}
+
+            <div className="metrics-grid">
+              {liveMetrics.map(([label, value], i) => {
+                const colors = ['#0072E3', '#00AA3C', '#FF6100', '#AB54F7'];
+                return (
+                  <div key={label} className="metric-tile">
+                    <p className="metric-label">{label}</p>
+                    <p className="metric-value" style={{ color: colors[i] || '#000000' }}>
+                      {value}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="metrics-card-footer">
+              <p className="metrics-quote">
+                &ldquo;Turning complex requirements into tactile, expressive, and reliable digital systems.&rdquo;
+              </p>
+            </div>
+          </div>
+
+          {/* Live Craft Radar Station Box */}
+          <div className="clay-card hero-dispatch-box">
+            <div className="dispatch-header">
+              <span className="dispatch-kicker">CURRENT FOCUS // 2026</span>
+              <span className="pulse-dot" />
+            </div>
+            
+            <div className="dispatch-items-list">
+              <div className="dispatch-item">
+                <span className="dispatch-dot" style={{ background: '#0072E3' }} />
+                <span>React, Next.js &amp; Responsive Web Architecture</span>
+              </div>
+              <div className="dispatch-item">
+                <span className="dispatch-dot" style={{ background: '#FFB200' }} />
+                <span>Tactile Claymorphic UI/UX &amp; Design Systems</span>
+              </div>
+              <div className="dispatch-item">
+                <span className="dispatch-dot" style={{ background: '#00AA3C' }} />
+                <span>ESP32 Hardware Microcontrollers &amp; Telemetry</span>
+              </div>
+            </div>
+
+            <button onClick={onOpenContact} className="dispatch-cta-btn clay-card">
+              <span>INITIATE COLLABORATION ↗</span>
+            </button>
+          </div>
+
         </div>
+
       </div>
 
       <style>{`
         .hero-section {
+          background-color: var(--bg-paper);
+          border-bottom: var(--border-thick);
           position: relative;
-          width: 100%;
-          min-height: calc(100vh - 40px);
-          background: var(--color-paper);
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          padding-bottom: 40px;
-          overflow: hidden;
+          padding-top: 60px;
         }
 
-        /* Multi-Color Top Stripe */
-        .hero-stripe-bar {
-          display: flex;
-          width: 100%;
-          height: 8px;
-          border-bottom: 2.5px solid #000000;
+        @media (min-width: 1025px) {
+          .hero-section {
+            padding-top: 0;
+            border-top: var(--border-thick);
+            border-left: var(--border-thick);
+            border-right: var(--border-thick);
+            border-radius: var(--radius-brand) var(--radius-brand) 0 0;
+            margin: 0 16px;
+            overflow: hidden;
+          }
         }
 
-        .hero-stripe-bar span {
+        .top-stripe-bar {
+          display: flex;
+          height: 10px;
+          width: 100%;
+          border-bottom: 2px solid #000000;
+        }
+
+        .top-stripe-bar span {
           flex: 1;
-          height: 100%;
         }
 
-        .hero-container {
-          max-width: var(--max-content-width);
-          width: 100%;
+        .hero-inner {
+          max-width: 1400px;
           margin: 0 auto;
-          padding: 32px 32px 0 32px;
+          padding: 40px 20px 60px 20px;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 40px;
+        }
+
+        @media (min-width: 1025px) {
+          .hero-inner {
+            grid-template-columns: 1.35fr 0.85fr;
+            padding: 56px 44px 72px 44px;
+            gap: 48px;
+            align-items: start;
+          }
+        }
+
+        /* ── Left Column ── */
+        .hero-main-col {
           display: flex;
           flex-direction: column;
-          gap: 32px;
+          gap: 24px;
         }
 
-        /* Meta Row */
-        .hero-meta-row {
+        .hero-badge-stack {
           display: flex;
-          justify-content: space-between;
-          align-items: center;
           flex-wrap: wrap;
-          gap: 16px;
+          gap: 8px;
         }
 
-        .hero-meta-pill {
+        .sticker-tag {
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
+          font-weight: 800;
+          letter-spacing: 0.06em;
+          padding: 6px 14px;
+          border-radius: var(--radius-pill);
+          border: var(--border-thin);
+          box-shadow: 2px 2px 0px #000000;
           display: inline-flex;
           align-items: center;
-          gap: 10px;
-          background: #000000;
-          color: #FFFFFF;
-          padding: 8px 18px;
-          border-radius: var(--radius-pill);
-          font-family: var(--font-mono);
-          font-size: 0.75rem;
-          font-weight: 700;
-          letter-spacing: 0.08em;
         }
 
-        .hero-meta-pill__dot {
-          width: 8px;
-          height: 8px;
-          background: var(--color-green);
-          border-radius: 50%;
-          animation: pulseGreen 1.6s ease-in-out infinite alternate;
-        }
-
-        @keyframes pulseGreen {
-          0% { opacity: 0.4; transform: scale(0.8); }
-          100% { opacity: 1; transform: scale(1.2); }
-        }
-
-        .hero-year-badge {
-          background: var(--color-yellow);
-          color: #000000;
-          font-family: var(--font-display);
-          font-weight: 900;
-          font-size: 0.85rem;
-          padding: 6px 16px;
-          border-radius: var(--radius-pill);
-          border: 2px solid #000000;
-        }
-
-        /* Massive Headline */
-        .hero-headline-block {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-        }
-
-        .hero-headline {
-          font-family: var(--font-display);
-          font-weight: 900;
-          font-size: clamp(3.5rem, 11vw, 9.5rem);
-          line-height: 0.88;
-          letter-spacing: -0.04em;
-          text-transform: uppercase;
-          color: #11110F;
-          margin: 0;
-        }
-
-        .hero-headline__line {
-          display: block;
-        }
-
-        .hero-headline__line--2 {
-          display: flex;
-          align-items: baseline;
-          flex-wrap: wrap;
-          gap: 20px;
-        }
-
-        .hero-name-accent {
-          color: var(--color-red);
-          text-shadow: 4px 4px 0px #000000;
-          -webkit-text-stroke: 1px #000000;
-        }
-
-        .hero-badge-tag {
-          font-family: var(--font-mono);
-          font-size: clamp(0.75rem, 1.6vw, 1.25rem);
-          font-weight: 800;
-          letter-spacing: 0.04em;
+        .sticker-tag--blue {
           background: var(--color-blue);
           color: #FFFFFF;
-          padding: 6px 18px;
-          border-radius: var(--radius-pill);
-          border: 2.5px solid #000000;
-          vertical-align: middle;
-          box-shadow: 3px 3px 0px #000000;
         }
 
-        .hero-subheadline {
-          font-family: var(--font-body);
-          font-size: clamp(1rem, 1.8vw, 1.35rem);
-          font-weight: 500;
-          line-height: 1.45;
-          max-width: 780px;
-          color: #2D2D2A;
-          margin-top: 8px;
+        .sticker-tag--yellow {
+          background: var(--color-yellow);
+          color: #11110F;
         }
 
-        /* Action Buttons & Mini Cards */
-        .hero-interactive-strip {
+        .sticker-tag--green-light {
+          background: var(--color-green-light);
+          color: #11110F;
+        }
+
+        .hero-title {
           display: flex;
           flex-direction: column;
-          gap: 28px;
+          font-family: var(--font-display);
+          font-size: clamp(2.8rem, 6.2vw, 5.2rem);
+          line-height: 0.95;
+          letter-spacing: -0.04em;
+          font-weight: 900;
+          color: #11110F;
         }
 
-        .hero-cta-group {
+        .hero-title-line--accent {
+          color: var(--color-red);
+          text-shadow: 3px 3px 0px #000000;
+        }
+
+        .hero-description {
+          font-size: clamp(1rem, 1.3vw, 1.2rem);
+          line-height: 1.6;
+          color: var(--text-gray);
+          max-width: 680px;
+        }
+
+        .hero-highlight {
+          color: var(--text-ink);
+          font-weight: 800;
+          text-decoration: underline;
+          text-decoration-color: var(--color-yellow);
+          text-decoration-thickness: 3px;
+        }
+
+        .hero-action-row {
           display: flex;
           flex-wrap: wrap;
           gap: 16px;
@@ -265,44 +307,40 @@ export default function Hero({ onOpenContact }) {
         }
 
         .hero-primary-btn {
-          background: var(--color-yellow);
-          color: #000000;
-          padding: 14px 32px;
-          border-radius: var(--radius-pill);
-          border: 2.5px solid #000000;
-          font-family: var(--font-display);
-          font-size: 1rem;
-          font-weight: 900;
-          letter-spacing: 0.04em;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          box-shadow: 4px 4px 0px #000000;
-          text-decoration: none;
-          transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .hero-primary-btn:hover {
-          transform: translate(-2px, -2px);
-          box-shadow: 6px 6px 0px #000000;
-          background: #FFC024;
-        }
-
-        .hero-secondary-btn {
-          background: #FFFFFF;
-          color: #000000;
+          background: var(--text-ink);
+          color: #FFFFFF;
           padding: 14px 28px;
           border-radius: var(--radius-pill);
           font-family: var(--font-display);
           font-size: 0.92rem;
           font-weight: 900;
           letter-spacing: 0.06em;
-          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          text-decoration: none;
+          transition: all 0.2s ease;
+        }
+
+        .hero-primary-btn:hover {
+          background: var(--color-blue);
+          transform: translateY(-3px);
+        }
+
+        .hero-secondary-btn {
+          background: var(--color-yellow);
+          color: #11110F;
+          padding: 14px 28px;
+          border-radius: var(--radius-pill);
+          font-family: var(--font-display);
+          font-size: 0.92rem;
+          font-weight: 900;
+          letter-spacing: 0.06em;
           transition: all 0.2s ease;
         }
 
         .hero-secondary-btn:hover {
-          background: #000000;
+          background: var(--color-orange);
           color: #FFFFFF;
           transform: translateY(-3px);
         }
@@ -332,115 +370,191 @@ export default function Hero({ onOpenContact }) {
         /* Mini Skill Cards */
         .hero-mini-cards-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-          gap: 16px;
+          grid-template-columns: 1fr;
+          gap: 14px;
+          margin-top: 10px;
+        }
+
+        @media (min-width: 640px) {
+          .hero-mini-cards-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
         }
 
         .hero-mini-card {
-          background: #FFFFFF;
-          padding: 18px 20px;
-          border-radius: var(--radius-card);
+          border-radius: 14px;
+          overflow: hidden;
+        }
+
+        .hero-card-body {
+          padding: 12px 14px;
+        }
+
+        .hero-card-body ul {
+          list-style: none;
           display: flex;
           flex-direction: column;
-          gap: 8px;
-          border-left: 6px solid var(--card-accent);
-          transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+          gap: 4px;
         }
 
-        .hero-mini-card:hover {
-          transform: translateY(-4px);
+        .hero-card-body li {
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
+          font-weight: 700;
+          color: var(--text-ink);
         }
 
-        .hero-mini-card__header {
+        /* ── Right Column ── */
+        .hero-side-col {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+        }
+
+        /* Live Metrics Card */
+        .hero-metrics-card {
+          background: #FFFFFF;
+          border-radius: 20px;
+          padding: 24px;
+          border: var(--border-medium);
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        .metrics-card-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
         }
 
-        .hero-mini-card__tag {
+        .metrics-status-pill {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
+          font-weight: 800;
+          color: var(--text-ink);
+        }
+
+        .metrics-loc-tag {
+          font-family: var(--font-mono);
+          font-size: 0.65rem;
+          font-weight: 800;
+          background: var(--bg-paper);
+          padding: 2px 8px;
+          border-radius: var(--radius-pill);
+          border: 1px solid rgba(0, 0, 0, 0.15);
+        }
+
+        .metrics-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 12px;
+        }
+
+        .metric-tile {
+          background: var(--bg-paper);
+          border-radius: 12px;
+          padding: 12px 14px;
+          border: 1px solid rgba(0, 0, 0, 0.08);
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+
+        .metric-label {
+          font-family: var(--font-mono);
+          font-size: 0.65rem;
+          font-weight: 700;
+          color: var(--text-muted);
+          text-transform: uppercase;
+        }
+
+        .metric-value {
+          font-family: var(--font-display);
+          font-size: 1.6rem;
+          font-weight: 900;
+          line-height: 1;
+        }
+
+        .metrics-card-footer {
+          border-top: 1px dashed rgba(0, 0, 0, 0.15);
+          padding-top: 12px;
+        }
+
+        .metrics-quote {
+          font-size: 0.84rem;
+          line-height: 1.45;
+          font-weight: 600;
+          color: var(--text-gray);
+          font-style: italic;
+        }
+
+        /* Dispatch Box */
+        .hero-dispatch-box {
+          background: #11110F;
+          border-radius: 20px;
+          padding: 22px;
+          color: #FFFFFF;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+
+        .dispatch-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .dispatch-kicker {
           font-family: var(--font-mono);
           font-size: 0.68rem;
           font-weight: 800;
           letter-spacing: 0.08em;
-          color: #71716D;
-          text-transform: uppercase;
+          color: var(--color-yellow);
         }
 
-        .hero-mini-card__dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-        }
-
-        .hero-mini-card__title {
-          font-family: var(--font-display);
-          font-size: 1.05rem;
-          font-weight: 900;
-          color: #11110F;
-          margin: 0;
-        }
-
-        .hero-mini-card__metric {
-          font-family: var(--font-body);
-          font-size: 0.8rem;
-          font-weight: 600;
-          color: #555550;
-          margin: 0;
-        }
-
-        /* Metrics Ribbon */
-        .hero-metrics-ribbon {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-          background: #000000;
-          border-radius: var(--radius-card);
-          border: 3px solid #000000;
-          box-shadow: var(--shadow-hard);
-          overflow: hidden;
-        }
-
-        .hero-metric-cell {
-          padding: 20px 24px;
+        .dispatch-items-list {
           display: flex;
           flex-direction: column;
-          gap: 4px;
-          border-right: 2px solid #222220;
+          gap: 8px;
         }
 
-        .hero-metric-cell:last-child {
-          border-right: none;
+        .dispatch-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 0.82rem;
+          font-weight: 600;
+          color: rgba(255, 255, 255, 0.9);
         }
 
-        .hero-metric-cell__value {
+        .dispatch-dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          flex-shrink: 0;
+        }
+
+        .dispatch-cta-btn {
+          background: var(--color-yellow);
+          color: #11110F;
+          padding: 10px 18px;
+          border-radius: var(--radius-pill);
           font-family: var(--font-display);
-          font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+          font-size: 0.78rem;
           font-weight: 900;
-          color: var(--color-yellow);
-          line-height: 1;
+          text-align: center;
+          margin-top: 4px;
+          transition: all 0.2s ease;
         }
 
-        .hero-metric-cell__label {
-          font-family: var(--font-mono);
-          font-size: 0.7rem;
-          font-weight: 700;
-          letter-spacing: 0.08em;
-          color: #A3A39E;
-          text-transform: uppercase;
-        }
-
-        @media (max-width: 768px) {
-          .hero-container {
-            padding: 20px 16px 0 16px;
-            gap: 24px;
-          }
-
-          .hero-metrics-ribbon {
-            grid-template-columns: 1fr 1fr;
-          }
-
-          .hero-headline__line--2 {
-            gap: 12px;
-          }
+        .dispatch-cta-btn:hover {
+          background: #FFFFFF;
+          transform: translateY(-2px);
         }
       `}</style>
     </section>

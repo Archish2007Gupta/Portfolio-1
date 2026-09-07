@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { getProjects } from '../services/projectsApi.js';
 import { ArrowUpRight } from './Icons.jsx';
+import useAnalytics from '../hooks/useAnalytics.js';
 
 const ACCENT_PALETTE = ['#0072E3', '#00AA3C', '#FFB200', '#AB54F7', '#EF333A', '#FF6100'];
 
@@ -22,6 +23,7 @@ function getVisualKey(project) {
 }
 
 export default function ProjectsSection() {
+  const { trackProjectClick, trackGithubClick } = useAnalytics();
   const [selectedProjects, setSelectedProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -327,6 +329,7 @@ export default function ProjectsSection() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="project-action-btn project-action-btn--primary clay-card"
+                      onClick={() => trackGithubClick(project.name)}
                     >
                       <span>VIEW REPOSITORY</span>
                       <ArrowUpRight size={13} />
@@ -338,6 +341,7 @@ export default function ProjectsSection() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="project-action-btn project-action-btn--secondary clay-card"
+                        onClick={() => trackProjectClick(project.name, 'demo')}
                       >
                         <span>LIVE DEMO</span>
                         <ArrowUpRight size={13} />

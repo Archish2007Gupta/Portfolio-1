@@ -31,6 +31,14 @@ export default function AdminPage() {
   const [messageToDelete, setMessageToDelete] = useState(null);
   const [actionLoadingId, setActionLoadingId] = useState(null);
 
+  // Analytics Tab State
+  const [activeAdminTab, setActiveAdminTab] = useState('inbox');
+  const [analyticsSummary, setAnalyticsSummary] = useState(null);
+  const [analyticsTimeseries, setAnalyticsTimeseries] = useState(null);
+  const [analyticsRange, setAnalyticsRange] = useState('30d');
+  const [loadingAnalytics, setLoadingAnalytics] = useState(false);
+  const [analyticsError, setAnalyticsError] = useState('');
+
   // 1. Initial Session Check
   useEffect(() => {
     checkSession();
@@ -128,6 +136,44 @@ export default function AdminPage() {
       fetchMessages();
     }
   }, [authenticated, fetchStats, fetchMessages]);
+
+  // Fetch Analytics Data
+  const fetchAnalytics = useCallback(async (range = analyticsRange) => {
+    try {
+      setLoadingAnalytics(true);
+      setAnalyticsError('');
+
+      const [summaryRes, timeseriesRes] = await Promise.all([
+        fetch(`${API_BASE}/api/admin/analytics/summary`, { credentials: 'include' }),
+        fetch(`${API_BASE}/api/admin/analytics/timeseries?range=${encodeURIComponent(range)}`, { credentials: 'include' })
+      ]);
+
+      if (summaryRes.status === 401 || timeseriesRes.status === 401) {
+        setAuthenticated(false);
+        return;
+      }
+
+      const summaryData = await summaryRes.json();
+      const timeseriesData = await timeseriesRes.json();
+
+      if (summaryRes.ok && summaryData.success) {
+        setAnalyticsSummary(summaryData.summary);
+      }
+      if (timeseriesRes.ok && timeseriesData.success) {
+        setAnalyticsTimeseries(timeseriesData);
+      }
+    } catch (err) {
+      setAnalyticsError('Unable to load visitor analytics.');
+    } finally {
+      setLoadingAnalytics(false);
+    }
+  }, [analyticsRange]);
+
+  useEffect(() => {
+    if (authenticated && activeAdminTab === 'analytics') {
+      fetchAnalytics(analyticsRange);
+    }
+  }, [authenticated, activeAdminTab, analyticsRange, fetchAnalytics]);
 
   // 4. Handle Login
   const handleLogin = async (e) => {
@@ -401,7 +447,28 @@ export default function AdminPage() {
           </div>
         </header>
 
-        {/* Metric Cards Row */}
+        {/* Tab Switcher */}
+        <div className="admin-nav-tabs">
+          <button
+            className={`admin-nav-tab ${activeAdminTab === 'inbox' ? 'active' : ''}`}
+            onClick={() => setActiveAdminTab('inbox')}
+            id="admin-tab-inbox"
+          >
+            <span>✉ CONTACT INBOX</span>
+            {stats.newMessages > 0 && <span className="tab-badge">{stats.newMessages}</span>}
+          </button>
+          <button
+            className={`admin-nav-tab ${activeAdminTab === 'analytics' ? 'active' : ''}`}
+            onClick={() => setActiveAdminTab('analytics')}
+            id="admin-tab-analytics"
+          >
+            <span>📊 VISITOR ANALYTICS &amp; INSIGHTS</span>
+          </button>
+        </div>
+
+        {activeAdminTab === 'inbox' && (
+          <>
+            {/* Metric Cards Row */}
         <section className="metrics-grid">
           <div className="metric-card">
             <span className="metric-label">TOTAL INBOX</span>
@@ -653,6 +720,253 @@ export default function AdminPage() {
           )}
 
         </main>
+          </>
+        )}
+
+        {/* ── ANALYTICS VIEW ── */}
+        {activeAdminTab === 'analytics' && (
+          <div className="analytics-dashboard-view">
+            {/* Analytics Metric Cards Grid */}
+            <section className="analytics-metrics-grid">
+              <div className="metric-card">
+                <span className="metric-label">TOTAL VISITS</span>
+                <div className="metric-value text-blue">
+                  {analyticsSummary ? analyticsSummary.totalVisits : 'N/A'}
+                </div>
+                <span className="metric-sub">Portfolio page views</span>
+              </div>
+
+              <div className="metric-card">
+                <span className="metric-label">UNIQUE SESSIONS</span>
+                <div className="metric-value text-green">
+                  {analyticsSummary ? analyticsSummary.uniqueSessions : 'N/A'}
+                </div>
+                <span className="metric-sub">Estimated unique visitors</span>
+              </div>
+
+              <div className="metric-card">
+                <span className="metric-label">PROJECT INTERACTIONS</span>
+                <div className="metric-value text-yellow">
+                  {analyticsSummary ? analyticsSummary.projectInteractions : 'N/A'}
+                </div>
+                <span className="metric-sub">Views &amp; demo clicks</span>
+              </div>
+
+              <div className="metric-card">
+                <span className="metric-label">GITHUB CLICKS</span>
+                <div className="metric-value">
+                  {analyticsSummary ? analyticsSummary.githubClicks : 'N/A'}
+                </div>
+                <span className="metric-sub">Repo &amp; profile views</span>
+              </div>
+
+              <div className="metric-card">
+                <span className="metric-label">RESUME VIEWS</span>
+                <div className="metric-value text-purple">
+                  {analyticsSummary ? analyticsSummary.resumeViews : 'N/A'}
+                </div>
+                <span className="metric-sub">PDF previews opened</span>
+              </div>
+
+              <div className="metric-card">
+                <span className="metric-label">RESUME DOWNLOADS</span>
+                <div className="metric-value text-purple">
+                  {analyticsSummary ? analyticsSummary.resumeDownloads : 'N/A'}
+                </div>
+                <span className="metric-sub">Direct file downloads</span>
+              </div>
+
+              <div className="metric-card">
+                <span className="metric-label">CONTACT SUCCESSES</span>
+                <div className="metric-value text-green">
+                  {analyticsSummary ? analyticsSummary.contactSuccesses : 'N/A'}
+                </div>
+                <span className="metric-sub">Inquiries submitted</span>
+              </div>
+
+              <div className="metric-card highlight-green">
+                <span className="metric-label">CONVERSION RATE</span>
+                <div className="metric-value text-green">
+                  {analyticsSummary ? analyticsSummary.conversionRate : 'N/A'}
+                </div>
+                <span className="metric-sub">Visits to contact ratio</span>
+              </div>
+            </section>
+
+            {/* Time-Series & Detailed Breakdown Panel */}
+            <main className="inbox-panel">
+              <div className="panel-header">
+                <div>
+                  <h2 className="panel-title">ACTIVITY TRENDS &amp; TELEMETRY</h2>
+                  <p className="panel-desc">
+                    Aggregated daily portfolio interactions over selected time horizon
+                  </p>
+                </div>
+
+                {/* Range Filter Buttons */}
+                <div className="filter-tabs">
+                  <button
+                    className={`tab-btn ${analyticsRange === '7d' ? 'active' : ''}`}
+                    onClick={() => setAnalyticsRange('7d')}
+                    id="range-7d-btn"
+                  >
+                    7 DAYS
+                  </button>
+                  <button
+                    className={`tab-btn ${analyticsRange === '30d' ? 'active' : ''}`}
+                    onClick={() => setAnalyticsRange('30d')}
+                    id="range-30d-btn"
+                  >
+                    30 DAYS
+                  </button>
+                  <button
+                    className={`tab-btn ${analyticsRange === '90d' ? 'active' : ''}`}
+                    onClick={() => setAnalyticsRange('90d')}
+                    id="range-90d-btn"
+                  >
+                    90 DAYS
+                  </button>
+                  <button
+                    onClick={() => fetchAnalytics(analyticsRange)}
+                    disabled={loadingAnalytics}
+                    className="btn-refresh"
+                    title="Refresh analytics"
+                  >
+                    {loadingAnalytics ? '...' : '↻'}
+                  </button>
+                </div>
+              </div>
+
+              {analyticsError && (
+                <div className="dashboard-error-banner" role="alert">
+                  <span>⚠️ {analyticsError}</span>
+                  <button onClick={() => fetchAnalytics(analyticsRange)} className="btn-retry">
+                    Retry
+                  </button>
+                </div>
+              )}
+
+              {loadingAnalytics ? (
+                <div className="inbox-loading-state">
+                  <div className="spinner"></div>
+                  <p>Aggregating telemetry records...</p>
+                </div>
+              ) : (
+                <>
+                  {/* Daily Activity Breakdown Table */}
+                  <div className="analytics-table-wrap">
+                    <table className="analytics-table">
+                      <thead>
+                        <tr>
+                          <th>DATE</th>
+                          <th>VISITS</th>
+                          <th>SESSIONS</th>
+                          <th>PROJECT CLICKS</th>
+                          <th>GITHUB CLICKS</th>
+                          <th>RESUME VIEWS</th>
+                          <th>RESUME DL</th>
+                          <th>CONTACTS</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {analyticsTimeseries?.timeline && analyticsTimeseries.timeline.length > 0 ? (
+                          analyticsTimeseries.timeline
+                            .slice()
+                            .reverse()
+                            .map((day) => (
+                              <tr key={day.date}>
+                                <td className="date-cell">
+                                  <strong>{day.date}</strong>
+                                </td>
+                                <td>
+                                  <span className={day.visits > 0 ? 'cell-val-active' : 'cell-val-zero'}>
+                                    {day.visits}
+                                  </span>
+                                </td>
+                                <td>
+                                  <span className={day.uniqueSessions > 0 ? 'cell-val-active' : 'cell-val-zero'}>
+                                    {day.uniqueSessions}
+                                  </span>
+                                </td>
+                                <td>
+                                  <span className={day.projectClicks > 0 ? 'cell-val-active' : 'cell-val-zero'}>
+                                    {day.projectClicks}
+                                  </span>
+                                </td>
+                                <td>
+                                  <span className={day.githubClicks > 0 ? 'cell-val-active' : 'cell-val-zero'}>
+                                    {day.githubClicks}
+                                  </span>
+                                </td>
+                                <td>
+                                  <span className={day.resumeViews > 0 ? 'cell-val-active' : 'cell-val-zero'}>
+                                    {day.resumeViews}
+                                  </span>
+                                </td>
+                                <td>
+                                  <span className={day.resumeDownloads > 0 ? 'cell-val-active' : 'cell-val-zero'}>
+                                    {day.resumeDownloads}
+                                  </span>
+                                </td>
+                                <td>
+                                  <span className={day.contactSuccesses > 0 ? 'cell-val-highlight' : 'cell-val-zero'}>
+                                    {day.contactSuccesses}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))
+                        ) : (
+                          <tr>
+                            <td colSpan="8" style={{ textAlign: 'center', padding: '24px', color: '#71717a' }}>
+                              No activity recorded in this time range.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Top Projects & Sections Grid */}
+                  <div className="analytics-breakdown-grid">
+                    <div className="breakdown-card">
+                      <h3 className="breakdown-title">TOP INTERACTED PROJECTS</h3>
+                      {analyticsSummary?.topProjects && analyticsSummary.topProjects.length > 0 ? (
+                        <div className="breakdown-list">
+                          {analyticsSummary.topProjects.map((p, idx) => (
+                            <div key={p.name || idx} className="breakdown-item">
+                              <span className="breakdown-rank">#{idx + 1}</span>
+                              <span className="breakdown-name">{p.name}</span>
+                              <span className="breakdown-count">{p.count} events</span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="breakdown-empty">No project interaction telemetry yet.</p>
+                      )}
+                    </div>
+
+                    <div className="breakdown-card">
+                      <h3 className="breakdown-title">TOP VIEWED SECTIONS</h3>
+                      {analyticsSummary?.topSections && analyticsSummary.topSections.length > 0 ? (
+                        <div className="breakdown-list">
+                          {analyticsSummary.topSections.map((s, idx) => (
+                            <div key={s.section || idx} className="breakdown-item">
+                              <span className="breakdown-rank">#{idx + 1}</span>
+                              <span className="breakdown-name">#{s.section}</span>
+                              <span className="breakdown-count">{s.count} views</span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="breakdown-empty">No section telemetry recorded yet.</p>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+            </main>
+          </div>
+        )}
       </div>
 
       {/* ── View Full Message Modal ── */}
@@ -895,6 +1209,175 @@ function AdminStyles() {
 
       .form-group input:focus {
         border-color: #EF333A;
+      }
+
+      /* ── Nav Tabs ── */
+      .admin-nav-tabs {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+        border-bottom: 1.5px solid #272732;
+        padding-bottom: 12px;
+      }
+
+      .admin-nav-tab {
+        background: transparent;
+        border: 1.5px solid #272732;
+        color: #a1a1aa;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+      }
+
+      .admin-nav-tab:hover {
+        border-color: #3f3f4e;
+        color: #ffffff;
+      }
+
+      .admin-nav-tab.active {
+        background: #1c1c24;
+        border-color: #EF333A;
+        color: #ffffff;
+      }
+
+      .tab-badge {
+        background: #EF333A;
+        color: #ffffff;
+        font-size: 10px;
+        font-weight: 900;
+        padding: 1px 6px;
+        border-radius: 10px;
+      }
+
+      /* Analytics Metrics Grid */
+      .analytics-metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      /* Analytics Table */
+      .analytics-table-wrap {
+        overflow-x: auto;
+        border: 1px solid #272732;
+        border-radius: 10px;
+        background: #14141a;
+        margin-bottom: 24px;
+      }
+
+      .analytics-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        text-align: left;
+      }
+
+      .analytics-table th {
+        padding: 12px 14px;
+        background: #1c1c24;
+        color: #a1a1aa;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        border-bottom: 1px solid #272732;
+      }
+
+      .analytics-table td {
+        padding: 12px 14px;
+        border-bottom: 1px solid #1f1f28;
+      }
+
+      .date-cell {
+        font-family: monospace;
+        color: #d4d4d8;
+      }
+
+      .cell-val-active {
+        color: #1BE349;
+        font-weight: 700;
+      }
+
+      .cell-val-highlight {
+        color: #FFB200;
+        font-weight: 900;
+      }
+
+      .cell-val-zero {
+        color: #52525b;
+      }
+
+      /* Analytics Breakdown Grid */
+      .analytics-breakdown-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 20px;
+      }
+
+      .breakdown-card {
+        background: #14141a;
+        border: 1.5px solid #272732;
+        border-radius: 12px;
+        padding: 20px;
+      }
+
+      .breakdown-title {
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        color: #a1a1aa;
+        margin: 0 0 16px 0;
+        text-transform: uppercase;
+      }
+
+      .breakdown-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .breakdown-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        background: #1c1c24;
+        border-radius: 6px;
+        border: 1px solid #272732;
+      }
+
+      .breakdown-rank {
+        font-size: 11px;
+        font-weight: 800;
+        color: #EF333A;
+        margin-right: 8px;
+      }
+
+      .breakdown-name {
+        flex: 1;
+        font-size: 13px;
+        font-weight: 700;
+        color: #ffffff;
+      }
+
+      .breakdown-count {
+        font-size: 12px;
+        color: #1BE349;
+        font-weight: 800;
+      }
+
+      .breakdown-empty {
+        color: #52525b;
+        font-size: 13px;
+        margin: 0;
       }
 
       /* ── Dashboard Layout ── */

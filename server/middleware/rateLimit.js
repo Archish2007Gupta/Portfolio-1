@@ -56,9 +56,27 @@ export const contactLimiter = rateLimit({
   }
 });
 
+/**
+ * Dedicated rate limiter for public analytics event ingestion.
+ * Used internally for abuse prevention only; IPs are never stored in analytics records.
+ * Limit: 120 events per 5 minutes per IP window.
+ */
+export const analyticsLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes window
+  max: 120, // Limit each IP to 120 events per window
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Analytics event limit reached for this window.'
+  }
+});
+
 export default {
   apiLimiter,
   strictLimiter,
   loginLimiter,
-  contactLimiter
+  contactLimiter,
+  analyticsLimiter
 };
+

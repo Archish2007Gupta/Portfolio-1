@@ -5,8 +5,10 @@
 import React, { useState } from 'react';
 import { profile } from '../data/portfolioData.js';
 import { CloseIcon } from './Icons.jsx';
+import useAnalytics from '../hooks/useAnalytics.js';
 
 export default function ContactModal({ open, onClose }) {
+  const { trackContactSuccess } = useAnalytics();
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -44,6 +46,7 @@ export default function ContactModal({ open, onClose }) {
 
       if (res.ok && data.success) {
         setSubmitted(true);
+        trackContactSuccess();
       } else {
         setError(data.message || 'Unable to send your message right now. Please try again.');
       }

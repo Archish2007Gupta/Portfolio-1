@@ -69,12 +69,31 @@ export function initDatabase() {
       }
     }
 
+    // Safe analytics_events table creation if missing
+    dbInstance.exec(`
+      CREATE TABLE IF NOT EXISTS analytics_events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        event_type TEXT NOT NULL,
+        section TEXT,
+        target TEXT,
+        session_id TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
     // Safe index creation
     dbInstance.exec("CREATE INDEX IF NOT EXISTS idx_contacts_status ON contacts(status)");
     dbInstance.exec("CREATE INDEX IF NOT EXISTS idx_contacts_created_at ON contacts(created_at DESC)");
     dbInstance.exec("CREATE INDEX IF NOT EXISTS idx_projects_stars ON projects_cache(stars DESC)");
     dbInstance.exec("CREATE INDEX IF NOT EXISTS idx_projects_classification ON projects_cache(classification)");
     dbInstance.exec("CREATE INDEX IF NOT EXISTS idx_projects_custom_order ON projects_cache(custom_order ASC)");
+    dbInstance.exec("CREATE INDEX IF NOT EXISTS idx_analytics_created_at ON analytics_events(created_at DESC)");
+    dbInstance.exec("CREATE INDEX IF NOT EXISTS idx_analytics_event_type ON analytics_events(event_type)");
+    dbInstance.exec("CREATE INDEX IF NOT EXISTS idx_analytics_session_id ON analytics_events(session_id)");
+    dbInstance.exec("CREATE INDEX IF NOT EXISTS idx_analytics_type_date ON analytics_events(event_type, created_at)");
+
+    // Safe automated 90-day retention cleanup (affects ONLY analytics_events)
+    dbInstance.exec("DELETE FROM analytics_events WHERE created_at < datetime('now', '-90 days')");
   } catch (err) {
     console.error('[DATABASE] Migration error checking schema:', err);
   }

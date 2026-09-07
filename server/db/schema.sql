@@ -67,10 +67,24 @@ CREATE TABLE IF NOT EXISTS sessions (
     expired_at INTEGER NOT NULL
 );
 
+-- Analytics Events (Privacy-conscious, zero PII, anonymous session_id only)
+CREATE TABLE IF NOT EXISTS analytics_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    event_type TEXT NOT NULL,
+    section TEXT,
+    target TEXT,
+    session_id TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Indices for performance
 CREATE INDEX IF NOT EXISTS idx_contacts_created_at ON contacts(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_contacts_status ON contacts(status);
 CREATE INDEX IF NOT EXISTS idx_projects_stars ON projects_cache(stars DESC);
 CREATE INDEX IF NOT EXISTS idx_certificates_category ON certificates(category);
 CREATE INDEX IF NOT EXISTS idx_sessions_expired_at ON sessions(expired_at);
+CREATE INDEX IF NOT EXISTS idx_analytics_created_at ON analytics_events(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_analytics_event_type ON analytics_events(event_type);
+CREATE INDEX IF NOT EXISTS idx_analytics_session_id ON analytics_events(session_id);
+CREATE INDEX IF NOT EXISTS idx_analytics_type_date ON analytics_events(event_type, created_at);
 

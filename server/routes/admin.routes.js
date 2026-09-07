@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { adminController } from '../controllers/admin.controller.js';
 import { projectsController } from '../controllers/projects.controller.js';
+import { analyticsController } from '../controllers/analytics.controller.js';
 import { requireAdmin } from '../middleware/auth.js';
 import { loginLimiter } from '../middleware/rateLimit.js';
 
@@ -11,11 +12,16 @@ router.post('/login', loginLimiter, adminController.login);
 router.post('/logout', adminController.logout);
 router.get('/session', adminController.getSession);
 
-// Protected admin endpoints
+// Protected admin message & project endpoints
 router.get('/stats', requireAdmin, adminController.getDashboardStats);
 router.get('/messages', requireAdmin, adminController.getMessages);
 router.patch('/messages/:id', requireAdmin, adminController.updateMessageStatus);
 router.delete('/messages/:id', requireAdmin, adminController.deleteMessage);
 router.post('/projects/refresh', requireAdmin, projectsController.refreshProjects);
+
+// Protected admin analytics endpoints
+router.get('/analytics/summary', requireAdmin, analyticsController.getSummary);
+router.get('/analytics/timeseries', requireAdmin, analyticsController.getTimeseries);
+router.get('/analytics/events', requireAdmin, analyticsController.getRecentEvents);
 
 export default router;

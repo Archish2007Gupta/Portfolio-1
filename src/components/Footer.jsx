@@ -1,62 +1,64 @@
 /* ============================================================
-   Footer.jsx — Neo-Brutalist Grid Footer Component
+   Footer.jsx — Nirmaan 2026 & units.gr Workspace Grid Footer
    ============================================================ */
 
 import React from 'react';
 import { profile } from '../data/portfolioData.js';
 import useResume from '../hooks/useResume.js';
+import useAnalytics from '../hooks/useAnalytics.js';
 
 export default function Footer({ onOpenContact }) {
   const resume = useResume();
+  const { trackResumeView, trackResumeDownload } = useAnalytics();
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const navLinks = [
-    { label: 'Overview', href: '#hero' },
-    { label: 'Selected Work', href: '#projects' },
-    { label: 'Disciplines', href: '#disciplines' },
-    { label: 'Certificates', href: '#certificates' },
-    { label: 'GitHub Radar', href: '#github' },
-    { label: 'Design Archive', href: '#archive' },
-    { label: 'Get in Touch', href: '#contact' },
-  ];
-
-  const socialLinks = [
-    { label: 'GitHub ↗', href: profile.githubUrl },
-    { label: 'LinkedIn ↗', href: profile.linkedinUrl },
-    { label: 'Email Direct ↗', href: `mailto:${profile.email}` },
-  ];
-
   return (
-    <footer className="portfolio-footer">
-      {/* Top Graphic Accent Bar */}
-      <div className="footer-accent-strip">
-        <span style={{ background: '#EF333A' }} />
-        <span style={{ background: '#FFB200' }} />
-        <span style={{ background: '#00AA3C' }} />
-        <span style={{ background: '#0072E3' }} />
-        <span style={{ background: '#AB54F7' }} />
-        <span style={{ background: '#FF6100' }} />
-      </div>
+    <footer id="footer" className="nirmaan-grid-footer">
+      <div className="footer-container">
+        
+        {/* Grid workspace container matching units.gr layout */}
+        <div className="footer-workspace-grid clay-card">
+          
+          {/* Animated scattered grid block snap-elements */}
+          <div className="scattered-block block-purple" title="Snap Block" />
+          <div className="scattered-block block-blue" title="Snap Block" />
+          <div className="scattered-block block-yellow" title="Snap Block" />
+          <div className="scattered-block block-orange" title="Snap Block" />
+          <div className="scattered-block block-green" title="Snap Block" />
 
-      <div className="footer-main-wrap">
-        {/* Massive Call-to-Action Masthead */}
-        <div className="footer-masthead">
-          <div className="footer-masthead__left">
-            <span className="footer-status-pill">● READY FOR IMPACT 2026</span>
-            <h2 className="footer-huge-title">
-              LET&apos;S BUILD<br />
-              <span className="footer-huge-title__accent">SOMETHING</span><br />
-              MEMORABLE.
+          {/* Giant branding typography with snapped accents */}
+          <div className="giant-brand-wrap" onClick={scrollToTop}>
+            <h2 className="giant-brand-text">
+              archisha.
+              {/* Embedded custom color spots overlapping letters */}
+              <span className="snap-accent-dot snap-accent-red" />
+              <span className="snap-accent-bar snap-accent-green" />
             </h2>
           </div>
 
-          <div className="footer-masthead__right">
-            <p className="footer-manifesto">
-              Available for high-stakes engineering hackathons, innovative open-source collaborations,
-              and design-forward digital applications. Let&apos;s engineer reality together.
+        </div>
+
+        {/* Footer bottom details & navigation links */}
+        <div className="footer-bottom-row">
+          
+          <div className="footer-attribution">
+            <p className="footer-copyright">
+              © {new Date().getFullYear()} ARCHISHA GUPTA
             </p>
+            <p className="footer-byline">
+              Designed &amp; Built with <span className="heart-accent">♥</span> by{' '}
+              <span className="author-name">Archisha Gupta</span>
+              {' · '}CSE @ BMSIT &amp; Design Associate @ Coding Club BMSIT
+            </p>
+          </div>
+
+          {/* Outline Pill navigation items */}
+          <div className="footer-pill-links" aria-label="Footer links">
+            <button onClick={scrollToTop} className="footer-outline-pill">
+              Back to Top ↑
+            </button>
             <button onClick={onOpenContact} className="footer-outline-pill footer-outline-pill--highlight">
               Initiate Contact ↗
             </button>
@@ -69,6 +71,7 @@ export default function Footer({ onOpenContact }) {
                   className="footer-outline-pill footer-outline-pill--purple"
                   id="footer-view-cv-btn"
                   title="View Resume (PDF)"
+                  onClick={() => trackResumeView()}
                 >
                   View CV ↗
                 </a>
@@ -78,6 +81,7 @@ export default function Footer({ onOpenContact }) {
                   id="footer-download-cv-btn"
                   title="Download Resume (PDF)"
                   download="Archisha_Gupta_Resume.pdf"
+                  onClick={() => trackResumeDownload()}
                 >
                   Download CV ↓
                 </a>
@@ -89,214 +93,265 @@ export default function Footer({ onOpenContact }) {
               rel="noopener noreferrer"
               className="footer-outline-pill"
             >
-              Star on GitHub ★
+              GitHub ↗
+            </a>
+            <a
+              href={profile.linkedinUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-outline-pill"
+            >
+              LinkedIn ↗
             </a>
           </div>
+
         </div>
 
-        {/* Multi-Column Grid Links */}
-        <div className="footer-columns-grid">
-          {/* Col 1: Brand & Identity */}
-          <div className="footer-col footer-col--brand">
-            <div className="footer-brand-logo">
-              <span className="footer-brand-logo__initials">AG</span>
-              <span className="footer-brand-logo__name">ARCHISHA GUPTA</span>
-            </div>
-            <p className="footer-col__bio">
-              B.Tech Computer Science &amp; Engineering &apos;29.<br />
-              BMS Institute of Technology &amp; Management, Bengaluru.<br />
-              Creative Technologist &amp; Full-Stack Builder.
-            </p>
-            <div className="footer-edition-stamp">
-              <span>EXHIBITION ARCHIVE &apos;26</span>
-            </div>
-          </div>
-
-          {/* Col 2: Navigation Index */}
-          <div className="footer-col">
-            <h4 className="footer-col__heading">INDEX NAVIGATION</h4>
-            <ul className="footer-links-list">
-              {navLinks.map((link, idx) => (
-                <li key={idx}>
-                  <a href={link.href} className="footer-nav-link">
-                    <span className="footer-nav-link__num">0{idx + 1}</span>
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Col 3: Presence & Network */}
-          <div className="footer-col">
-            <h4 className="footer-col__heading">EXTERNAL RADAR</h4>
-            <ul className="footer-links-list">
-              {socialLinks.map((link, idx) => (
-                <li key={idx}>
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="footer-nav-link"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Col 4: Systems Spec */}
-          <div className="footer-col footer-col--spec">
-            <h4 className="footer-col__heading">SPECIFICATIONS</h4>
-            <div className="footer-spec-box">
-              <div className="footer-spec-row">
-                <span>ENGINE:</span>
-                <strong>REACT + VITE</strong>
-              </div>
-              <div className="footer-spec-row">
-                <span>DESIGN:</span>
-                <strong>NIRMAAN 2026 BRUTALISM</strong>
-              </div>
-              <div className="footer-spec-row">
-                <span>GRID:</span>
-                <strong>4PX KINETIC</strong>
-              </div>
-              <div className="footer-spec-row">
-                <span>LOCATION:</span>
-                <strong>BENGALURU, INDIA</strong>
-              </div>
-            </div>
-
-            <button onClick={scrollToTop} className="footer-back-to-top">
-              BACK TO TOP ↑
-            </button>
-          </div>
-        </div>
-
-        {/* Bottom Colophon Bar */}
-        <div className="footer-colophon-bar">
-          <div className="footer-colophon-bar__copy">
-            © 2026 ARCHISHA GUPTA. ALL RIGHTS RESERVED. CRAFTED WITH OBSESSIVE RIGOR.
-          </div>
-          <div className="footer-colophon-bar__coords">
-            13.0827° N, 77.5877° E — BENGALURU
-          </div>
-        </div>
       </div>
 
       <style>{`
-        .portfolio-footer {
-          position: relative;
-          background: #000000;
-          color: #FFFFFF;
-          border-top: 4px solid #000000;
-          width: 100%;
-          overflow: hidden;
+        .nirmaan-grid-footer {
+          margin-top: 40px;
+          padding-bottom: 30px;
         }
 
-        /* Accent Strip */
-        .footer-accent-strip {
-          display: flex;
-          height: 8px;
-          width: 100%;
-        }
-
-        .footer-accent-strip span {
-          flex: 1;
-          height: 100%;
-        }
-
-        .footer-main-wrap {
-          max-width: var(--max-content-width);
+        .footer-container {
+          max-width: 1320px;
           margin: 0 auto;
-          padding: 80px 32px 40px 32px;
-          display: flex;
-          flex-direction: column;
-          gap: 60px;
+          padding: 0 20px;
         }
 
-        /* Huge Masthead */
-        .footer-masthead {
-          display: grid;
-          grid-template-columns: 1.4fr 1fr;
-          gap: 40px;
-          align-items: flex-end;
-          padding-bottom: 60px;
-          border-bottom: 2px solid #222220;
+        /* ── Grid Workspace Container ── */
+        .footer-workspace-grid {
+          position: relative;
+          height: clamp(200px, 25vw, 320px);
+          overflow: hidden;
+          border-radius: var(--radius-brand);
+          border: 2px solid rgba(255, 255, 255, 0.4);
+          box-shadow: 0 18px 60px rgba(0, 0, 0, 0.12);
+          background-color: #F2EAE1;
+          background-image: 
+            linear-gradient(to right, rgba(0, 0, 0, 0.12) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(0, 0, 0, 0.12) 1px, transparent 1px);
+          background-size: 36px 36px;
         }
 
-        .footer-status-pill {
-          display: inline-block;
-          font-family: var(--font-mono);
-          font-size: 0.75rem;
-          font-weight: 800;
-          letter-spacing: 0.08em;
-          background: #11110F;
-          border: 1px solid #333330;
-          color: var(--color-green);
-          padding: 6px 14px;
-          border-radius: var(--radius-pill);
-          margin-bottom: 20px;
+        /* ── Scattered Grid Snap Blocks ── */
+        .scattered-block {
+          position: absolute;
+          width: 36px;
+          height: 36px;
+          border-radius: 4px;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
+          cursor: pointer;
+          transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        .footer-huge-title {
+        .scattered-block:hover {
+          transform: scale(1.3) rotate(15deg) !important;
+        }
+
+        .block-purple {
+          left: 20%;
+          top: 15%;
+          background: var(--color-purple);
+          animation: floatBlock1 5s ease-in-out infinite;
+        }
+
+        .block-blue {
+          left: 72%;
+          top: 22%;
+          background: var(--color-blue);
+          animation: floatBlock2 6.2s ease-in-out infinite 0.5s;
+        }
+
+        .block-yellow {
+          left: 52%;
+          top: 38%;
+          background: var(--color-yellow);
+          animation: floatBlock3 5.6s ease-in-out infinite 1s;
+        }
+
+        .block-orange {
+          left: 33%;
+          top: 45%;
+          background: var(--color-orange);
+          animation: floatBlock4 4.8s ease-in-out infinite 1.5s;
+        }
+
+        .block-green {
+          left: 85%;
+          top: 48%;
+          background: var(--color-green-light);
+          animation: floatBlock1 5.2s ease-in-out infinite 0.8s;
+        }
+
+        @keyframes floatBlock1 {
+          0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+          30% { transform: translateY(-12px) rotate(8deg) scale(1.08); }
+          70% { transform: translateY(10px) rotate(-6deg) scale(0.96); }
+        }
+
+        @keyframes floatBlock2 {
+          0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+          30% { transform: translateY(14px) rotate(-10deg) scale(0.95); }
+          70% { transform: translateY(-8px) rotate(8deg) scale(1.1); }
+        }
+
+        @keyframes floatBlock3 {
+          0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+          30% { transform: translateY(-16px) rotate(12deg) scale(1.12); }
+          70% { transform: translateY(10px) rotate(-12deg) scale(0.92); }
+        }
+
+        @keyframes floatBlock4 {
+          0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+          30% { transform: translateY(10px) rotate(-8deg) scale(0.96); }
+          70% { transform: translateY(-14px) rotate(10deg) scale(1.09); }
+        }
+
+        /* ── Giant Branding Typography ── */
+        .giant-brand-wrap {
+          position: absolute;
+          bottom: 16px;
+          left: 24px;
+          z-index: 10;
+          user-select: none;
+          cursor: pointer;
+        }
+
+        @media (min-width: 768px) {
+          .giant-brand-wrap {
+            bottom: 24px;
+            left: 36px;
+          }
+        }
+
+        .giant-brand-text {
           font-family: var(--font-display);
-          font-weight: 900;
-          font-size: clamp(3rem, 7.5vw, 6.5rem);
+          font-size: clamp(54px, 10.5vw, 130px);
           line-height: 0.9;
-          letter-spacing: -0.04em;
-          text-transform: uppercase;
-          color: #FFFFFF;
-          margin: 0;
+          letter-spacing: -0.05em;
+          font-weight: 900;
+          color: var(--text-ink);
+          position: relative;
+          display: inline-block;
         }
 
-        .footer-huge-title__accent {
-          color: var(--color-yellow);
-          -webkit-text-stroke: 1px #000000;
+        .snap-accent-dot {
+          position: absolute;
+          left: 18px;
+          bottom: 2px;
+          width: 16px;
+          height: 16px;
+          background: var(--color-red);
+          border-radius: 2px;
+          z-index: 20;
+          animation: spinScaleAccent 3s ease-in-out infinite;
         }
 
-        .footer-masthead__right {
+        .snap-accent-bar {
+          position: absolute;
+          left: 115px;
+          bottom: 18px;
+          width: 10px;
+          height: 24px;
+          background: var(--color-green-light);
+          border-radius: 2px;
+          z-index: 20;
+          animation: pulseBarAccent 2.5s ease-in-out infinite;
+        }
+
+        @keyframes spinScaleAccent {
+          0%, 100% { transform: rotate(45deg) scale(1); }
+          50% { transform: rotate(90deg) scale(1.25); }
+        }
+
+        @keyframes pulseBarAccent {
+          0%, 100% { transform: translateY(0) scaleY(1); }
+          50% { transform: translateY(-4px) scaleY(1.2); }
+        }
+
+        /* ── Footer Bottom Details Row ── */
+        .footer-bottom-row {
+          margin-top: 24px;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          align-items: flex-end;
+          gap: 20px;
+        }
+
+        .footer-attribution {
           display: flex;
           flex-direction: column;
-          gap: 20px;
-          align-items: flex-start;
+          gap: 4px;
+          text-align: left;
         }
 
-        .footer-manifesto {
-          font-family: var(--font-body);
-          font-size: 1.05rem;
-          line-height: 1.5;
-          color: #A3A39E;
-          margin: 0;
+        .footer-copyright {
+          font-family: var(--font-display);
+          font-size: 0.88rem;
+          font-weight: 900;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          color: var(--text-ink);
+        }
+
+        .footer-byline {
+          font-size: 0.78rem;
+          font-weight: 700;
+          color: var(--text-ink);
+        }
+
+        .heart-accent {
+          color: var(--color-red);
+          font-weight: 900;
+        }
+
+        .author-name {
+          font-weight: 900;
+          color: var(--text-ink);
+          text-decoration: underline;
+          text-decoration-color: var(--color-blue);
+        }
+
+        /* ── Outline Pill Links ── */
+        .footer-pill-links {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
         }
 
         .footer-outline-pill {
+          border-radius: var(--radius-pill);
+          border: 1.5px solid rgba(0, 0, 0, 0.4);
+          padding: 8px 18px;
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
+          font-weight: 800;
+          color: var(--text-ink);
+          background: transparent;
+          cursor: pointer;
+          transition: all 0.2s ease;
           display: inline-flex;
           align-items: center;
-          gap: 8px;
-          padding: 12px 24px;
-          border-radius: var(--radius-pill);
-          border: 2px solid #FFFFFF;
-          color: #FFFFFF;
-          background: transparent;
-          font-family: var(--font-display);
-          font-weight: 800;
-          font-size: 0.9rem;
-          letter-spacing: 0.04em;
-          text-decoration: none;
-          cursor: pointer;
-          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .footer-outline-pill:hover {
-          background: #FFFFFF;
-          color: #000000;
+          background: var(--text-ink);
+          color: #FFFFFF;
+          border-color: var(--text-ink);
           transform: translateY(-2px);
         }
 
         .footer-outline-pill--highlight {
-          border-color: var(--color-orange);
+          background: var(--color-yellow);
+          border-color: #000000;
+        }
+
+        .footer-outline-pill--highlight:hover {
           background: var(--color-orange);
           color: #FFFFFF;
         }
@@ -321,185 +376,6 @@ export default function Footer({ onOpenContact }) {
         .footer-outline-pill--blue:hover {
           background: #000000;
           color: #FFFFFF;
-        }
-
-        /* Multi-Column Grid */
-        .footer-columns-grid {
-          display: grid;
-          grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
-          gap: 40px;
-          padding-bottom: 40px;
-        }
-
-        .footer-col {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-        }
-
-        .footer-brand-logo {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .footer-brand-logo__initials {
-          font-family: var(--font-display);
-          font-weight: 900;
-          font-size: 1.2rem;
-          background: var(--color-red);
-          color: #FFFFFF;
-          padding: 6px 12px;
-          border-radius: var(--radius-pill);
-          border: 2px solid #FFFFFF;
-        }
-
-        .footer-brand-logo__name {
-          font-family: var(--font-display);
-          font-weight: 900;
-          font-size: 1.15rem;
-          letter-spacing: 0.04em;
-          color: #FFFFFF;
-        }
-
-        .footer-col__bio {
-          font-family: var(--font-body);
-          font-size: 0.85rem;
-          line-height: 1.5;
-          color: #888882;
-          margin: 0;
-        }
-
-        .footer-edition-stamp {
-          margin-top: 8px;
-          font-family: var(--font-mono);
-          font-size: 0.7rem;
-          font-weight: 800;
-          color: var(--color-yellow);
-        }
-
-        .footer-col__heading {
-          font-family: var(--font-mono);
-          font-size: 0.75rem;
-          font-weight: 800;
-          letter-spacing: 0.1em;
-          color: #71716D;
-          margin: 0;
-          text-transform: uppercase;
-        }
-
-        .footer-links-list {
-          list-style: none;
-          margin: 0;
-          padding: 0;
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-
-        .footer-nav-link {
-          font-family: var(--font-display);
-          font-size: 0.95rem;
-          font-weight: 800;
-          color: #D4D4D0;
-          text-decoration: none;
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          transition: color 0.18s ease, transform 0.18s ease;
-        }
-
-        .footer-nav-link__num {
-          font-family: var(--font-mono);
-          font-size: 0.7rem;
-          font-weight: 700;
-          color: var(--color-green);
-        }
-
-        .footer-nav-link:hover {
-          color: var(--color-yellow);
-          transform: translateX(4px);
-        }
-
-        /* Spec Box */
-        .footer-spec-box {
-          background: #11110F;
-          border: 1.5px solid #222220;
-          border-radius: var(--radius-card);
-          padding: 16px;
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-
-        .footer-spec-row {
-          display: flex;
-          justify-content: space-between;
-          font-family: var(--font-mono);
-          font-size: 0.72rem;
-        }
-
-        .footer-spec-row span {
-          color: #71716D;
-        }
-
-        .footer-spec-row strong {
-          color: #FFFFFF;
-          font-weight: 700;
-        }
-
-        .footer-back-to-top {
-          background: #FFFFFF;
-          color: #000000;
-          border: none;
-          padding: 12px 16px;
-          border-radius: var(--radius-pill);
-          font-family: var(--font-display);
-          font-weight: 900;
-          font-size: 0.82rem;
-          cursor: pointer;
-          letter-spacing: 0.06em;
-          margin-top: 8px;
-          transition: background 0.18s ease, transform 0.18s ease;
-        }
-
-        .footer-back-to-top:hover {
-          background: var(--color-yellow);
-          transform: translateY(-2px);
-        }
-
-        /* Colophon Bar */
-        .footer-colophon-bar {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          flex-wrap: wrap;
-          gap: 16px;
-          padding-top: 24px;
-          border-top: 1px solid #1A1A18;
-          font-family: var(--font-mono);
-          font-size: 0.72rem;
-          color: #61615D;
-        }
-
-        @media (max-width: 992px) {
-          .footer-masthead {
-            grid-template-columns: 1fr;
-          }
-
-          .footer-columns-grid {
-            grid-template-columns: 1fr 1fr;
-          }
-        }
-
-        @media (max-width: 600px) {
-          .footer-columns-grid {
-            grid-template-columns: 1fr;
-          }
-
-          .footer-main-wrap {
-            padding: 48px 16px 32px 16px;
-          }
         }
       `}</style>
     </footer>

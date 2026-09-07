@@ -5,7 +5,8 @@
    design system, layout architecture, 3D artifacts, and mechanics.
    ============================================================ */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import useAnalytics from './hooks/useAnalytics.js';
 
 // Section Components
 import Preloader from './components/Preloader.jsx';
@@ -54,6 +55,49 @@ export default function App() {
   const closeContactModal = () => {
     setContactModalOpen(false);
   };
+
+  const { trackPageView, trackSectionView } = useAnalytics();
+
+  useEffect(() => {
+    if (!loading && !isAdminRoute) {
+      trackPageView();
+
+      const sectionIds = [
+        'hero',
+        'about',
+        'disciplines',
+        'projects',
+        'journey',
+        'certificates',
+        'github',
+        'skills',
+        'archive',
+        'contact'
+      ];
+
+      if (typeof IntersectionObserver !== 'undefined') {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting && entry.target.id) {
+                trackSectionView(entry.target.id);
+              }
+            });
+          },
+          { threshold: 0.3 }
+        );
+
+        sectionIds.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) observer.observe(el);
+        });
+
+        return () => {
+          observer.disconnect();
+        };
+      }
+    }
+  }, [loading, isAdminRoute, trackPageView, trackSectionView]);
 
   return (
     <>
