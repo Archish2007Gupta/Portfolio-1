@@ -1,0 +1,67 @@
+{
+  "overrides": [
+    {
+      "id": "javascript",
+      "name": "JavaScript",
+      "category": "Languages",
+      "order": 1
+    },
+    {
+      "id": "typescript",
+      "name": "TypeScript",
+      "category": "Languages",
+      "order": 2
+    },
+    {
+      "id": "html",
+      "name": "HTML",
+      "category": "Frontend",
+      "order": 3
+    },
+    {
+      "id": "css",
+      "name": "CSS",
+      "category": "Frontend",
+      "order": 4
+    }
+  ],
+  "additional": [
+    {
+      "id": "react",
+      "name": "React",
+      "category": "Frontend",
+      "order": 5
+    },
+    {
+      "id": "c-plus-plus",
+      "name": "C++",
+      "category": "Languages",
+      "order": 6
+    },
+    {
+      "id": "python",
+      "name": "Python",
+      "category": "Languages",
+      "order": 7
+    },
+    {
+      "id": "esp32",
+      "name": "ESP32",
+      "category": "Hardware / IoT",
+      "order": 8
+    },
+    {
+      "id": "supabase",
+      "name": "Supabase",
+      "category": "Database",
+      "order": 9
+    },
+    {
+      "id": "figma",
+      "name": "Figma",
+      "category": "Tools",
+      "order": 10
+    }
+  ],
+  "hidden": []
+}

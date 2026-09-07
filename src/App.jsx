@@ -20,6 +20,7 @@ import JourneySection from './components/JourneySection.jsx';
 import DesignArchive from './components/DesignArchive.jsx';
 import CertificatesGallery from './components/CertificatesGallery.jsx';
 import GithubSection from './components/GithubSection.jsx';
+import SkillsSection from './components/SkillsSection.jsx';
 import ContactSection from './components/ContactSection.jsx';
 import Footer from './components/Footer.jsx';
 
@@ -130,6 +131,14 @@ export default function App() {
 
             {/* 05. GitHub Radar & Repositories */}
             <GithubSection />
+
+            {/* Signature Nirmaan Section Divider: Tech Stack & Skills */}
+            <SectionTitle bgColor="#1BE349" textColor="#11110F">
+              TECH STACK &amp; CAPABILITIES
+            </SectionTitle>
+
+            {/* 06. Tech Stack & Repository Skills */}
+            <SkillsSection />
 
             {/* Signature Nirmaan Section Divider 4 */}
             <SectionTitle bgColor="#00AA3C" textColor="#11110F">
