@@ -16,6 +16,7 @@ import SectionTitle from './components/SectionTitle.jsx';
 import AboutSection from './components/AboutSection.jsx';
 import Disciplines from './components/Disciplines.jsx';
 import ProjectsSection from './components/ProjectsSection.jsx';
+import JourneySection from './components/JourneySection.jsx';
 import DesignArchive from './components/DesignArchive.jsx';
 import CertificatesGallery from './components/CertificatesGallery.jsx';
 import GithubSection from './components/GithubSection.jsx';
@@ -110,6 +111,9 @@ export default function App() {
 
             {/* 03. Asymmetric Selected Work */}
             <ProjectsSection />
+
+            {/* 04. Experience & Timeline Schedule Board */}
+            <JourneySection />
 
             {/* Signature Nirmaan Section Divider: Certificates */}
             <SectionTitle bgColor="#AB54F7" textColor="#FFB200">

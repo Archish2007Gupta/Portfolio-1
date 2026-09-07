@@ -1,14 +1,78 @@
 /* ============================================================
    JourneySection.jsx — Nirmaan 2026 Interactive Schedule Board
+   Backend-Driven Experience System (Single Source of Truth: experience.json)
    ============================================================ */
 
-import React, { useState } from 'react';
-import { scheduleTimeline } from '../data/portfolioData.js';
+import React, { useState, useEffect, useMemo } from 'react';
+import { getExperience } from '../services/experienceApi.js';
 
 export default function JourneySection() {
+  const [experienceList, setExperienceList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [activeGroupIndex, setActiveGroupIndex] = useState(0);
 
-  const activeGroup = scheduleTimeline[activeGroupIndex];
+  // Fetch experience data dynamically from backend API
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadExperience() {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getExperience();
+        if (isMounted) {
+          if (data && Array.isArray(data.experience)) {
+            setExperienceList(data.experience);
+          } else {
+            setExperienceList([]);
+          }
+        }
+      } catch (err) {
+        if (isMounted) {
+          console.warn('[EXPERIENCE] Failed to load experience:', err);
+          setError('Timeline entries temporarily unavailable.');
+          setExperienceList([]);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadExperience();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Build tabs / groups dynamically from backend experience items
+  const groups = useMemo(() => {
+    if (!experienceList || experienceList.length === 0) return [];
+
+    const map = new Map();
+    experienceList.forEach((item) => {
+      const period = item.period || (item.current ? '2025 – Present' : 'Milestones');
+      const label = item.periodLabel || item.type || 'Experience';
+      const key = `${period}___${label}`;
+
+      if (!map.has(key)) {
+        map.set(key, {
+          period,
+          label,
+          items: []
+        });
+      }
+      map.get(key).items.push(item);
+    });
+
+    return Array.from(map.values());
+  }, [experienceList]);
+
+  // Keep active index safely bounded
+  const safeIndex = Math.min(activeGroupIndex, Math.max(0, groups.length - 1));
+  const activeGroup = groups[safeIndex] || { period: '', label: '', items: [] };
 
   return (
     <section className="nirmaan-section" id="schedule">
@@ -27,36 +91,68 @@ export default function JourneySection() {
       <div className="brutal-card schedule-board-card">
         
         {/* Top Tab Bar Switcher */}
-        <div className="schedule-tab-bar">
-          {scheduleTimeline.map((group, idx) => {
-            const isActive = activeGroupIndex === idx;
-            return (
-              <button
-                key={group.period}
-                onClick={() => setActiveGroupIndex(idx)}
-                className={`schedule-tab-btn clay-card ${isActive ? 'schedule-tab-btn--active' : ''}`}
-              >
-                <span className="tab-period">{group.period}</span>
-                <span className="tab-label">{group.label}</span>
-              </button>
-            );
-          })}
-        </div>
+        {groups.length > 0 && (
+          <div className="schedule-tab-bar">
+            {groups.map((group, idx) => {
+              const isActive = safeIndex === idx;
+              return (
+                <button
+                  key={`${group.period}-${idx}`}
+                  onClick={() => setActiveGroupIndex(idx)}
+                  className={`schedule-tab-btn clay-card ${isActive ? 'schedule-tab-btn--active' : ''}`}
+                >
+                  <span className="tab-period">{group.period}</span>
+                  <span className="tab-label">{group.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {/* Schedule List Content */}
         <div className="schedule-rows-container">
-          {activeGroup.items.map((item, i) => (
-            <div key={i} className="schedule-row-item">
+          {loading && (
+            <div className="schedule-row-item schedule-loading-row">
+              <div className="schedule-time-col">
+                <span className="schedule-time-badge" style={{ background: '#0072E3' }}>
+                  FETCHING...
+                </span>
+                <span className="schedule-type-tag">LIVE_STREAM</span>
+              </div>
+              <div className="schedule-detail-col">
+                <div className="schedule-title-row">
+                  <h3 className="schedule-title">Loading Timeline Records</h3>
+                  <span className="schedule-org">SYNCING API</span>
+                </div>
+                <p className="schedule-desc">Querying single source of truth timeline entries from backend repository...</p>
+              </div>
+            </div>
+          )}
+
+          {!loading && error && (
+            <div className="schedule-empty-state">
+              <p>{error}</p>
+            </div>
+          )}
+
+          {!loading && !error && groups.length === 0 && (
+            <div className="schedule-empty-state">
+              <p>No timeline entries currently listed in records.</p>
+            </div>
+          )}
+
+          {!loading && !error && activeGroup.items.map((item, i) => (
+            <div key={item.id || i} className="schedule-row-item">
               
               {/* Time & Tag Col */}
               <div className="schedule-time-col">
                 <span
                   className="schedule-time-badge"
-                  style={{ background: item.color }}
+                  style={{ background: item.color || '#0072E3' }}
                 >
                   {item.time}
                 </span>
-                <span className="schedule-type-tag">{item.tag}</span>
+                <span className="schedule-type-tag">{item.tag || item.type}</span>
               </div>
 
               {/* Detail Col */}
@@ -65,7 +161,7 @@ export default function JourneySection() {
                   <h3 className="schedule-title">{item.title}</h3>
                   <span className="schedule-org">{item.organization}</span>
                 </div>
-                <p className="schedule-desc">{item.detail}</p>
+                <p className="schedule-desc">{item.detail || item.description}</p>
               </div>
 
             </div>
@@ -161,6 +257,24 @@ export default function JourneySection() {
           transform: translateX(8px);
           background-color: #FFFFFF;
           box-shadow: 0 10px 0 rgba(0, 0, 0, 0.12);
+        }
+
+        .schedule-loading-row {
+          opacity: 0.75;
+          animation: pulseFade 1.6s ease-in-out infinite;
+        }
+
+        @keyframes pulseFade {
+          0%, 100% { opacity: 0.6; }
+          50% { opacity: 0.95; }
+        }
+
+        .schedule-empty-state {
+          padding: 32px 20px;
+          text-align: center;
+          font-family: var(--font-mono);
+          font-size: 0.85rem;
+          color: var(--text-muted);
         }
 
         .schedule-time-col {

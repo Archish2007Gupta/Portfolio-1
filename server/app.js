@@ -15,6 +15,7 @@ import contactRoutes from './routes/contact.routes.js';
 import projectsRoutes from './routes/projects.routes.js';
 import certificatesRoutes from './routes/certificates.routes.js';
 import adminRoutes from './routes/admin.routes.js';
+import experienceRoutes from './routes/experience.routes.js';
 
 const app = express();
 
@@ -93,6 +94,7 @@ app.use('/api', apiLimiter);
 app.use('/api/contact', contactRoutes);
 app.use('/api/projects', projectsRoutes);
 app.use('/api/certificates', certificatesRoutes);
+app.use('/api/experience', experienceRoutes);
 app.use('/api/admin', adminRoutes);
 
 // 404 Handler for undefined routes

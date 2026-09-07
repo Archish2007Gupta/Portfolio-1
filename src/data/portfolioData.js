@@ -283,69 +283,7 @@ export const featuredProjects = [
   },
 ];
 
-// ── Experience & Timeline Groups ──
-export const scheduleTimeline = [
-  {
-    period: '2025 – Present',
-    label: 'Academic & Core Roles',
-    items: [
-      {
-        time: '2025 — 2029',
-        title: 'B.Tech in Computer Science Engineering',
-        organization: 'BMS Institute of Technology & Management',
-        detail: 'Core coursework in Algorithms, Data Structures, Computer Architecture, and Object-Oriented Programming.',
-        color: '#0072E3',
-        tag: 'EDUCATION',
-      },
-      {
-        time: 'March 2026 — Present',
-        title: 'Design Associate & Core Team Member',
-        organization: 'Coding Club BMSIT',
-        detail: 'Conceptualized branding identities, event posters, official ID cards, club apparel, and digital promotional campaigns.',
-        color: '#FFB200',
-        tag: 'LEADERSHIP',
-      },
-      {
-        time: 'June 2026 — Present',
-        title: 'Editorial Director',
-        organization: 'Rotaract Club of BMS Yelahanka',
-        detail: 'Directing creative content presentation, editorial communication, newsletters, and visual storytelling for community outreach.',
-        color: '#EF333A',
-        tag: 'EDITORIAL',
-      },
-    ],
-  },
-  {
-    period: '2026 Hackathons',
-    label: 'Competitive Sprints',
-    items: [
-      {
-        time: '2026 Sprint',
-        title: 'Decode2Deploy Hackathon',
-        organization: 'Coding Club BMSIT',
-        detail: 'Intensive building sprint tackling real-world problem statements under 24-hour pressure.',
-        color: '#00AA3C',
-        tag: 'HACKATHON',
-      },
-      {
-        time: '2026 Sprint',
-        title: 'RNSIT ImpactX Challenge',
-        organization: 'RNSIT Bengaluru',
-        detail: 'Collaborative prototyping, multi-disciplinary engineering, and rapid pitch evaluation.',
-        color: '#AB54F7',
-        tag: 'CHALLENGE',
-      },
-      {
-        time: '2026 Sprint',
-        title: 'VyuhaTech 2.0',
-        organization: 'Inter-College Innovation Sprint',
-        detail: 'Hardware & IoT integration with cloud telemetry and live prototype demonstration.',
-        color: '#FF6100',
-        tag: 'SPRINT',
-      },
-    ],
-  },
-];
+// Experience data is dynamically driven by backend single source of truth: server/data/experience.json via /api/experience
 
 // ── Design Archive / Visual Gallery ──
 export const designGallery = [
