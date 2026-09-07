@@ -2,7 +2,20 @@
  * Privacy-Conscious Analytics Client
  * Handles anonymous session identifier management and non-blocking background event dispatch.
  * Strictly NO IP addresses, user agents, or personal information.
+ *
+ * Environment-aware:
+ *  - Development:  Sends to /api/analytics/events (Vite proxy → localhost:5000)
+ *  - Production:   Sends to VITE_API_BASE_URL/api/analytics/events (Railway backend)
  */
+
+// Resolve API base once at module load (works at build time via Vite env injection)
+const API_BASE = (
+  typeof import.meta !== 'undefined' &&
+  import.meta.env &&
+  import.meta.env.VITE_API_BASE_URL
+    ? import.meta.env.VITE_API_BASE_URL
+    : ''
+).replace(/\/+$/, '');
 
 let memorySessionId = null;
 
@@ -63,7 +76,7 @@ export async function sendAnalyticsEvent({ event, section, target }) {
 
     // Prefer fetch with keepalive to allow safe dispatch during clicks/nav
     if (typeof window !== 'undefined' && typeof window.fetch === 'function') {
-      fetch('/api/analytics/events', {
+      fetch(`${API_BASE}/api/analytics/events`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: bodyString,
@@ -82,7 +95,7 @@ export async function sendAnalyticsEvent({ event, section, target }) {
  * @returns {Promise<{ success: boolean, summary: object }>}
  */
 export async function getAnalyticsSummary() {
-  const res = await fetch('/api/admin/analytics/summary', {
+  const res = await fetch(`${API_BASE}/api/admin/analytics/summary`, {
     method: 'GET',
     credentials: 'include'
   });
@@ -96,7 +109,7 @@ export async function getAnalyticsSummary() {
  * @returns {Promise<{ success: boolean, range: string, days: number, timeline: Array }>}
  */
 export async function getAnalyticsTimeseries(range = '30d') {
-  const res = await fetch(`/api/admin/analytics/timeseries?range=${encodeURIComponent(range)}`, {
+  const res = await fetch(`${API_BASE}/api/admin/analytics/timeseries?range=${encodeURIComponent(range)}`, {
     method: 'GET',
     credentials: 'include'
   });
@@ -110,7 +123,7 @@ export async function getAnalyticsTimeseries(range = '30d') {
  * @returns {Promise<{ success: boolean, events: Array }>}
  */
 export async function getRecentAnalyticsEvents(limit = 50) {
-  const res = await fetch(`/api/admin/analytics/events?limit=${limit}`, {
+  const res = await fetch(`${API_BASE}/api/admin/analytics/events?limit=${limit}`, {
     method: 'GET',
     credentials: 'include'
   });
