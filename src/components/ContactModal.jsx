@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import { profile } from '../data/portfolioData.js';
 import { CloseIcon } from './Icons.jsx';
 import useAnalytics from '../hooks/useAnalytics.js';
+import { submitContact } from '../services/contactApi.js';
 
 export default function ContactModal({ open, onClose }) {
   const { trackContactSuccess } = useAnalytics();
@@ -29,29 +30,21 @@ export default function ContactModal({ open, onClose }) {
     setError('');
 
     try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          message: formData.message,
-          role: formData.role,
-        }),
+      const data = await submitContact({
+        name: formData.name,
+        email: formData.email,
+        message: formData.message,
+        role: formData.role,
       });
 
-      const data = await res.json().catch(() => ({}));
-
-      if (res.ok && data.success) {
+      if (data && data.success) {
         setSubmitted(true);
         trackContactSuccess();
       } else {
-        setError(data.message || 'Unable to send your message right now. Please try again.');
+        setError(data?.message || 'Unable to send your message right now. Please try again.');
       }
     } catch (err) {
-      setError('Unable to connect right now. Please try again later.');
+      setError(err?.message || 'Unable to connect right now. Please try again later.');
     } finally {
       setLoading(false);
     }
