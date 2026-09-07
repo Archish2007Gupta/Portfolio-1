@@ -50,17 +50,24 @@ app.use('/resume', express.static(resumeDir, {
 }));
 
 // CORS Configuration - Restrict to configured client origin
+// In production: frontend (Vercel) and backend (Railway) are cross-origin.
+// credentials: true is required for admin session cookies.
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow requests with no origin (like curl, local health checks)
+    // Allow requests with no origin (like curl, local health checks, Railway health probes)
     if (!origin) return callback(null, true);
 
-    const allowedOrigins = [env.CLIENT_ORIGIN];
+    const allowedOrigins = new Set([env.CLIENT_ORIGIN]);
+
     if (!env.isProduction) {
-      allowedOrigins.push('http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000');
+      // Dev convenience: allow all localhost variants
+      allowedOrigins.add('http://localhost:5173');
+      allowedOrigins.add('http://127.0.0.1:5173');
+      allowedOrigins.add('http://localhost:3000');
+      allowedOrigins.add('http://localhost:4173'); // vite preview
     }
 
-    if (allowedOrigins.includes(origin)) {
+    if (allowedOrigins.has(origin)) {
       callback(null, true);
     } else {
       callback(new AppError(`Origin '${origin}' not allowed by CORS policy`, 403));
@@ -77,7 +84,13 @@ app.use(cors(corsOptions));
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
-// Server-side session management with SQLite store
+// Server-side session management with SQLite store.
+// In production (Railway ↔ Vercel cross-origin):
+//   - secure: true (Railway runs HTTPS)
+//   - sameSite: 'none' (required for cross-origin credentialed requests with cookies)
+// In development (same-origin via Vite proxy):
+//   - secure: false  (localhost HTTP)
+//   - sameSite: 'lax'
 app.use(session({
   name: 'portfolio_sid',
   secret: env.SESSION_SECRET,
@@ -87,7 +100,7 @@ app.use(session({
   cookie: {
     httpOnly: true,
     secure: env.isProduction,
-    sameSite: env.isProduction ? (process.env.COOKIE_SAMESITE || 'lax') : 'lax',
+    sameSite: env.isProduction ? 'none' : 'lax',
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
 }));
