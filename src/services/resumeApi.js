@@ -1,20 +1,16 @@
-import { request } from './api.js';
-
 /**
- * Fetch dynamic resume metadata from the portfolio backend.
- * Single source of truth: public/resume/resume.pdf via GET /api/resume.
- * @returns {Promise<{ success: boolean, available: boolean, url?: string, filename?: string, size?: number, updatedAt?: string, downloadUrl?: string }>}
+ * Returns hardcoded resume metadata (previously fetched from /api/resume).
+ * The file is known to exist at /resume/resume.pdf — no backend check needed.
+ * @returns {Promise<{ success: boolean, available: boolean, url: string, downloadUrl: string, filename: string }>}
  */
 export async function getResumeMetadata() {
-  try {
-    const data = await request('/api/resume', {
-      method: 'GET'
-    });
-    return data || { success: true, available: false };
-  } catch (err) {
-    console.warn('[RESUME API] Failed to fetch resume metadata:', err.message);
-    return { success: true, available: false };
-  }
+  return {
+    success: true,
+    available: true,
+    url: '/resume/resume.pdf',
+    downloadUrl: '/resume/resume.pdf',
+    filename: 'resume.pdf',
+  };
 }
 
 export default { getResumeMetadata };

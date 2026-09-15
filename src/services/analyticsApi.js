@@ -1,21 +1,8 @@
 /**
- * Privacy-Conscious Analytics Client
- * Handles anonymous session identifier management and non-blocking background event dispatch.
- * Strictly NO IP addresses, user agents, or personal information.
- *
- * Environment-aware:
- *  - Development:  Sends to /api/analytics/events (Vite proxy → localhost:5000)
- *  - Production:   Sends to VITE_API_BASE_URL/api/analytics/events (Railway backend)
+ * Privacy-Conscious Analytics Client — No-Op Mode
+ * Analytics event dispatch is silenced; no backend is deployed.
+ * getAnonymousSessionId() remains functional (pure client-side).
  */
-
-// Resolve API base once at module load (works at build time via Vite env injection)
-const API_BASE = (
-  typeof import.meta !== 'undefined' &&
-  import.meta.env &&
-  import.meta.env.VITE_API_BASE_URL
-    ? import.meta.env.VITE_API_BASE_URL
-    : ''
-).replace(/\/+$/, '');
 
 let memorySessionId = null;
 
@@ -36,7 +23,6 @@ export function getAnonymousSessionId() {
         return stored;
       }
 
-      // Generate random anonymous ID
       const randomPart = Math.random().toString(36).substring(2, 10);
       const timePart = Date.now().toString(36);
       const newId = `anon_${randomPart}_${timePart}`;
@@ -55,80 +41,26 @@ export function getAnonymousSessionId() {
 }
 
 /**
- * Sends an approved analytics event in the background.
- * Asynchronous, non-blocking, and failure-tolerant.
- * Never interrupts user navigation, interactions, or causes console errors.
- * @param {{ event: string, section?: string, target?: string }} params
+ * No-op — analytics events are not sent (no backend deployed).
+ * @param {{ event: string, section?: string, target?: string }} _params
  */
-export async function sendAnalyticsEvent({ event, section, target }) {
-  if (!event || typeof event !== 'string') return;
-
-  try {
-    const sessionId = getAnonymousSessionId();
-    const payload = {
-      event: event.trim(),
-      section: section ? String(section).trim().substring(0, 50) : null,
-      target: target ? String(target).trim().substring(0, 100) : null,
-      session_id: sessionId
-    };
-
-    const bodyString = JSON.stringify(payload);
-
-    // Prefer fetch with keepalive to allow safe dispatch during clicks/nav
-    if (typeof window !== 'undefined' && typeof window.fetch === 'function') {
-      fetch(`${API_BASE}/api/analytics/events`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: bodyString,
-        keepalive: true
-      }).catch(() => {
-        // Silently swallow network failures to guarantee portfolio functionality
-      });
-    }
-  } catch {
-    // Fail silently
-  }
+export async function sendAnalyticsEvent(_params) {
+  // Silently suppressed — no backend
 }
 
 /**
- * Admin: Fetch aggregated summary metrics.
- * @returns {Promise<{ success: boolean, summary: object }>}
+ * Admin analytics stubs — always return empty since no backend is deployed.
  */
 export async function getAnalyticsSummary() {
-  const res = await fetch(`${API_BASE}/api/admin/analytics/summary`, {
-    method: 'GET',
-    credentials: 'include'
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return await res.json();
+  return { success: false, summary: null };
 }
 
-/**
- * Admin: Fetch daily time-series activity for range ('7d' | '30d' | '90d').
- * @param {string} range
- * @returns {Promise<{ success: boolean, range: string, days: number, timeline: Array }>}
- */
-export async function getAnalyticsTimeseries(range = '30d') {
-  const res = await fetch(`${API_BASE}/api/admin/analytics/timeseries?range=${encodeURIComponent(range)}`, {
-    method: 'GET',
-    credentials: 'include'
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return await res.json();
+export async function getAnalyticsTimeseries(_range = '30d') {
+  return { success: false, timeline: [] };
 }
 
-/**
- * Admin: Fetch recent raw anonymous events.
- * @param {number} [limit=50]
- * @returns {Promise<{ success: boolean, events: Array }>}
- */
-export async function getRecentAnalyticsEvents(limit = 50) {
-  const res = await fetch(`${API_BASE}/api/admin/analytics/events?limit=${limit}`, {
-    method: 'GET',
-    credentials: 'include'
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return await res.json();
+export async function getRecentAnalyticsEvents(_limit = 50) {
+  return { success: false, events: [] };
 }
 
 export default {

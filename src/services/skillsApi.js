@@ -1,14 +1,12 @@
-import { request } from './api.js';
+import { skillsData } from '../data/portfolioData.js';
 
 /**
- * Fetch dynamic technology stack and skills from the portfolio backend.
- * Primary source of truth: GitHub repositories (+ optional server/data/skills.json curation).
+ * Returns hardcoded skills data (previously fetched from /api/skills).
+ * No backend required — data is sourced directly from portfolioData.js.
  * @returns {Promise<{ success: boolean, skills: Array }>}
  */
 export async function getSkills() {
-  return await request('/api/skills', {
-    method: 'GET'
-  });
+  return { success: true, skills: skillsData };
 }
 
 export default { getSkills };

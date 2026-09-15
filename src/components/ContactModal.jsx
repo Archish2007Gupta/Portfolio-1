@@ -97,9 +97,9 @@ export default function ContactModal({ open, onClose }) {
 
         {submitted ? (
           <div className="modal-success-box clay-card">
-            <h3 className="success-title">⚡ QUEST DISPATCHED!</h3>
+            <h3 className="success-title">⚡ EMAIL CLIENT OPENED!</h3>
             <p className="success-desc">
-              Thank you for reaching out! Your message has been logged. I will reply to <strong>{formData.email}</strong> shortly.
+              Your email client has been opened with a pre-filled message. Just hit <strong>Send</strong> in your mail app to complete the contact — I'll reply to <strong>{formData.email}</strong> shortly!
             </p>
             <button onClick={handleReset} className="success-done-btn clay-card">
               BACK TO PORTFOLIO
@@ -172,7 +172,7 @@ export default function ContactModal({ open, onClose }) {
               disabled={loading}
               style={{ opacity: loading ? 0.75 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}
             >
-              {loading ? 'SENDING MESSAGE...' : 'SEND MESSAGE ↗'}
+              {loading ? 'OPENING EMAIL CLIENT...' : 'OPEN EMAIL CLIENT ↗'}
             </button>
           </form>
         )}

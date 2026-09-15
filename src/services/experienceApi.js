@@ -1,14 +1,12 @@
-import { request } from './api.js';
+import { experienceData } from '../data/portfolioData.js';
 
 /**
- * Fetch dynamic experience and timeline records from the portfolio backend.
- * Single source of truth: server/data/experience.json via GET /api/experience.
+ * Returns hardcoded experience data (previously fetched from /api/experience).
+ * No backend required — data is sourced directly from portfolioData.js.
  * @returns {Promise<{ success: boolean, experience: Array }>}
  */
 export async function getExperience() {
-  return await request('/api/experience', {
-    method: 'GET'
-  });
+  return { success: true, experience: experienceData };
 }
 
 export default { getExperience };
